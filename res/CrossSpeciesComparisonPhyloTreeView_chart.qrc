@@ -11,8 +11,6 @@
         <file>js_libs/d3.v6.js</file>
 		<file>js_libs/d3.v4.js</file>
 		<file>js_libs/d3-scale-chromatic.v1.min.js</file>
-		<file>js_libs/clusterfck.js</file>
         <file>js_libs/qwebchannel.tools.js</file>
-		<file>own_libs/hierarchicalClusteringFile.js</file>
 	</qresource>
 </RCC>
