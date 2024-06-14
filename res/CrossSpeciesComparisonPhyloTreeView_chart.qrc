@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="CrossSpeciesComparisonPhyloTreeView">
+		<file>CrossSpeciesComparisonPhyloTreeView_chart/ChartFile.js</file>
+		<file>CrossSpeciesComparisonPhyloTreeView_chart/DataFile.js</file>
+		<file>CrossSpeciesComparisonPhyloTreeView_chart/FunctionFile.js</file>
+		<file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.html</file>
+		<file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.css</file>
+        <file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.js</file>
+    </qresource>
+    <qresource prefix="CrossSpeciesComparisonPhyloTreeView">
+        <file>js_libs/d3.v6.js</file>
+		<file>js_libs/d3.v4.js</file>
+		<file>js_libs/d3-scale-chromatic.v1.min.js</file>
+		<file>js_libs/clusterfck.js</file>
+        <file>js_libs/qwebchannel.tools.js</file>
+		<file>own_libs/hierarchicalClusteringFile.js</file>
+	</qresource>
+</RCC>

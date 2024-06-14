@@ -1,0 +1,5 @@
+{
+  "name": "CrossSpeciesComparisonPhyloTreeView",
+  "version": "1",
+  "dependencies": [ "CrossSpeciesComparisonTree" , "CrossSpeciesComparisonTreeMeta"]
+}
