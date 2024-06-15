@@ -436,12 +436,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
 
 
-    const auto updateViewsButtonUpdate = [this]() -> void
-        {
-
-        };
-    connect(&_updateSettingsHolder.getUpdateViewsButtonAction(), &TriggerAction::triggered, this, updateViewsButtonUpdate);
-
     referenceDatasetPickerActionModify();
 }
 
