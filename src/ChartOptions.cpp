@@ -226,15 +226,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
         };
     
-    const auto updateTreeLeafSelectionFromQT = [this]() -> void
-        {
-            QString selectionString= _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-            _viewerPlugin.getChartWidget().setLeafSelectionFromQT(selectionString);
-
-        };
-
-    connect(&_linkerSettingsHolder.getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
-
     const auto traitSelectionNumeric = [this]() -> void
         {
 

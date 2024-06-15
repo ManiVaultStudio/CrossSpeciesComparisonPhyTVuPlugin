@@ -101,6 +101,17 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
     connect(&_chartWidget, &ChartWidget::addLeftRightSelectionToScatterplot, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::addLeftRightSelectionToScatterplot);
 
     connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::passScatterplotLeafPointSelection);
+    
+    const auto updateTreeLeafSelectionFromQT = [this]() -> void
+        {
+
+            QString selectionString = _chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT().getString();
+            _chartWidget.setLeafSelectionFromQT(selectionString);
+            _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
+        };
+
+    connect(&_chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
+
 
     _chartWidget.setAcceptDrops(true);
     const auto layout = new QVBoxLayout();
