@@ -46,7 +46,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Update Views Button");
 
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSCPTV:Scatterplot Leaf Selection Value");
-    _linkerSettingsHolder.getTreeLeafSelectionValue().setSerializationName("CSCPTV:Tree Leaf Selection Value");
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
     _linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSCPTV:Reembedding Options");
 
     //_extraSettingsHolder.getNumOfClustersAction().setSerializationName("Number of clusters");
@@ -144,11 +144,11 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
 
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::TextEdit);
+    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
     _linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
     _linkerSettingsHolder.getReembeddingOptions().setChecked(false);
-    _linkerSettingsHolder.getTreeLeafSelectionValue().setString("");
-    _linkerSettingsHolder.getTreeLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setString("");
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setDefaultWidgetFlags(StringAction::LineEdit);
 
     _extraSettingsHolder.getExpandAllAction().setDefaultWidgetFlags(ToggleAction::CheckBox);
     _extraSettingsHolder.getExpandAllAction().setChecked(false);
@@ -233,7 +233,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
         };
 
-    connect(&_linkerSettingsHolder.getScatterplotLeafSelectionValue(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
+    connect(&_linkerSettingsHolder.getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
 
     const auto traitSelectionNumeric = [this]() -> void
         {
@@ -1608,7 +1608,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
-    _linkerSettingsHolder.getTreeLeafSelectionValue().fromParentVariantMap(variantMap);
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().fromParentVariantMap(variantMap);
 
 }
 
@@ -1628,6 +1628,6 @@ QVariantMap ChartOptions::toVariantMap() const
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);
-    _linkerSettingsHolder.getTreeLeafSelectionValue().insertIntoVariantMap(variantMap);
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().insertIntoVariantMap(variantMap);
     return variantMap;
 }
