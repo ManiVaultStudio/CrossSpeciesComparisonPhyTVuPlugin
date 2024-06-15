@@ -61,32 +61,32 @@ ReembedOptions::ReembedOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossS
     _reembeddingSettingsHolder(*this)
 
 {
-    setSerializationName("CSV:CrossSpecies Comparison Phylo Tree View Reembed Settings");
+    setSerializationName("CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings");
 
 
-    _reembeddingSettingsHolder.getselectedLeftRightLeafNamesFlag().setSerializationName("CSV:getselectedLeftRightLeafNamesFlag");
+    _reembeddingSettingsHolder.getselectedLeftRightLeafNamesFlag().setSerializationName("CSCPTV:getselectedLeftRightLeafNamesFlag");
 
-    _reembeddingSettingsHolder.getselectedLeftRightLeafNames().setSerializationName("CSV:getselectedLeftRightLeafNames");
-    _reembeddingSettingsHolder.gethsneDataset().setSerializationName("CSV:gethsneDataset");
-    _reembeddingSettingsHolder.getPerformHSNETSNEFlag().setSerializationName("CSV:getPerformHSNETSNEFlag");
-    _reembeddingSettingsHolder.getPerformHSNEFlag().setSerializationName("CSV:getPerformHSNEFlag");
-    _reembeddingSettingsHolder.getPerformTSNEFlag().setSerializationName("CSV:getPerformTSNEFlag");
-    _reembeddingSettingsHolder.getselectedLeafNames().setSerializationName("CSV:getselectedLeafNames");
+    _reembeddingSettingsHolder.getselectedLeftRightLeafNames().setSerializationName("CSCPTV:getselectedLeftRightLeafNames");
+    _reembeddingSettingsHolder.gethsneDataset().setSerializationName("CSCPTV:gethsneDataset");
+    _reembeddingSettingsHolder.getPerformHSNETSNEFlag().setSerializationName("CSCPTV:getPerformHSNETSNEFlag");
+    _reembeddingSettingsHolder.getPerformHSNEFlag().setSerializationName("CSCPTV:getPerformHSNEFlag");
+    _reembeddingSettingsHolder.getPerformTSNEFlag().setSerializationName("CSCPTV:getPerformTSNEFlag");
+    _reembeddingSettingsHolder.getselectedLeafNames().setSerializationName("CSCPTV:getselectedLeafNames");
 
-    _reembeddingSettingsHolder.getembeddingDataset().setSerializationName("CSV:getembeddingDataset");
-    _reembeddingSettingsHolder.getleafNamesDataset().setSerializationName("CSV:getleafNamesDataset");
-    _reembeddingSettingsHolder.getselectedRowSelectionDataset().setSerializationName("CSV:getselectedRowSelectionDataset");
+    _reembeddingSettingsHolder.getembeddingDataset().setSerializationName("CSCPTV:getembeddingDataset");
+    _reembeddingSettingsHolder.getleafNamesDataset().setSerializationName("CSCPTV:getleafNamesDataset");
+    _reembeddingSettingsHolder.getselectedRowSelectionDataset().setSerializationName("CSCPTV:getselectedRowSelectionDataset");
 
-    _reembeddingSettingsHolder.getdeDatasetLeft().setSerializationName("CSV:getdeDatasetLeft");
-    _reembeddingSettingsHolder.getdeDatasetRight().setSerializationName("CSV:getdeDatasetRight");
+    _reembeddingSettingsHolder.getdeDatasetLeft().setSerializationName("CSCPTV:getdeDatasetLeft");
+    _reembeddingSettingsHolder.getdeDatasetRight().setSerializationName("CSCPTV:getdeDatasetRight");
 
-    _reembeddingSettingsHolder.getgeneNamesConnection().setSerializationName("CSV:getgeneNamesConnection");
-    //_reembeddingSettingsHolder.getclusterSelectionFromPopulationPyramidDataset().setSerializationName("CSV:getclusterSelectionFromPopulationPyramidDataset");
-    _reembeddingSettingsHolder.getdeUpdateSwitch().setSerializationName("CSV:getdeUpdateSwitch");
-    _reembeddingSettingsHolder.getLeftGroupPointDatasetDE().setSerializationName("CSV:getLeftGroupPointDatasetDE");
-    _reembeddingSettingsHolder.getRightGroupPointDatasetDE().setSerializationName("CSV:getRightGroupPointDatasetDE");
-    _reembeddingSettingsHolder.getLeftGroupClusterDatasetDE().setSerializationName("CSV:getLeftGroupClusterDatasetDE");
-    _reembeddingSettingsHolder.getRightGroupClusterDatasetDE().setSerializationName("CSV:getRightGroupClusterDatasetDE");
+    _reembeddingSettingsHolder.getgeneNamesConnection().setSerializationName("CSCPTV:getgeneNamesConnection");
+    //_reembeddingSettingsHolder.getclusterSelectionFromPopulationPyramidDataset().setSerializationName("CSCPTV:getclusterSelectionFromPopulationPyramidDataset");
+    _reembeddingSettingsHolder.getdeUpdateSwitch().setSerializationName("CSCPTV:getdeUpdateSwitch");
+    _reembeddingSettingsHolder.getLeftGroupPointDatasetDE().setSerializationName("CSCPTV:getLeftGroupPointDatasetDE");
+    _reembeddingSettingsHolder.getRightGroupPointDatasetDE().setSerializationName("CSCPTV:getRightGroupPointDatasetDE");
+    _reembeddingSettingsHolder.getLeftGroupClusterDatasetDE().setSerializationName("CSCPTV:getLeftGroupClusterDatasetDE");
+    _reembeddingSettingsHolder.getRightGroupClusterDatasetDE().setSerializationName("CSCPTV:getRightGroupClusterDatasetDE");
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetAdded));
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetRemoved));
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetChildAdded));
