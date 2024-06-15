@@ -62,14 +62,12 @@ set(WEB_MAIN
     res/CrossSpeciesComparisonPhyloTreeView_chart/DataFile.js
     res/CrossSpeciesComparisonPhyloTreeView_chart/FunctionFile.js
 	res/CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.js
-    res/own_libs/hierarchicalClusteringFile.js
 )
 
 set(WEB_LIBS
-    res/js_libs/d3.v3.min.js
+    res/js_libs/d3.v6.js
     res/js_libs/d3.v4.js
     res/js_libs/d3-scale-chromatic.v1.min.js
-    res/js_libs/clusterfck.js
     res/js_libs/qwebchannel.tools.js
 )
 

@@ -255,7 +255,18 @@ function setShowReferenceTree(showReferenceTreeValue) {
         }
     }
 }
+function setLeafSelectionFromQT(speciesStringValue) {
+    // log("showReferenceTreeValue: " + showReferenceTreeValue);
+    //if (speciesStringValue !== "")
+    {
+        var speciesArray = speciesStringValue.split(" @%$,$%@ ");
+        speciesSelected = speciesArray;
+        if (dataReference != "" && dataMainCompare != "") {
+            generateVis();
+        }
+    }
 
+}
 function setExpandAll(setExpandAllValue) {
     // log("showReferenceTreeValue: " + showReferenceTreeValue);
 

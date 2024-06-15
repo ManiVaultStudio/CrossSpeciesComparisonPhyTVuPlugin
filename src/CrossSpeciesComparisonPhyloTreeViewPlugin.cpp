@@ -20,7 +20,7 @@ CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPl
     _toolbarAction(this, "Toolbar")
     , _originalName(getGuiName())
 {
-    setSerializationName("CSV:CrossSpeciesComparisonPhyloTreeView");
+    setSerializationName("CSCPTV:CrossSpeciesComparisonPhyloTreeView");
 
     _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 5, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 4, GroupAction::Horizontal);
@@ -101,6 +101,20 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
     connect(&_chartWidget, &ChartWidget::addLeftRightSelectionToScatterplot, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::addLeftRightSelectionToScatterplot);
 
     connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::passScatterplotLeafPointSelection);
+    
+    const auto updateTreeLeafSelectionFromQT = [this]() -> void
+        {
+
+            QString selectionString = _chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT().getString();
+            _chartWidget.setLeafSelectionFromQT(selectionString);
+            //if (selectionString != "")
+            {
+                _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
+            }
+        };
+
+    connect(&_chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
+
 
     _chartWidget.setAcceptDrops(true);
     const auto layout = new QVBoxLayout();
@@ -689,10 +703,10 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::passScatterplotLeafPointSelectio
 void CrossSpeciesComparisonPhyloTreeViewPlugin::fromVariantMap(const QVariantMap& variantMap)
 {
     ViewPlugin::fromVariantMap(variantMap);
-    mv::util::variantMapMustContain(variantMap, "CSV:CrossSpecies Comparison Phylo Tree View Settings");
-    mv::util::variantMapMustContain(variantMap, "CSV:CrossSpecies Comparison Phylo Tree View Reembed Settings");
-    _chartOptions.fromVariantMap(variantMap["CSV:CrossSpecies Comparison Phylo Tree View Settings"].toMap());
-    _reembedOptions.fromVariantMap(variantMap["CSV:CrossSpecies Comparison Phylo Tree View Reembed Settings"].toMap());
+    mv::util::variantMapMustContain(variantMap, "CSCPTV:CrossSpecies Comparison Phylo Tree View Settings");
+    mv::util::variantMapMustContain(variantMap, "CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings");
+    _chartOptions.fromVariantMap(variantMap["CSCPTV:CrossSpecies Comparison Phylo Tree View Settings"].toMap());
+    _reembedOptions.fromVariantMap(variantMap["CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings"].toMap());
 }
 
 QVariantMap CrossSpeciesComparisonPhyloTreeViewPlugin::toVariantMap() const

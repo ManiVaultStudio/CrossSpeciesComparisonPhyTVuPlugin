@@ -110,11 +110,14 @@ public:
         StringAction& getScatterplotLeafSelectionValue() { return _scatterplotLeafSelectionValue; }
         const ToggleAction& getReembeddingOptions() const { return _reembeddingOptions; }
         ToggleAction& getReembeddingOptions() { return _reembeddingOptions; }
+        const StringAction& getTreeLeafSelectionValueQT() const { return _treeLeafSelectionValue; }
+        StringAction& getTreeLeafSelectionValueQT() { return _treeLeafSelectionValue; }
 
     protected:
         ChartOptions& _chartOptions;
 
         StringAction                _scatterplotLeafSelectionValue;
+        StringAction                _treeLeafSelectionValue;
         ToggleAction                _reembeddingOptions;
 
     };

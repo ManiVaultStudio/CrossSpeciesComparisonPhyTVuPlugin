@@ -30,23 +30,24 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _updateSettingsHolder(*this)
 
 {
-    setSerializationName("CSV:CrossSpecies Comparison Phylo Tree View Settings");
-    _mainSettingsHolder.getMainReferenceTreeSelectionAction().setSerializationName("CSV:Reference tree selection");
-    _extraSettingsHolder.getColorMapAction().setSerializationName("CSV:Color map selection");
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setSerializationName("CSV:Comparison tree selection");
-    _metaDataSettingsHolder.getColorTraitAction().setSerializationName("CSV:Color type trait selection");
+    setSerializationName("CSCPTV:CrossSpecies Comparison Phylo Tree View Settings");
+    _mainSettingsHolder.getMainReferenceTreeSelectionAction().setSerializationName("CSCPTV:Reference tree selection");
+    _extraSettingsHolder.getColorMapAction().setSerializationName("CSCPTV:Color map selection");
+    _mainSettingsHolder.getComparisonTreeSelectionAction().setSerializationName("CSCPTV:Comparison tree selection");
+    _metaDataSettingsHolder.getColorTraitAction().setSerializationName("CSCPTV:Color type trait selection");
     _metaDataSettingsHolder.getNumericTraitAction().setSerializationName("Numeric type trait selection");
-    _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSV:String type trait selection");
+    _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
     //_extraSettingsHolder.getClusteringMethodAction().setSerializationName("ClusterMethod");
-    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSV:Trait Dataset selection");
-    _extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSV:Show reference tree selection");
-    _extraSettingsHolder.getExpandAllAction().setSerializationName("CSV:Expand all selection");
-    _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSV:Disable Accept Dataset Drops");
+    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
+    _extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSCPTV:Show reference tree selection");
+    _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
+    _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
 
-    _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSV:Update Views Button");
+    _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Update Views Button");
 
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSV:Scatterplot Leaf Selection Value");
-    _linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSV:Reembedding Options");
+    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSCPTV:Scatterplot Leaf Selection Value");
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
+    _linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSCPTV:Reembedding Options");
 
     //_extraSettingsHolder.getNumOfClustersAction().setSerializationName("Number of clusters");
 
@@ -143,10 +144,11 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
 
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::TextEdit);
+    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
     _linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
     _linkerSettingsHolder.getReembeddingOptions().setChecked(false);
-
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setString("");
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().setDefaultWidgetFlags(StringAction::LineEdit);
 
     _extraSettingsHolder.getExpandAllAction().setDefaultWidgetFlags(ToggleAction::CheckBox);
     _extraSettingsHolder.getExpandAllAction().setChecked(false);
@@ -223,7 +225,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
             }
 
         };
-
+    
     const auto traitSelectionNumeric = [this]() -> void
         {
 
@@ -433,12 +435,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
         };
     connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
 
-
-    const auto updateViewsButtonUpdate = [this]() -> void
-        {
-
-        };
-    connect(&_updateSettingsHolder.getUpdateViewsButtonAction(), &TriggerAction::triggered, this, updateViewsButtonUpdate);
 
     referenceDatasetPickerActionModify();
 }
@@ -1527,7 +1523,8 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
     VerticalGroupAction(&chartOptions, "Meta data options"),
     _chartOptions(chartOptions),
     _scatterplotLeafSelectionValue(this, "Scatterplot Leaf Selection Value"),
-    _reembeddingOptions(this, "Reembedding Options")
+    _reembeddingOptions(this, "Reembedding Options"),
+    _treeLeafSelectionValue(this, "Tree Leaf Selection Value")
 
 {
     setText("Linker Options");
@@ -1535,6 +1532,7 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
     addAction(&_scatterplotLeafSelectionValue);
+    addAction(&_treeLeafSelectionValue);
     addAction(&_reembeddingOptions);
 }
 
@@ -1595,7 +1593,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
-    //initLoader();
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().fromParentVariantMap(variantMap);
 
 }
 
@@ -1615,5 +1613,6 @@ QVariantMap ChartOptions::toVariantMap() const
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);
+    _linkerSettingsHolder.getTreeLeafSelectionValueQT().insertIntoVariantMap(variantMap);
     return variantMap;
 }
