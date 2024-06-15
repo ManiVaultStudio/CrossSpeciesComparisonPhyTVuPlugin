@@ -97,6 +97,12 @@ void ChartWidget::setShowReferenceTree(QString visColorContent)
 {
     emit _communicationObject->qt_setShowReferenceTree(visColorContent);
 }
+
+void ChartWidget::setLeafSelectionFromQT(QString visColorContent)
+{
+    emit _communicationObject->qt_setLeafSelectionFromQT(visColorContent);
+}
+
 void ChartWidget::setExpandAll(QString visColorContent)
 {
     emit _communicationObject->qt_setExpandAll(visColorContent);
