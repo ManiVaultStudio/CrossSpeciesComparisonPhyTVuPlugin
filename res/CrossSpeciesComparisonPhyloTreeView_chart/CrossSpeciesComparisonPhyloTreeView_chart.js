@@ -255,7 +255,11 @@ function setShowReferenceTree(showReferenceTreeValue) {
         }
     }
 }
+function setLeafSelectionFromQT(speciesStringValue) {
+    // log("showReferenceTreeValue: " + showReferenceTreeValue);
 
+
+}
 function setExpandAll(setExpandAllValue) {
     // log("showReferenceTreeValue: " + showReferenceTreeValue);
 

@@ -18,6 +18,9 @@ try {
         QtBridge.qt_setShowReferenceTree.connect(function () {
             setShowReferenceTree(arguments[0]);
         });
+        QtBridge.qt_setLeafSelectionFromQT.connect(function () {
+            setLeafSelectionFromQT(arguments[0]);
+        });
         QtBridge.qt_setExpandAll.connect(function () {
             setExpandAll(arguments[0]);
         });
