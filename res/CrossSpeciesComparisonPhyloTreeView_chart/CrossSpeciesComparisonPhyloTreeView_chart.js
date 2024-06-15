@@ -261,7 +261,7 @@ function setLeafSelectionFromQT(speciesStringValue) {
         var speciesArray = speciesStringValue.split(" @%$,$%@ ");
         speciesSelected = speciesArray;
         if (dataReference != "" && dataMainCompare != "") {
-           // generateVis();
+            generateVis();
         }
     }
 

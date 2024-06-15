@@ -1384,6 +1384,7 @@ function generateVis() {
                 });
         }
     }
+    updateNodeStyles();
 }
 
 //add a function to trigger on esc click
