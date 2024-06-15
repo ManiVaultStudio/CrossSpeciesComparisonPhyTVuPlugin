@@ -107,7 +107,10 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
 
             QString selectionString = _chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT().getString();
             _chartWidget.setLeafSelectionFromQT(selectionString);
-            _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
+            //if (selectionString != "")
+            {
+                _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
+            }
         };
 
     connect(&_chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);

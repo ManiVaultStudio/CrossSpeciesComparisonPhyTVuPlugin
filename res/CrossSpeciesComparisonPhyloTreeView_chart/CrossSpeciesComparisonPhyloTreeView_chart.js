@@ -257,7 +257,8 @@ function setShowReferenceTree(showReferenceTreeValue) {
 }
 function setLeafSelectionFromQT(speciesStringValue) {
     // log("showReferenceTreeValue: " + showReferenceTreeValue);
-    if (speciesStringValue !== "") {
+    //if (speciesStringValue !== "")
+    {
         var speciesArray = speciesStringValue.split(" @%$,$%@ ");
         speciesSelected = speciesArray;
         if (dataReference != "" && dataMainCompare != "") {
