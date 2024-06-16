@@ -63,12 +63,8 @@ public slots:
     ChartOptions& getChartOptions() { return _chartOptions; }
     ReembedOptions& getReembedOptions() { return _reembedOptions; }
 
-    mv::Dataset<CrossSpeciesComparisonTree>& getComparisonTreeDataset() { return _comparisonTree; }
-    //void setComparisonTreeDataset(mv::Dataset<Points> _treeTe) { _comparisonTree= _treeTe; }
-    //void setReferenceTreeDataset(mv::Dataset<Points> _treeTe) { _referenceTree.setDataset(_treeTe); }
     mv::Dataset<CrossSpeciesComparisonTree>& getReferenceTreeDataset() { return _referenceTree; }
     mv::Dataset<CrossSpeciesComparisonTreeMeta>& getMetaInfoDataset() { return _metaInfo; }
-    //void setMetaInfoDataset(mv::Dataset<Points> _treeTe) { _metaInfo = _treeTe; }
 
     bool getInitialLoadCompleteflag() { return _initialLoadComplete; }
     void setInitialLoadCompleteflag(int initialLoadComplete) { _initialLoadComplete = initialLoadComplete; }
@@ -95,7 +91,6 @@ private:
     QLabel* _comparisonDatasetNameLabel;   /** Label that show the current dataset name */
     QLabel* _referenceDatasetNameLabel;
     QLabel* _metaInfoDatasetNameLabel;
-    mv::Dataset<CrossSpeciesComparisonTree>   _comparisonTree;                    /** Points smart pointer */
     mv::Dataset<CrossSpeciesComparisonTree>   _referenceTree;
     mv::Dataset<CrossSpeciesComparisonTreeMeta>   _metaInfo;
     bool _initialLoadComplete = false;

@@ -14,7 +14,6 @@ using namespace mv;
 CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPlugin(const PluginFactory* factory) :
     ViewPlugin(factory),
     _chartWidget(),
-    //_currentDataSet(nullptr),
     _chartOptions(*this, _core),
     _reembedOptions(*this, _core),
     _toolbarAction(this, "Toolbar")
@@ -72,7 +71,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
             else
             {
                 _chartWidget.setAcceptDrops(true);
-               if(!_referenceTree.isValid() && !_comparisonTree.isValid())
+               if(!_referenceTree.isValid())
                 _dropWidget->setShowDropIndicator(true);
             }
         };
@@ -179,11 +178,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
                         dropRegions << new DropWidget::DropRegion(this, "Reference CrossSpeciesComparisonTree", QString("Load %1 into cross-species comparison view").arg(datasetGuiName), "project-diagram", true, [this, candidateTreeDataset]() {
                             _referenceTree = candidateTreeDataset;
 
-                            if (!_comparisonTree.isValid())
-                            {
-                                _comparisonTree = candidateTreeDataset;
-                            }
-                            if (_comparisonTree.isValid() && _referenceTree.isValid())
+                            if ( _referenceTree.isValid())
                             {
                                 triggerChartJS();
                             }
@@ -210,58 +205,14 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
                             //_settingsAction.getColoringAction().addColorDataset(candidateDataset);
                             //_settingsAction.getColoringAction().setCurrentColorDataset(candidateDataset);
                             _referenceTree = candidateTreeDataset;
-                            if (!_comparisonTree.isValid())
-                            {
-                                _comparisonTree = candidateTreeDataset;
-                            }
-                            if (_comparisonTree.isValid() && _referenceTree.isValid())
+
+                            if ( _referenceTree.isValid())
                             {
                                 triggerChartJS();
                             }
                             });
                     }
 
-
-
-                    auto comparisonDatasetDimensions = _referenceTree->getTreeLeafNames();
-                    if (leaves.size() > 0 && comparisonDatasetDimensions.size() > 0)
-                    {
-                        leaves.sort();
-                        comparisonDatasetDimensions.sort();
-                        // Check if the lists are equal
-                        if (leaves == comparisonDatasetDimensions) {
-
-                            if (_comparisonTree == candidateTreeDataset)
-                            {
-                                // Dataset cannot be dropped because it is already loaded
-                                dropRegions << new DropWidget::DropRegion(this, "Comparison CrossSpeciesComparisonTree Warning", "Data already loaded", "exclamation-circle", false);
-                            }
-                            else
-                            {
-
-
-                                // The number of points is equal, so offer the option to use the points dataset as source for points size
-                                dropRegions << new DropWidget::DropRegion(this, "Comparison CrossSpeciesComparisonTree", QString("Compare %1 tree ").arg(datasetGuiName), "project-diagram", true, [this, candidateTreeDataset]() {
-                                    //_settingsAction.getPlotAction().getPointPlotAction().addPointSizeDataset(candidateDataset);
-                                    //_settingsAction.getPlotAction().getPointPlotAction().getSizeAction().setCurrentDataset(candidateDataset);
-                                    _comparisonTree = candidateTreeDataset;
-                                    if (!_referenceTree.isValid())
-                                    {
-                                        _referenceTree = candidateTreeDataset;
-                                    }
-                                    if (_comparisonTree.isValid() && _referenceTree.isValid())
-                                    {
-                                        triggerChartJS();
-                                    }
-                                    //triggerChartJS();
-                                    });
-                            }
-
-                        }
-                        else {
-                            dropRegions << new DropWidget::DropRegion(this, "Comparison CrossSpeciesComparisonTree error", "CrossSpeciesComparisonTree does not have the same leaves as the comparison tree. Please try with a different dataset or change the comparison tree dataset", "exclamation-circle", false);
-                        }
-                    }
 
                 }
 
@@ -273,7 +224,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
 
             leaves = candidateMetadataDataset->getTreeMetaLeafNames();
             auto comparisonDatasetDimensions = _referenceTree->getTreeLeafNames();
-            if (_referenceTree.isValid() && _comparisonTree.isValid())
+            if (_referenceTree.isValid())
             {
                 /* TODO: MEtadata */
                 if (leaves.size() > 0 && comparisonDatasetDimensions.size() > 0)
@@ -295,8 +246,6 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
                             {
                                 // The number of points is equal, so offer the option to use the points dataset as source for points opacity
                                 dropRegions << new DropWidget::DropRegion(this, "Meta data", QString("Set %1 metadata ").arg(datasetGuiName), "table", true, [this, candidateMetadataDataset]() {
-                                    //_settingsAction.getPlotAction().getPointPlotAction().addPointOpacityDataset(candidateDataset);
-                                   // _settingsAction.getPlotAction().getPointPlotAction().getOpacityAction().setCurrentDataset(candidateDataset);
                                     _metaInfo = candidateMetadataDataset;
                                     });
                             }
@@ -330,12 +279,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
         return dropRegions;
         });
 
-    //connect(&_currentDataSet, &Dataset<Points>::dataChanged, &_chartOptions, &ChartOptions::updateChartDataJS);
 
-    //connect(&_points, &Dataset<Points>::changed, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::triggerChartJS);
-
-
-    // Respond when the name of the dataset in the dataset reference changes
 
     connect(&_metaInfo, &Dataset<CrossSpeciesComparisonTreeMeta>::guiNameChanged, this, [this]() {
 
@@ -344,8 +288,6 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
         // Update the current dataset name label
         _metaInfoDatasetNameLabel->setText(QString("Current points dataset: %1").arg(newDatasetName));
 
-        // Only show the drop indicator when nothing is loaded in the dataset reference
-       // _dropWidget->setShowDropIndicator(newDatasetName.isEmpty());
         });
 
     connect(&_referenceTree, &Dataset<CrossSpeciesComparisonTreeMeta>::guiNameChanged, this, [this]() {
@@ -355,18 +297,8 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
         _referenceDatasetNameLabel->setText(QString("Current points dataset: %1").arg(newDatasetName));
 
         });
-    connect(&_comparisonTree, &Dataset<CrossSpeciesComparisonTreeMeta>::guiNameChanged, this, [this]() {
 
-        auto newDatasetName = _comparisonTree->getGuiName();
 
-        _comparisonDatasetNameLabel->setText(QString("Current points dataset: %1").arg(newDatasetName));
-
-        });
-    // Alternatively, classes which derive from hdsp::EventListener (all plugins do) can also respond to events
-    //_eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetAdded));
-    //_eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetDataChanged));
-    //_eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetRemoved));
-    //_eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetDataSelectionChanged));
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTree, this, std::placeholders::_1));
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTreeMeta, this, std::placeholders::_1));
 }
@@ -453,26 +385,15 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::loadData(const Dataset<CrossSpec
     if (!dataset.isValid())
         return;
 
-    //qDebug() << "CrossSpeciesComparisonPhyloTreeViewPlugin::loadData: Load data set from ManiVault core";
 
-    // Load the dataset, changes to _points are connected with convertDataAndUpdateChart
-    /*if (_points != dataset)
-    {
-        _points = dataset;
-        //events().notifyDatasetDataChanged(_points);
-        triggerChartJS();
-    }*/
 
 
     if(_referenceTree != dataset)
     {
         _referenceTree = dataset;
     }
-    if (!_comparisonTree.isValid())
-    {
-        _comparisonTree = dataset;
-    }
-    if(_comparisonTree.isValid() && _referenceTree.isValid() )
+
+    if( _referenceTree.isValid() )
     {
         triggerChartJS();
     }
