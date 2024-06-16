@@ -52,6 +52,7 @@ var minBranchLength = 0;
 var maxDepth = 0;
 var eachDepthWidth = 0;
 var maxTotalDepthWidth = 0;
+var dataReference = "";
 //true for Debugging
 var isDebug = false;
 const colorScales = {

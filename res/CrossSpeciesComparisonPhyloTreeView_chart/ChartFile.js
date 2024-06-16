@@ -206,7 +206,7 @@ function generateVis() {
             //console.log("eachDepthWidth: ", eachDepthWidth);
             //console.log("******");
             if (d.children || (d._children && !d.data.iscollapsed)) {
-                valTemp = (d.depth * screenWidth) / 15;
+                valTemp = (d.depth * screenWidth) / 22;
             }
             //console.log("valTemp: ", valTemp);
             d.y = valTemp;
