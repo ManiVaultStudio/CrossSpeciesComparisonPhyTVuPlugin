@@ -9,15 +9,16 @@ function UpdateOverviewMeasures() {
     m_aComparisonOverviewMeasures = new Array(); //array of arrays to store the comparison measures of each tree
     m_aScoreDistribution = new Array(); //array of arrays to store the score distribution of each tree
     m_aAverageScore = new Array(); //array of arrays to store the average score of each tree
-    allScoresStorage = new Array();//array of arrays to store all scores of each tree
+    allScoresStorage = new Array(); //array of arrays to store all scores of each tree
 
     var nReferenceTree = 0; //reference tree is always the first tree
 
-    m_aComparisonOverviewMeasures[nReferenceTree] = new Array();    //array to store the comparison measures of the reference tree
-    m_aScoreDistribution[nReferenceTree] = new Array();//array to store the score distribution of the reference tree
-    m_aAverageScore[nReferenceTree] = new Array();//array to store the average score of the reference tree
+    m_aComparisonOverviewMeasures[nReferenceTree] = new Array(); //array to store the comparison measures of the reference tree
+    m_aScoreDistribution[nReferenceTree] = new Array(); //array to store the score distribution of the reference tree
+    m_aAverageScore[nReferenceTree] = new Array(); //array to store the average score of the reference tree
 
-    for (//calculate comparison measures for each pair of trees
+    for (
+        //calculate comparison measures for each pair of trees
         var nCompareTree = 0;
         nCompareTree < m_aLoadedTrees.length;
         nCompareTree++
@@ -32,7 +33,8 @@ function UpdateOverviewMeasures() {
         //get all nodes of the comparing tree
         var aNodeList = m_aLoadedTrees[nCompareTree].GetNodeList();
         //compare all nodes of the comparing tree with the reference tree and store the distributions
-        for (// iterate over all nodes of the comparing tree
+        for (
+            // iterate over all nodes of the comparing tree
             var nCompareNode = 0;
             nCompareNode < aNodeList.length;
             nCompareNode++
@@ -45,7 +47,7 @@ function UpdateOverviewMeasures() {
                 m_sGlobalMeasure == "element" ||
                 m_sGlobalMeasure == "edge",
                 "Wrong measure set"
-            );// check for mesaure set 
+            ); // check for mesaure set
 
             if (m_sGlobalMeasure == "leaf") {
                 resultTree = Vis2LeafMeasure(
@@ -53,7 +55,8 @@ function UpdateOverviewMeasures() {
                     aNodeList[nCompareNode]
                 );
                 fMeasure = resultTree.leafmeasure;
-            } else if (m_sGlobalMeasure == "element") {// for element mesaure, 
+            } else if (m_sGlobalMeasure == "element") {
+                // for element mesaure,
                 resultTree = Vis2ElementMeasure(
                     m_aLoadedTrees[nReferenceTree],
                     aNodeList[nCompareNode]
@@ -310,90 +313,107 @@ function GetElements(rNode) {
     return vLeaves;
 }
 
-function GetElementMeasure(rNode1, rNode2) {// for element mesaure,
+function GetElementMeasure(rNode1, rNode2) {
+    // for element mesaure,
     // get elements under node 1
     var vElementsOfNode1 = GetElements(rNode1);
 
     // get elements under node 2
     var vElementsOfNode2 = GetElements(rNode2);
 
-    var iSameElements = 0;// number of same elements
-    var iTotal = vElementsOfNode1.length + vElementsOfNode2.length;// total number of elements
+    var iSameElements = 0; // number of same elements
+    var iTotal = vElementsOfNode1.length + vElementsOfNode2.length; // total number of elements
 
-    for (var i = 0; i < vElementsOfNode1.length; i++) {// iterate over all elements of node 1
-        var bFound = false;// flag if element is found in node 2
+    for (var i = 0; i < vElementsOfNode1.length; i++) {
+        // iterate over all elements of node 1
+        var bFound = false; // flag if element is found in node 2
 
-        for (var j = 0; j < vElementsOfNode2.length; j++) {// iterate over all elements of node 2
-            if (// check if element is found in node 2
+        for (var j = 0; j < vElementsOfNode2.length; j++) {
+            // iterate over all elements of node 2
+            if (
+                // check if element is found in node 2
                 typeof vElementsOfNode2[j] == "object" &&
                 typeof vElementsOfNode1[i] == "object"
-            ) {// check if element is found in node 2
-                var vSubArray1 = vElementsOfNode2[j];// get sub array of node 2
-                var vSubArray2 = vElementsOfNode1[i];// get sub array of node 1
+            ) {
+                // check if element is found in node 2
+                var vSubArray1 = vElementsOfNode2[j]; // get sub array of node 2
+                var vSubArray2 = vElementsOfNode1[i]; // get sub array of node 1
 
                 if (vSubArray1.length == vSubArray2.length) {
-                    var bArraysIdent = true;// flag if arrays are identical
+                    var bArraysIdent = true; // flag if arrays are identical
 
-                    for (var k = 0; k < vSubArray1.length; k++)// iterate over all elements of sub arrays
-                        if (vSubArray1[k] != vSubArray2[k]) bArraysIdent = false;// check if arrays are identical
+                    for (
+                        var k = 0;
+                        k < vSubArray1.length;
+                        k++ // iterate over all elements of sub arrays
+                    )
+                        if (vSubArray1[k] != vSubArray2[k]) bArraysIdent = false; // check if arrays are identical
 
-                    if (bArraysIdent) {// check if arrays are identical
-                        bFound = true;// set flag if arrays are identical
-                        break;// break if arrays are identical
+                    if (bArraysIdent) {
+                        // check if arrays are identical
+                        bFound = true; // set flag if arrays are identical
+                        break; // break if arrays are identical
                     }
                 }
-            } else if (vElementsOfNode2[j] == vElementsOfNode1[i]) {// check if element is found in node 2
-                bFound = true;// set flag if element is found in node 2
-                break;// break if element is found in node 2
+            } else if (vElementsOfNode2[j] == vElementsOfNode1[i]) {
+                // check if element is found in node 2
+                bFound = true; // set flag if element is found in node 2
+                break; // break if element is found in node 2
             }
         }
 
-        if (bFound == true) {// check if element is found in node 2
-            iSameElements++;// increment number of same elements
-            iTotal--;// decrement total number of elements
+        if (bFound == true) {
+            // check if element is found in node 2
+            iSameElements++; // increment number of same elements
+            iTotal--; // decrement total number of elements
         }
     }
 
-    return iSameElements / iTotal;// return element measure
+    return iSameElements / iTotal; // return element measure
 }
 
-function Vis2ElementMeasure(rReferenceTree, rTestTree) {// for element mesaure, 
-    var rNodesQueue = new Array();// queue to store nodes of the comparing tree
-    var rNodesTotal = new Array();// array to store all nodes of the comparing tree
-    var rNodesTotalReference = rReferenceTree.GetNodeList();// get all nodes of the reference tree
+function Vis2ElementMeasure(rReferenceTree, rTestTree) {
+    // for element mesaure,
+    var rNodesQueue = new Array(); // queue to store nodes of the comparing tree
+    var rNodesTotal = new Array(); // array to store all nodes of the comparing tree
+    var rNodesTotalReference = rReferenceTree.GetNodeList(); // get all nodes of the reference tree
 
-    rNodesQueue.push(rTestTree);// add root node to queue
+    rNodesQueue.push(rTestTree); // add root node to queue
 
-    while (rNodesQueue.length > 0) {// iterate over all nodes of the comparing tree
+    while (rNodesQueue.length > 0) {
+        // iterate over all nodes of the comparing tree
         var rCurrentNode = rNodesQueue.shift(); // get first node in queue
 
-        rNodesTotal.push(rCurrentNode);// add node to total list
+        rNodesTotal.push(rCurrentNode); // add node to total list
 
-        for (var i = 0; i < rCurrentNode.GetChildrenCount(); i++) { // add children to queue
+        for (var i = 0; i < rCurrentNode.GetChildrenCount(); i++) {
+            // add children to queue
             /** @define {Vis2Node} */ // get child
-            var child = rCurrentNode.children[i];// get child
+            var child = rCurrentNode.children[i]; // get child
 
-            if (child.isleaf == false) rNodesQueue.push(child);// add child to queue
+            if (child.isleaf == false) rNodesQueue.push(child); // add child to queue
         }
     }
     // calculate element measure for each node
-    for (var iNode = 0; iNode < rNodesTotal.length; iNode++) { // iterate over all nodes of the comparing tree
-        var fMaximum = 0;// maximum measure
+    for (var iNode = 0; iNode < rNodesTotal.length; iNode++) {
+        // iterate over all nodes of the comparing tree
+        var fMaximum = 0; // maximum measure
         // calculate element measure for each node
         for (
             var iReferenceNode = 0;
             iReferenceNode < rNodesTotalReference.length;
             iReferenceNode++
-        ) {// iterate over all nodes of the reference tree
+        ) {
+            // iterate over all nodes of the reference tree
             var fMeasure = GetElementMeasure(
                 rNodesTotalReference[iReferenceNode],
                 rNodesTotal[iNode]
-            );// get element measure
-            if (fMeasure > fMaximum) fMaximum = fMeasure;// update maximum measure
-        }// end for iReferenceNode
+            ); // get element measure
+            if (fMeasure > fMaximum) fMaximum = fMeasure; // update maximum measure
+        } // end for iReferenceNode
 
-        rNodesTotal[iNode].elementmeasure = fMaximum;// set element measure
-    }// end for iNode
+        rNodesTotal[iNode].elementmeasure = fMaximum; // set element measure
+    } // end for iNode
 
     return rTestTree; // return tree with element measures
 }
@@ -579,7 +599,6 @@ function shuffleSiblings(children) {
 //   }
 // }
 
-
 function convertClusterToDesiredFormat(cluster) {
     // Base case: if the cluster is a leaf node (i.e., it has no left or right child)
 
@@ -608,9 +627,8 @@ function convertClusterToDesiredFormat(cluster) {
     };
 }
 
-
 function replacer(key, value) {
-    if (key === 'parent') {
+    if (key === "parent") {
         return;
     }
     return value;
@@ -618,8 +636,8 @@ function replacer(key, value) {
 function copyDataWithCollapsedFlag(node) {
     let copy = { ...node };
 
-    if ('score' in node) {
-        copy.iscollapsed = node.score === 1;
+    if ("score" in node) {
+        copy.iscollapsed = node.score < -10; //=== 1;
     }
 
     if (node.children) {

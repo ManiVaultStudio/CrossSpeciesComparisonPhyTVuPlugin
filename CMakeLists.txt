@@ -67,6 +67,7 @@ set(WEB_MAIN
 set(WEB_LIBS
     res/js_libs/d3.v6.js
     res/js_libs/d3.v4.js
+    res/js_libs/d3.v5.js
     res/js_libs/d3-scale-chromatic.v1.min.js
     res/js_libs/qwebchannel.tools.js
 )

@@ -372,16 +372,11 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
 }
 void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerInitialChart()
 {
-    if(_chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentText()!="" && _chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if(_chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
-        Dataset<CrossSpeciesComparisonTree> tempCompTree;
+
         Dataset<CrossSpeciesComparisonTree> tempRefTree;
-        if(_chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentText()!="" && _chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentDataset().isValid())
-        {
-            tempCompTree = _chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentDataset();
-            _chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().setCurrentText("");
-            _chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().setCurrentDataset(_comparisonTree);
-        }
+
         if (_chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "" && _chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             _chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().setCurrentText("");
@@ -405,13 +400,10 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerChartJS()
     {
         _chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().setCurrentDataset(_referenceTree);
     }
-    if(_chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentDataset()!= _comparisonTree)
-    {
-        _chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().setCurrentDataset(_comparisonTree);
-    }
+
    
 
-    if (_chartOptions.getMainSettingsHolder().getComparisonTreeSelectionAction().getCurrentText() != "" && _chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if (_chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
         if (!_initialLoadComplete)
         {

@@ -36,64 +36,7 @@ function getChildrenNames(node) {
     }
     return names;
 }
-/*
-function updateNumericTrait(node, data, type) {
-  if (node.name !== undefined) {
-    node.numeric = data[node.name];
-    //node.numericKey = type;
-  }
 
-  if (node.children) {
-    node.children.forEach((child) => updateNumericTrait(child, data, type));
-  }
-}
-function updateTraitNumeric(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueNumericKey = type;
-  updateNumericTrait(node, data, type);
-}
-function updateColorsTrait(node, data, type) {
-  if (node.name !== undefined && node.name !== "") {
-    node.color = data[node.name];
-    //node.colorKey = type;
-  }
-
-  if (node.children) {
-    node.children.forEach((child) => updateColorsTrait(child, data, type));
-  }
-}
-
-function updateTraitColor(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueColorKey = type;
-  updateColorsTrait(node, data, type);
-}
-
-function updateStringTrait(node, data, type) {
-  if (node.name !== undefined) {
-    node.string = data[node.name];
-    //node.stringKey = type;
-  }
-
-  if (node.children) {
-    node.children.forEach((child) => updateStringTrait(child, data, type));
-  }
-}
-function updateTraitString(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueStringKey = type;
-  updateStringTrait(node, data, type);
-}
-*/
 function generateVis() {
     if (expandedLeafNameID !== "") {
         d3.select(expandedLeafNameID).style("font-size", "12px");
@@ -104,12 +47,7 @@ function generateVis() {
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
     svg.selectAll("*").remove();
-
-    if (showReferenceTree) {
-        treeData = dataReference;
-    } else {
-        treeData = dataMainCompare;
-    }
+    treeData = dataReference;
 
     if (traitValueString !== "") {
         //updateTraitString(treeData, traitValueString);
@@ -157,37 +95,19 @@ function generateVis() {
         dataValuesString = Object.values(traitValueStringContainer);
         uniqueValuesString = Array.from(new Set(dataValuesString));
 
-        shapeScale = d3
-            .scaleOrdinal()
-            .domain(uniqueValuesString)
-            /*.range([
-                   d3.symbolCircle,
-                   d3.symbolCross,
-                   d3.symbolDiamond,
-                   d3.symbolSquare,
-                   d3.symbolStar,
-                   d3.symbolTriangle,
-                   d3.symbolWye,
-                 ]);*/
-            .range(d3.symbols);
+        shapeScale = d3.scaleOrdinal().domain(uniqueValuesString).range(d3.symbols);
     }
 
     // Set the dimensions and margins of the diagram
-    //var borderWidth = (15 / 100) * window.innerWidth;
-    //var borderHeight = (1 / 100) * window.innerHeight;
     var margin = {
         top: 1,
         right: 1,
-        bottom: 10,
-        left: 1,
+        bottom: 20,
+        left: 32,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
     var removeAnimation = true;
-    // append the svg object to the body of the page
-    // appends a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
-    //clear svg
 
     svg = d3
         .select("#my_dataviz")
@@ -195,10 +115,7 @@ function generateVis() {
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr(
-            "transform",
-            "translate(" + (margin.left + 60) + "," + margin.top + ")"
-        );
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     let colorScale;
     let scaleType = colorScales[qtColor]
         ? colorScales[qtColor]
@@ -221,20 +138,20 @@ function generateVis() {
     root = d3.hierarchy(treeData, function (d) {
         return d.children;
     });
+
+    root.each(function (d) {
+        if (d.depth > maxDepth) {
+            maxDepth = d.depth;
+        }
+    });
+
     root.x0 = height / 2;
     root.y0 = 0;
-
+    eachDepthWidth = (width - maxNameLength) / maxDepth;
     if (isFirstRender) {
         isFirstRender = false;
     }
-    /*function collapseNodesWithScoreOne(node) {
-            if (node.data.score === 1) {
-              collapse(node);
-            }
-            if (node.children) {
-              node.children.forEach(collapseNodesWithScoreOne);
-            }
-          } */
+
     function toggleNode(node, action) {
         if (action === "collapse" && node.data.iscollapsed) {
             collapse(node);
@@ -263,7 +180,6 @@ function generateVis() {
 
     function update(source) {
         // Assigns the x and y position for the nodes
-        // Assigns the x and y position for the nodes
         var treeData = treemap(root);
 
         // Compute the new tree layout.
@@ -272,24 +188,27 @@ function generateVis() {
 
         // Normalize for fixed-depth.
         nodes.forEach((d) => {
-            const screenWidth = width - maxNameLength * 12; // Get the width of the screen
-            let divisor; // = Math.max(10, screenWidth / 300); // Adjust divisor dynamically based on screen width
-            //log("screenWidth",screenWidth);
-            // Adjust divisor for smaller screen sizes to prevent overlapping
-            if (screenWidth > 0) {
-                divisor = Math.max(12, screenWidth / 1000);
-            } else {
-                divisor = width;
-            }
-
-            let valTemp;
-
+            const screenWidth = width - maxNameLength;
+            let valTemp = screenWidth;
+            //console.log("******");
+            //console.log("d.y width: ", d.y);
+            //console.log("width: ", width);
+            //console.log("maxNameLength width: ", maxNameLength);
+            //console.log("maxBranchLength width: ", maxBranchLength);
+            //console.log("Current branch length width: ", d.data.branchLength);
+            //console.log("desirable width: ", maxNameLength * 7);
+            //console.log("branchLength: ", d.data.branchLength);
+            //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
+            //console.log("depth: ", d.depth);
+            //console.log("name: ", d.data.name);
+            //console.log("maxDepth: ", maxDepth);
+            //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
+            //console.log("eachDepthWidth: ", eachDepthWidth);
+            //console.log("******");
             if (d.children || (d._children && !d.data.iscollapsed)) {
-                valTemp = (d.depth * screenWidth) / divisor;
-            } else {
-                valTemp = screenWidth;
+                valTemp = (d.depth * screenWidth) / 15;
             }
-
+            //console.log("valTemp: ", valTemp);
             d.y = valTemp;
         });
 
@@ -335,15 +254,15 @@ function generateVis() {
                             sizeScale(traitValueNumericContainer[d.data.name])
                         );
                     } else {
-                        symbol = symbol.size(80);
+                        symbol = symbol.size(60);
                     }
 
                     return symbol();
                 } else {
-                    return d3.symbol().type(d3.symbolSquare).size(80)();
+                    return d3.symbol().type(d3.symbolSquare).size(200)();
                 }
             })
-            .attr("transform", "translate(0,0)") // Adjust position if necessary
+            .attr("transform", "translate(5,0)") // Adjust position if necessary
             .style("cursor", "pointer")
             .style("stroke", "#000000")
             .style("stroke-width", "1px")
@@ -385,7 +304,13 @@ function generateVis() {
                     }
 
                     if (traitValueStringFlag || traitValueNumericFlag) {
-                        return "leaf : " + d.data.name + returnStringADd;
+                        return (
+                            "leaf : " +
+                            d.data.name +
+                            "\nMean: " +
+                            d.data.mean +
+                            returnStringADd
+                        );
                     } else {
                         return d.data.name;
                     }
@@ -395,17 +320,9 @@ function generateVis() {
                         var returnString = "";
                         for (var i = 0; i < childrennames.length; i++) {
                             let result = findNodeByName(childrennames[i], treeData);
-                            if (result && result.node.hastrait) {
-                                returnString +=
-                                    (childrennames[i]
-                                        ? childrennames[i].replace(/_/g, " ")
-                                        : "") + "✔\n";
-                            } else {
-                                returnString +=
-                                    (childrennames[i]
-                                        ? childrennames[i].replace(/_/g, " ")
-                                        : "") + "\n";
-                            }
+                            returnString +=
+                                (childrennames[i] ? childrennames[i].replace(/_/g, " ") : "") +
+                                "\n";
                         }
                         return returnString.trimEnd();
                     }
@@ -415,11 +332,11 @@ function generateVis() {
         nodeEnter
             .append("text")
             .attr("id", "nodeScore")
-            .attr("y", -8) // Adjust this value as needed
-            .attr("x", -12)
+            .attr("y", -3) // Adjust this value as needed
+            .attr("x", -22)
             .attr("dy", ".10em")
             .attr("dx", "-.55em")
-            .style("font-size", "12px")
+            .style("font-size", "10px")
 
             .text(function (d) {
                 if (showReferenceTree) {
@@ -438,11 +355,11 @@ function generateVis() {
             .style("font-size", "12px")
             .style("fill", function (d, i) {
                 /*
-                    legendTextContainer = [];
-          legendTextContainerAltFlag = false;
-          legendTextContainerActivateFlag = false;
-          changeLegendColor();
-                */
+                        legendTextContainer = [];
+              legendTextContainerAltFlag = false;
+              legendTextContainerActivateFlag = false;
+              changeLegendColor();
+                    */
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.data.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
@@ -495,18 +412,8 @@ function generateVis() {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function (d) {
-                // Check if the node has the property 'hastrait' and if it's true
-                if (d.data.hastrait) {
-                    // If true, add a tick mark beside the name
-                    return d && d.data && d.data.name
-                        ? d.data.name.replace(/_/g, " ") + "✔"
-                        : "";
-                } else {
-                    // If false, return the name as is
-                    return d && d.data && d.data.name
-                        ? d.data.name.replace(/_/g, " ")
-                        : "";
-                }
+                // If false, return the name as is
+                return d && d.data && d.data.name ? d.data.name.replace(/_/g, " ") : "";
             })
             .append("title") // Append title tag for hover text
             .text(function (d) {
@@ -529,7 +436,9 @@ function generateVis() {
                 }
 
                 if (traitValueStringFlag || traitValueNumericFlag) {
-                    return "leaf : " + d.data.name + returnStringADd;
+                    return (
+                        "leaf : " + d.data.name + "\nMean: " + d.data.mean + returnStringADd
+                    );
                 }
             });
 
@@ -541,9 +450,23 @@ function generateVis() {
             ? nodeUpdate
             : nodeUpdate.transition().duration(duration);
         nodeUpdate.attr("transform", function (d) {
+            //console.log("******");
+            //console.log("d.y width: ", d.y);
+            //console.log("width: ", width);
+            //console.log("maxNameLength width: ", maxNameLength);
+            //console.log("maxBranchLength width: ", maxBranchLength);
+            //console.log("Current branch length width: ", d.data.branchLength);
+            //console.log("desirable width: ", maxNameLength * 7);
+            //console.log("depth: ", d.depth);
+            //console.log("name: ", d.data.name);
+            //console.log("maxDepth: ", maxDepth);
+            //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
+            //console.log("eachDepthWidth: ", eachDepthWidth);
+            //console.log("******");
             if (!d.children) {
-                // if the node is a leaf node
-                d.y = width - maxNameLength * 10; // move it to the fixed position
+                d.y = width - maxNameLength * 7.5; // move it to the fixed position
+            } else {
+                d.y = d.y;
             }
             return "translate(" + d.y + "," + d.x + ")";
         });
@@ -640,19 +563,11 @@ function generateVis() {
 
         // Creates a curved (diagonal) path from parent to the child nodes
         function diagonal(s, d) {
-            const dx = d.y - s.y;
-            const dy = d.x - s.x;
-            const hx = dx;
-
-            const path = `M ${s.y} ${s.x}
-    L ${s.y + hx} ${s.x}
-    L ${s.y + hx} ${d.x}
-    L ${d.y} ${d.x}`;
-
-            return path;
+            return `M ${s.y} ${s.x}
+L ${d.y} ${s.x}
+L ${d.y} ${d.x}`;
         }
     }
-
     function extractSpeciesNamesCollapsed(node) {
         var speciesNames = [];
 
@@ -674,7 +589,7 @@ function generateVis() {
     function contextmenuNodes(d) {
         //check if leaf node clicked else do something
         if (!d.children && !d._children) {
-            console.log(d.data.name); //TODO: change here
+            //(d.data.name); //TODO: change here
             if (expandedLeafNameID !== "") {
                 d3.select(expandedLeafNameID).style("font-size", "12px");
                 if (!isDebug) {
@@ -761,11 +676,6 @@ function generateVis() {
                         }
                     })
                     .size(function (d) {
-                        /*if (d.numberofChildrenRecursively > 12) {
-                                                          return 10;
-                                                        } else {
-                                                          return 100;
-                                                        }*/
                         if (traitValueNumericFlag) {
                             return sizeScale(traitValueNumericContainer[d.name]);
                         } else {
@@ -780,12 +690,6 @@ function generateVis() {
                 return "translate(" + x + "," + y + ")";
             })
             .style("stroke", function (d, i) {
-                /*
-                    legendTextContainer = [];
-          legendTextContainerAltFlag = false;
-          legendTextContainerActivateFlag = false;
-          changeLegendColor();
-                */
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
@@ -861,7 +765,7 @@ function generateVis() {
                 }
 
                 if (traitValueStringFlag || traitValueNumericFlag) {
-                    return "leaf : " + d.name + returnStringADd;
+                    return "leaf : " + d.name + "\nMean: " + d.mean + returnStringADd;
                 } else {
                     return d.name;
                 }
@@ -1238,7 +1142,7 @@ function generateVis() {
                 window.innerHeight -
                 window.innerHeight / (uniqueValuesString.length + 2);
         }
-        var legendX = 0 + legendXValue;
+        var legendX = legendXValue;
         var legendY = 0 + legendYValue;
         var sizeLegend;
         if (traitValueNumericFlag) {
@@ -1343,12 +1247,6 @@ function generateVis() {
                 .attr("dy", 6)
                 .attr("cursor", "pointer")
                 .attr("fill", function (d, i) {
-                    /*
-                        legendTextContainer = [];
-              legendTextContainerAltFlag = false;
-              legendTextContainerActivateFlag = false;
-              changeLegendColor();
-                    */
                     if (legendTextContainerActivateFlag) {
                         if (legendTextContainerAltFlag) {
                             //if legendTextContainer includes d and index of d is 0
