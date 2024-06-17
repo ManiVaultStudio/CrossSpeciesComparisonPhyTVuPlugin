@@ -520,8 +520,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                var color = colorScale(parentScore);
-
+                //var color = colorScale(parentScore);
+                var color = colorScale(d.data.score);
                 return color;
             });
 
@@ -539,8 +539,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                var color = colorScale(parentScore);
-
+                //var color = colorScale(parentScore);
+                var color = colorScale(d.data.score);
                 return color;
             });
 
