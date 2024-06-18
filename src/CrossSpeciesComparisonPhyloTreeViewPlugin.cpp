@@ -21,12 +21,12 @@ CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPl
 {
     setSerializationName("CSCPTV:CrossSpeciesComparisonPhyloTreeView");
 
-    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 5, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 4, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 1, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_reembedOptions.getReembeddingSettingsHolder(), 2, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 6, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 6, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 5, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 4, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 2, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_reembedOptions.getReembeddingSettingsHolder(), 3, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 1, GroupAction::Horizontal);
 
     
 }
