@@ -36,64 +36,14 @@ function getChildrenNames(node) {
     }
     return names;
 }
-/*
-function updateNumericTrait(node, data, type) {
-  if (node.name !== undefined) {
-    node.numeric = data[node.name];
-    //node.numericKey = type;
-  }
+function isRightChild(node) {
+    // Check if the node has a parent and the parent has a children array
+    if (!node.parent || !Array.isArray(node.parent.children)) return false;
 
-  if (node.children) {
-    node.children.forEach((child) => updateNumericTrait(child, data, type));
-  }
+    const index = node.parent.children.indexOf(node);
+
+    return index === 1;
 }
-function updateTraitNumeric(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueNumericKey = type;
-  updateNumericTrait(node, data, type);
-}
-function updateColorsTrait(node, data, type) {
-  if (node.name !== undefined && node.name !== "") {
-    node.color = data[node.name];
-    //node.colorKey = type;
-  }
-
-  if (node.children) {
-    node.children.forEach((child) => updateColorsTrait(child, data, type));
-  }
-}
-
-function updateTraitColor(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueColorKey = type;
-  updateColorsTrait(node, data, type);
-}
-
-function updateStringTrait(node, data, type) {
-  if (node.name !== undefined) {
-    node.string = data[node.name];
-    //node.stringKey = type;
-  }
-
-  if (node.children) {
-    node.children.forEach((child) => updateStringTrait(child, data, type));
-  }
-}
-function updateTraitString(node, traitValue) {
-  let parsedObject = JSON.parse(traitValue);
-
-  let data = parsedObject.data;
-  let type = parsedObject.type;
-  traitValueStringKey = type;
-  updateStringTrait(node, data, type);
-}
-*/
 function generateVis() {
     if (expandedLeafNameID !== "") {
         d3.select(expandedLeafNameID).style("font-size", "12px");
@@ -104,12 +54,7 @@ function generateVis() {
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
     svg.selectAll("*").remove();
-
-    if (showReferenceTree) {
-        treeData = dataReference;
-    } else {
-        treeData = dataMainCompare;
-    }
+    treeData = dataReference;
 
     if (traitValueString !== "") {
         //updateTraitString(treeData, traitValueString);
@@ -157,61 +102,41 @@ function generateVis() {
         dataValuesString = Object.values(traitValueStringContainer);
         uniqueValuesString = Array.from(new Set(dataValuesString));
 
-        shapeScale = d3
-            .scaleOrdinal()
-            .domain(uniqueValuesString)
-            /*.range([
-                   d3.symbolCircle,
-                   d3.symbolCross,
-                   d3.symbolDiamond,
-                   d3.symbolSquare,
-                   d3.symbolStar,
-                   d3.symbolTriangle,
-                   d3.symbolWye,
-                 ]);*/
-            .range(d3.symbols);
+        shapeScale = d3.scaleOrdinal().domain(uniqueValuesString).range(d3.symbols);
     }
 
     // Set the dimensions and margins of the diagram
-    //var borderWidth = (15 / 100) * window.innerWidth;
-    //var borderHeight = (1 / 100) * window.innerHeight;
     var margin = {
-        top: 1,
-        right: 1,
-        bottom: 10,
-        left: 1,
+        top: 0,
+        right: 0,
+        bottom: 20,
+        left: 27,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
     var removeAnimation = true;
-    // append the svg object to the body of the page
-    // appends a 'group' element to 'svg'
-    // moves the 'group' element to the top left margin
-    //clear svg
-
+    var sizeofShapes = height / 4.5;
     svg = d3
         .select("#my_dataviz")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr(
-            "transform",
-            "translate(" + (margin.left + 60) + "," + margin.top + ")"
-        );
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    /*
     let colorScale;
     let scaleType = colorScales[qtColor]
-        ? colorScales[qtColor]
-        : colorScales["default"];
+      ? colorScales[qtColor]
+      : colorScales["default"];
     let domain = colorMirror
-        ? [mindistanceColor, maxdistanceColor]
-        : [maxdistanceColor, mindistanceColor];
-
+      ? [mindistanceColor, maxdistanceColor]
+      : [maxdistanceColor, mindistanceColor];
+  
     if (qtColor === "qualitative") {
-        colorScale = d3.scaleOrdinal(scaleType).domain(domain);
+      colorScale = d3.scaleOrdinal(scaleType).domain(domain);
     } else {
-        colorScale = d3.scaleSequential(scaleType).domain(domain);
-    }
+      colorScale = d3.scaleSequential(scaleType).domain(domain);
+    }*/
     var i = 0,
         duration = 750,
         root;
@@ -221,20 +146,20 @@ function generateVis() {
     root = d3.hierarchy(treeData, function (d) {
         return d.children;
     });
+
+    root.each(function (d) {
+        if (d.depth > maxDepth) {
+            maxDepth = d.depth;
+        }
+    });
+
     root.x0 = height / 2;
     root.y0 = 0;
-
+    eachDepthWidth = (width - maxNameLength) / maxDepth;
     if (isFirstRender) {
         isFirstRender = false;
     }
-    /*function collapseNodesWithScoreOne(node) {
-            if (node.data.score === 1) {
-              collapse(node);
-            }
-            if (node.children) {
-              node.children.forEach(collapseNodesWithScoreOne);
-            }
-          } */
+
     function toggleNode(node, action) {
         if (action === "collapse" && node.data.iscollapsed) {
             collapse(node);
@@ -263,35 +188,37 @@ function generateVis() {
 
     function update(source) {
         // Assigns the x and y position for the nodes
-        // Assigns the x and y position for the nodes
         var treeData = treemap(root);
 
         // Compute the new tree layout.
         var nodes = treeData.descendants(),
             links = treeData.descendants().slice(1);
 
-        // Normalize for fixed-depth.
+        /*     // Normalize for fixed-depth.
         nodes.forEach((d) => {
-            const screenWidth = width - maxNameLength * 12; // Get the width of the screen
-            let divisor; // = Math.max(10, screenWidth / 300); // Adjust divisor dynamically based on screen width
-            //log("screenWidth",screenWidth);
-            // Adjust divisor for smaller screen sizes to prevent overlapping
-            if (screenWidth > 0) {
-                divisor = Math.max(12, screenWidth / 1000);
-            } else {
-                divisor = width;
-            }
-
-            let valTemp;
-
-            if (d.children || (d._children && !d.data.iscollapsed)) {
-                valTemp = (d.depth * screenWidth) / divisor;
-            } else {
-                valTemp = screenWidth;
-            }
-
-            d.y = valTemp;
-        });
+          const screenWidth = width - maxNameLength;
+          let valTemp = screenWidth;
+          //console.log("******");
+          //console.log("d.y width: ", d.y);
+          //console.log("width: ", width);
+          //console.log("maxNameLength width: ", maxNameLength);
+          //console.log("maxBranchLength width: ", maxBranchLength);
+          //console.log("Current branch length width: ", d.data.branchLength);
+          //console.log("desirable width: ", maxNameLength * 7);
+          //console.log("branchLength: ", d.data.branchLength);
+          //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
+          //console.log("depth: ", d.depth);
+          //console.log("name: ", d.data.name);
+          //console.log("maxDepth: ", maxDepth);
+          //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
+          //console.log("eachDepthWidth: ", eachDepthWidth);
+          //console.log("******");
+          if (d.children || (d._children && !d.data.iscollapsed)) {
+            valTemp = (d.depth * screenWidth) / 22;
+          }
+          //console.log("valTemp: ", valTemp);
+          d.y = valTemp;
+        }); */
 
         // ****************** Nodes section ***************************
 
@@ -335,15 +262,15 @@ function generateVis() {
                             sizeScale(traitValueNumericContainer[d.data.name])
                         );
                     } else {
-                        symbol = symbol.size(80);
+                        symbol = symbol.size(sizeofShapes);
                     }
 
                     return symbol();
                 } else {
-                    return d3.symbol().type(d3.symbolSquare).size(80)();
+                    return d3.symbol().type(d3.symbolSquare).size(sizeofShapes)();
                 }
             })
-            .attr("transform", "translate(0,0)") // Adjust position if necessary
+            .attr("transform", "translate(2,0)") // Adjust position if necessary
             .style("cursor", "pointer")
             .style("stroke", "#000000")
             .style("stroke-width", "1px")
@@ -356,7 +283,7 @@ function generateVis() {
                 ) {
                     return traitValueColorContainer[d.data.name];
                 } else {
-                    return colorScale(d.data.score);
+                    return "black"; //colorScale(d.data.score);
                 }
             })
             .append("title")
@@ -385,7 +312,13 @@ function generateVis() {
                     }
 
                     if (traitValueStringFlag || traitValueNumericFlag) {
-                        return "leaf : " + d.data.name + returnStringADd;
+                        return (
+                            "leaf : " +
+                            d.data.name +
+                            "\nMean: " +
+                            d.data.mean +
+                            returnStringADd
+                        );
                     } else {
                         return d.data.name;
                     }
@@ -395,17 +328,9 @@ function generateVis() {
                         var returnString = "";
                         for (var i = 0; i < childrennames.length; i++) {
                             let result = findNodeByName(childrennames[i], treeData);
-                            if (result && result.node.hastrait) {
-                                returnString +=
-                                    (childrennames[i]
-                                        ? childrennames[i].replace(/_/g, " ")
-                                        : "") + "✔\n";
-                            } else {
-                                returnString +=
-                                    (childrennames[i]
-                                        ? childrennames[i].replace(/_/g, " ")
-                                        : "") + "\n";
-                            }
+                            returnString +=
+                                (childrennames[i] ? childrennames[i].replace(/_/g, " ") : "") +
+                                "\n";
                         }
                         return returnString.trimEnd();
                     }
@@ -415,11 +340,13 @@ function generateVis() {
         nodeEnter
             .append("text")
             .attr("id", "nodeScore")
-            .attr("y", -8) // Adjust this value as needed
-            .attr("x", -12)
+            .attr("y", function (d) {
+                return isRightChild(d) ? 9 : -4;
+            })
+            .attr("x", -20)
             .attr("dy", ".10em")
             .attr("dx", "-.55em")
-            .style("font-size", "12px")
+            .style("font-size", "10px")
 
             .text(function (d) {
                 if (showReferenceTree) {
@@ -438,11 +365,11 @@ function generateVis() {
             .style("font-size", "12px")
             .style("fill", function (d, i) {
                 /*
-                    legendTextContainer = [];
-          legendTextContainerAltFlag = false;
-          legendTextContainerActivateFlag = false;
-          changeLegendColor();
-                */
+                        legendTextContainer = [];
+              legendTextContainerAltFlag = false;
+              legendTextContainerActivateFlag = false;
+              changeLegendColor();
+                    */
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.data.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
@@ -495,18 +422,8 @@ function generateVis() {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function (d) {
-                // Check if the node has the property 'hastrait' and if it's true
-                if (d.data.hastrait) {
-                    // If true, add a tick mark beside the name
-                    return d && d.data && d.data.name
-                        ? d.data.name.replace(/_/g, " ") + "✔"
-                        : "";
-                } else {
-                    // If false, return the name as is
-                    return d && d.data && d.data.name
-                        ? d.data.name.replace(/_/g, " ")
-                        : "";
-                }
+                // If false, return the name as is
+                return d && d.data && d.data.name ? d.data.name.replace(/_/g, " ") : "";
             })
             .append("title") // Append title tag for hover text
             .text(function (d) {
@@ -529,7 +446,9 @@ function generateVis() {
                 }
 
                 if (traitValueStringFlag || traitValueNumericFlag) {
-                    return "leaf : " + d.data.name + returnStringADd;
+                    return (
+                        "leaf : " + d.data.name + "\nMean: " + d.data.mean + returnStringADd
+                    );
                 }
             });
 
@@ -540,12 +459,181 @@ function generateVis() {
         nodeUpdate = removeAnimation
             ? nodeUpdate
             : nodeUpdate.transition().duration(duration);
-        nodeUpdate.attr("transform", function (d) {
-            if (!d.children) {
-                // if the node is a leaf node
-                d.y = width - maxNameLength * 10; // move it to the fixed position
+        nodeUpdate.attr("transform", (d) => {
+            // Optimized calculation by reducing repetitive operations and improving readability
+            const scaledBranchLength =
+                (d.data.branchLength / maxBranchLength) *
+                (eachDepthWidth - maxNameLength);
+
+            var scalefact = 1.28;
+            if (width >= 2000) {
+                scalefact = 1.064;
+            } else if (width >= 1975) {
+                scalefact = 1.07;
+            } else if (width >= 1950) {
+                scalefact = 1.074;
+            } else if (width >= 1925) {
+                scalefact = 1.08;
+            } else if (width >= 1900) {
+                scalefact = 1.084;
+            } else if (width >= 1875) {
+                scalefact = 1.09;
+            } else if (width >= 1850) {
+                scalefact = 1.094;
+            } else if (width >= 1825) {
+                scalefact = 1.1;
+            } else if (width >= 1800) {
+                scalefact = 1.104;
+            } else if (width >= 1775) {
+                scalefact = 1.11;
+            } else if (width >= 1750) {
+                scalefact = 1.114;
+            } else if (width >= 1725) {
+                scalefact = 1.12;
+            } else if (width >= 1700) {
+                scalefact = 1.124;
+            } else if (width >= 1675) {
+                scalefact = 1.13;
+            } else if (width >= 1650) {
+                scalefact = 1.134;
+            } else if (width >= 1625) {
+                scalefact = 1.14;
+            } else if (width >= 1600) {
+                scalefact = 1.144;
+            } else if (width >= 1575) {
+                scalefact = 1.15;
+            } else if (width >= 1550) {
+                scalefact = 1.154;
+            } else if (width >= 1525) {
+                scalefact = 1.16;
+            } else if (width >= 1500) {
+                scalefact = 1.164;
+            } else if (width >= 1475) {
+                scalefact = 1.17;
+            } else if (width >= 1450) {
+                scalefact = 1.174;
+            } else if (width >= 1425) {
+                scalefact = 1.18;
+            } else if (width >= 1400) {
+                scalefact = 1.184;
+            } else if (width >= 1375) {
+                scalefact = 1.19;
+            } else if (width >= 1350) {
+                scalefact = 1.194;
+            } else if (width >= 1325) {
+                scalefact = 1.2;
+            } else if (width >= 1300) {
+                scalefact = 1.204;
+            } else if (width >= 1275) {
+                scalefact = 1.21;
+            } else if (width >= 1250) {
+                scalefact = 1.214;
+            } else if (width >= 1225) {
+                scalefact = 1.22;
+            } else if (width >= 1200) {
+                scalefact = 1.224;
+            } else if (width >= 1175) {
+                scalefact = 1.23;
+            } else if (width >= 1150) {
+                scalefact = 1.234;
+            } else if (width >= 1125) {
+                scalefact = 1.27;
+            } else if (width >= 1100) {
+                scalefact = 1.27;
+            } else if (width >= 1075) {
+                scalefact = 1.27;
+            } else if (width >= 1050) {
+                scalefact = 1.27;
+            } else if (width >= 1025) {
+                scalefact = 1.28;
+            } else if (width >= 1000) {
+                scalefact = 1.29;
+            } else if (width >= 975) {
+                scalefact = 1.3;
+            } else if (width >= 950) {
+                scalefact = 1.31;
+            } else if (width >= 925) {
+                scalefact = 1.32;
+            } else if (width >= 900) {
+                scalefact = 1.33;
+            } else if (width >= 875) {
+                scalefact = 1.34;
+            } else if (width >= 850) {
+                scalefact = 1.35;
+            } else if (width >= 825) {
+                scalefact = 1.37;
+            } else if (width >= 800) {
+                scalefact = 1.38;
+            } else if (width >= 775) {
+                scalefact = 1.39;
+            } else if (width >= 750) {
+                scalefact = 1.42;
+            } else if (width >= 725) {
+                scalefact = 1.44;
+            } else if (width >= 700) {
+                scalefact = 1.46;
+            } else if (width >= 675) {
+                scalefact = 1.48;
+            } else if (width >= 650) {
+                scalefact = 1.5;
+            } else if (width >= 625) {
+                scalefact = 1.54;
+            } else if (width >= 600) {
+                scalefact = 1.58;
+            } else if (width >= 575) {
+                scalefact = 1.62;
+            } else if (width >= 550) {
+                scalefact = 1.66;
+            } else if (width >= 525) {
+                scalefact = 1.7;
+            } else if (width >= 500) {
+                scalefact = 1.76;
+            } else if (width >= 475) {
+                scalefact = 1.84;
+            } else if (width >= 450) {
+                scalefact = 1.9;
+            } else if (width >= 425) {
+                scalefact = 1.99;
+            } else if (width >= 400) {
+                scalefact = 2.15;
+            } else if (width >= 375) {
+                scalefact = 2.3;
+            } else if (width >= 350) {
+                scalefact = 2.5;
+            } else if (width >= 325) {
+                scalefact = 3;
+            } else if (width >= 300) {
+                scalefact = 3.5;
+            } else if (width >= 275) {
+                scalefact = 4;
+            } else if (width >= 250) {
+                scalefact = 4.5;
+            } else if (width >= 225) {
+                scalefact = 5;
+            } else if (width >= 200) {
+                scalefact = 5.5;
+            } else if (width >= 175) {
+                scalefact = 6;
+            } else if (width >= 150) {
+                scalefact = 6.5;
+            } else if (width >= 125) {
+                scalefact = 7;
+            } else if (width >= 100) {
+                scalefact = 7.5;
+            } else if (width >= 75) {
+                scalefact = 8;
+            } else if (width >= 50) {
+                scalefact = 8.5;
+            } else if (width >= 25) {
+                scalefact = 9;
+            } else if (width >= 0) {
+                scalefact = 9.5;
+            } else {
+                scalefact = 10;
             }
-            return "translate(" + d.y + "," + d.x + ")";
+
+            d.y = d.y / scalefact + scaledBranchLength;
+            return `translate(${d.y},${d.x})`;
         });
 
         // Update the node attributes and style
@@ -597,8 +685,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                var color = colorScale(parentScore);
-
+                //var color = colorScale(parentScore);
+                var color = "black"; //colorScale(d.data.score);
                 return color;
             });
 
@@ -616,8 +704,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                var color = colorScale(parentScore);
-
+                //var color = colorScale(parentScore);
+                var color = "black"; //colorScale(d.data.score);
                 return color;
             });
 
@@ -640,19 +728,11 @@ function generateVis() {
 
         // Creates a curved (diagonal) path from parent to the child nodes
         function diagonal(s, d) {
-            const dx = d.y - s.y;
-            const dy = d.x - s.x;
-            const hx = dx;
-
-            const path = `M ${s.y} ${s.x}
-    L ${s.y + hx} ${s.x}
-    L ${s.y + hx} ${d.x}
-    L ${d.y} ${d.x}`;
-
-            return path;
+            return `M ${s.y} ${s.x}
+L ${d.y} ${s.x}
+L ${d.y} ${d.x}`;
         }
     }
-
     function extractSpeciesNamesCollapsed(node) {
         var speciesNames = [];
 
@@ -674,7 +754,7 @@ function generateVis() {
     function contextmenuNodes(d) {
         //check if leaf node clicked else do something
         if (!d.children && !d._children) {
-            console.log(d.data.name); //TODO: change here
+            //(d.data.name); //TODO: change here
             if (expandedLeafNameID !== "") {
                 d3.select(expandedLeafNameID).style("font-size", "12px");
                 if (!isDebug) {
@@ -721,153 +801,86 @@ function generateVis() {
         return result;
     }
     function updateNamesBelowNodes() {
-        // Remove existing names below nodes
-        svg.selectAll(".species-names").remove();
+        svg.selectAll(".species-names").remove(); // Remove existing names
 
-        // Select all nodes with children
-        var nodesWithChildren = svg.selectAll(".node").filter(function (d) {
-            return d._children && d.data.iscollapsed;
-        });
-
-        nodesWithChildren
-            .append("g") // Create a group element for each node
+        svg
+            .selectAll(".node")
+            .filter((d) => d._children && d.data.iscollapsed) // Filter nodes with children and collapsed
+            .append("g")
             .attr("class", "species-names")
-            .selectAll("path") // Append a path element for each name
-            .data(function (d) {
-                // Assuming extractSpeciesNamesCollapsed(d) returns an array of strings
-                var names = extractSpeciesNamesCollapsed(d);
-                // Map each name to an object that includes the original data
-                return names.map(function (name) {
-                    return {
-                        name: name,
-                        color: d.data.color,
-                        numberofChildrenRecursively: getNumberOfChildren(d),
-                        isCollapsed: d.iscollapsed,
-                        score: d.data.score,
-                    };
-                });
-            })
+            .selectAll("path")
+            .data((d) =>
+                extractSpeciesNamesCollapsed(d).map((name) => ({
+                    ...d.data, // Spread operator to include all data properties
+                    name,
+                    numberofChildrenRecursively: getNumberOfChildren(d),
+                    isCollapsed: d.iscollapsed,
+                }))
+            )
             .enter()
             .append("path")
             .attr(
                 "d",
                 d3
                     .symbol()
-                    .type(function (d, i) {
-                        if (traitValueStringFlag) {
-                            return shapeScale(traitValueStringContainer[d.name]); //d3.symbolCircle;
-                        } else {
-                            return d3.symbolCircle;
-                        }
-                    })
-                    .size(function (d) {
-                        /*if (d.numberofChildrenRecursively > 12) {
-                                                          return 10;
-                                                        } else {
-                                                          return 100;
-                                                        }*/
-                        if (traitValueNumericFlag) {
-                            return sizeScale(traitValueNumericContainer[d.name]);
-                        } else {
-                            return 50;
-                        }
-                    })
+                    .type((d) =>
+                        traitValueStringFlag
+                            ? shapeScale(traitValueStringContainer[d.name])
+                            : d3.symbolCircle
+                    )
+                    .size((d) =>
+                        traitValueNumericFlag
+                            ? sizeScale(traitValueNumericContainer[d.name])
+                            : 50
+                    )
             )
-            .attr("transform", function (d, i) {
-                // Calculate x and y positions
-                var x = (i % symbolsPerLine) * symbolsPerLine * 2 + 40; // Every 10th symbol, start a new line
-                var y = Math.floor(i / symbolsPerLine) * symbolsPerLine * 2 + 2 - 7; // Increase y position for every new line
-                return "translate(" + x + "," + y + ")";
+            .attr("transform", (d, i) => {
+                let x = (i % symbolsPerLine) * symbolsPerLine * 2 + 40;
+                let y = Math.floor(i / symbolsPerLine) * symbolsPerLine * 2 + 2 - 7;
+                return `translate(${x},${y})`;
             })
-            .style("stroke", function (d, i) {
-                /*
-                    legendTextContainer = [];
-          legendTextContainerAltFlag = false;
-          legendTextContainerActivateFlag = false;
-          changeLegendColor();
-                */
+            .style("stroke", (d) => {
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
                         if (legendTextContainerAltFlag) {
-                            //if legendTextContainer includes d and index of d is 0
-
-                            if (
-                                legendTextContainer.includes(traitName) &&
-                                legendTextContainer.indexOf(traitName) === 0
-                            ) {
-                                rightSpeciesSelected.push(d.name);
-                                speciesSelected.push(d.name);
-                                return "#1D8ECE";
-                            }
-                            //else if legendTextContainer includes d and index of d is 1
-                            else if (
-                                legendTextContainer.includes(traitName) &&
-                                legendTextContainer.indexOf(traitName) === 1
-                            ) {
-                                leftSpeciesSelected.push(d.name);
-                                speciesSelected.push(d.name);
-                                return "#FF5733";
-                            } else {
-                                return "black";
-                            }
-                        } else {
                             if (legendTextContainer.includes(traitName)) {
                                 speciesSelected.push(d.name);
-                                return "#1D8ECE";
-                            } else {
-                                return "black";
+                                return legendTextContainer.indexOf(traitName) === 0
+                                    ? "#1D8ECE"
+                                    : "#FF5733";
                             }
+                            return "black";
+                        } else {
+                            return legendTextContainer.includes(traitName)
+                                ? "#1D8ECE"
+                                : "black";
                         }
-                    } else {
-                        return "black";
                     }
-                } else {
-                    return "black";
                 }
+                return "black";
             })
             .style("stroke-width", "1px")
-            .style("fill", function (d) {
-                // If the node is a parent, set the color to something other than pink
-                if (d.name !== undefined && d.name !== "" && traitValueColorFlag) {
-                    return traitValueColorContainer[d.name];
-                } else if (d && colorScale(d.score)) {
-                    return colorScale(d.score);
-                } else {
-                    return "black";
-                }
-            })
+            .style("fill", (d) =>
+                traitValueColorFlag && traitValueColorContainer[d.name]
+                    ? traitValueColorContainer[d.name]
+                    : colorScale(d.score) || "black"
+            )
             .style("cursor", "pointer")
             .on("click", clickNames)
-            .append("title") // Add a title element for hover text
+            .append("title")
             .style("font-size", "12px")
-            .text(function (d) {
-                if (d.name !== undefined && d.name !== "") {
-                    var returnStringADd = "";
-                    if (traitValueStringFlag) {
-                        returnStringADd +=
-                            "\n" +
-                            traitValueStringKey +
-                            " : " +
-                            traitValueStringContainer[d.name];
-                    }
-                    if (traitValueNumericFlag) {
-                        returnStringADd +=
-                            "\n" +
-                            traitValueNumericKey +
-                            " : " +
-                            traitValueNumericContainer[d.name];
-                    }
-                }
-
-                if (traitValueStringFlag || traitValueNumericFlag) {
-                    return "leaf : " + d.name + returnStringADd;
-                } else {
-                    return d.name;
-                }
+            .text((d) => {
+                let info = d.name;
+                if (traitValueStringFlag)
+                    info += `\n${traitValueStringKey} : ${traitValueStringContainer[d.name]
+                        }`;
+                if (traitValueNumericFlag)
+                    info += `\n${traitValueNumericKey} : ${traitValueNumericContainer[d.name]
+                        }`;
+                return info;
             });
     }
-
     function extractSpeciesNames(node) {
         var speciesNames = [];
 
@@ -985,8 +998,11 @@ function generateVis() {
 
         // Select the corresponding icons
         svg.selectAll(".species-names path").each(function (d) {
-            if (clickedSpecies.includes(d.name)) {
-                d3.select(this).classed("selected", speciesSelected.includes(d.name));
+            if (clickedSpecies.includes(d.data.name)) {
+                d3.select(this).classed(
+                    "selected",
+                    speciesSelected.includes(d.data.name)
+                );
             }
         });
 
@@ -1079,7 +1095,7 @@ function generateVis() {
         legendTextContainerActivateFlag = false;
         changeLegendColor();
 
-        var clickedSpecies = d.name; // Extract the name from the data
+        var clickedSpecies = d.data.name; // Extract the name from the data
         if (speciesSelected.includes(clickedSpecies)) {
             speciesSelected = speciesSelected.filter(
                 (item) => item !== clickedSpecies
@@ -1093,130 +1109,82 @@ function generateVis() {
     }
 
     function updateNodeStyles() {
-        // Update styles for .node text
-
-        svg.selectAll(".node text").style("fill", function (d) {
-            if (d && d.data) {
-                if (speciesSelected.includes(d.data.name)) {
-                    if (altPressed || splitGroupsAltKey) {
-                        if (leftSpeciesSelected.includes(d.data.name)) {
-                            return "#FF5733"; // Bright Orange
-                        } else if (rightSpeciesSelected.includes(d.data.name)) {
-                            return "#1D8ECE"; // Deep Sky Blue
-                        }
-                    } else {
-                        return "#357EC7";
-                    }
+        // Helper function to determine fill color for nodes
+        function getNodeFillColor(d) {
+            // Check if node is selected
+            if (d?.data && speciesSelected.includes(d.data.name)) {
+                // Handle key press combinations for selected nodes
+                if (altShiftPressed) {
+                    // Alt+Shift+mouse click
+                    return "#A52A2A"; // Unique color for Alt+Shift+mouse click
+                } else if (altPressed || splitGroupsAltKey) {
+                    // Alt+mouse click or splitGroupsAltKey
+                    return leftSpeciesSelected.includes(d.data.name)
+                        ? "#FF5733"
+                        : "#1D8ECE";
                 } else {
-                    if (d.name !== undefined && d.name !== "" && traitValueColorFlag) {
-                        return traitValueColorContainer[d.name];
-                    } else {
-                        return colorScale(d.score);
-                    }
+                    // Default color for selected species
+                    return "#1D8ECE";
                 }
-            } else {
-                if (d.name !== undefined && d.name !== "" && traitValueColorFlag) {
-                    return traitValueColorContainer[d.name];
-                } else {
-                    return colorScale(d.score);
-                }
+            } else if (d?.name && traitValueColorFlag) {
+                // Node has a name and traitValueColorFlag is true
+                return traitValueColorContainer[d.data.name];
             }
-        });
+            // Default color if none of the above conditions are met
+            return "black";
+        }
 
-        // Update styles for .species-names text
-        svg.selectAll(".species-names text").style("fill", function (d) {
-            if (speciesSelected.includes(d)) {
-                return "#357EC7";
-            } else {
-                if (d.name !== undefined && d.name !== "") {
-                    return traitValueColorContainer[d.name];
-                } else {
-                    return colorScale(d.score);
-                }
-            }
-        });
-
-        // Update styles for .species-names path (the symbols)
-        svg.selectAll(".species-names path").style("fill", function (d) {
-            if (d.name !== undefined && d.name !== "" && traitValueColorFlag) {
-                return traitValueColorContainer[d.name];
-            } else {
-                return colorScale(d.score);
-            }
-        });
-
-        // Update styles for .species-names path (the symbols)
-        svg.selectAll(".species-names path").style("stroke", function (d) {
-            if (speciesSelected.includes(d.name)) {
-                return "#357EC7";
-            } else {
-                return "black";
-            }
-        });
-        // Update styles for .species-names path (the symbols)
-        svg.selectAll(".species-names path").style("stroke-width", function (d) {
-            if (speciesSelected.includes(d.name)) {
-                return "2px";
-            } else {
-                return "1px";
-            }
-        });
-
-        // Update styles for .node path (the symbols)
-        svg.selectAll(".node path").style("stroke", function (d) {
+        // Helper function to determine stroke color for paths
+        function getPathStrokeColor(d) {
             if (splitGroupsAltKey) {
-                if (leftSpeciesSelected.includes(d.name)) {
-                    return "#FF5733"; // Bright Orange
-                } else if (rightSpeciesSelected.includes(d.name)) {
-                    return "#1D8ECE"; // Deep Sky Blue
-                } else {
-                    return "black";
-                }
-            } else {
-                if (speciesSelected.includes(d.name)) {
-                    return "#357EC7";
-                } else {
-                    return "black";
-                }
+                if (leftSpeciesSelected.includes(d.data.name)) return "#FF5733";
+                if (rightSpeciesSelected.includes(d.data.name)) return "#1D8ECE";
+            } else if (speciesSelected.includes(d.data.name)) {
+                return "#1D8ECE";
             }
-        });
+            return "black";
+        }
 
-        svg.selectAll(".node path").style("stroke-width", function (d) {
-            if (speciesSelected.includes(d.name)) {
-                return "2px";
-            } else {
-                return "1px";
-            }
-        });
+        // Helper function to determine stroke width
+        function getStrokeWidth(d) {
+            return speciesSelected.includes(d.data.name) ? "2px" : "1px";
+        }
+        function getFontWeight(d) {
+            return speciesSelected.includes(d.data.name) ? "bold" : "normal";
+        }
+        // Update styles for .node text and .species-names text/path
+        svg
+            .selectAll(".node text, .species-names text, .species-names path")
+            .style("fill", getNodeFillColor)
+            .style("font-weight", getFontWeight)
+            .filter(".species-names path")
+            .style("stroke", getPathStrokeColor)
+            .style("stroke-width", getStrokeWidth);
 
-        var speciesString = "";
+        // Simplified update styles for .node path
+        svg
+            .selectAll(".node path")
+            .style("stroke", getPathStrokeColor)
+            .style("stroke-width", getStrokeWidth);
 
-        if (speciesSelected.length > 0) {
-            if (altPressed) {
-                var totalString = "";
-                var leftString = "";
-                var rightString = "";
-                if (leftSpeciesSelected.length > 0) {
-                    leftString = leftSpeciesSelected.join(" @%$,$%@ ");
-                }
-                if (rightSpeciesSelected.length > 0) {
-                    rightString = rightSpeciesSelected.join(" @%$,$%@ ");
-                }
-                totalString = leftString + "@$LEFTSPLITRIGHT$@" + rightString;
+        // Handle species selection string
+        let speciesString = speciesSelected.join(" @%$,$%@ ");
+        let selectionString = "";
 
-                if (!isDebug) {
-                    passLeftRightSelectionToQT(totalString);
-                }
-            } else {
-                //Comment for Debugging
-                speciesString = speciesSelected.join(" @%$,$%@ ");
-
-                if (!isDebug) {
-                    passAddSelectionToQt(speciesString);
-                }
-            }
+        if (altPressed && speciesSelected.length > 0) {
+            let leftString = leftSpeciesSelected.join(" @%$,$%@ ");
+            let rightString = rightSpeciesSelected.join(" @%$,$%@ ");
+            selectionString = `${leftString}@$LEFTSPLITRIGHT$@${rightString}`;
         } else {
-            if (!isDebug) {
+            selectionString = speciesString;
+        }
+
+        if (!isDebug) {
+            if (speciesSelected.length > 0) {
+                altPressed
+                    ? passLeftRightSelectionToQT(selectionString)
+                    : passAddSelectionToQt(speciesString);
+            } else {
                 passRemoveSelectionToQt("");
             }
         }
@@ -1238,7 +1206,7 @@ function generateVis() {
                 window.innerHeight -
                 window.innerHeight / (uniqueValuesString.length + 2);
         }
-        var legendX = 0 + legendXValue;
+        var legendX = legendXValue;
         var legendY = 0 + legendYValue;
         var sizeLegend;
         if (traitValueNumericFlag) {
@@ -1343,12 +1311,6 @@ function generateVis() {
                 .attr("dy", 6)
                 .attr("cursor", "pointer")
                 .attr("fill", function (d, i) {
-                    /*
-                        legendTextContainer = [];
-              legendTextContainerAltFlag = false;
-              legendTextContainerActivateFlag = false;
-              changeLegendColor();
-                    */
                     if (legendTextContainerActivateFlag) {
                         if (legendTextContainerAltFlag) {
                             //if legendTextContainer includes d and index of d is 0

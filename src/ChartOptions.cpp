@@ -33,7 +33,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     setSerializationName("CSCPTV:CrossSpecies Comparison Phylo Tree View Settings");
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().setSerializationName("CSCPTV:Reference tree selection");
     _extraSettingsHolder.getColorMapAction().setSerializationName("CSCPTV:Color map selection");
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setSerializationName("CSCPTV:Comparison tree selection");
+
     _metaDataSettingsHolder.getColorTraitAction().setSerializationName("CSCPTV:Color type trait selection");
     _metaDataSettingsHolder.getNumericTraitAction().setSerializationName("Numeric type trait selection");
     _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
@@ -69,14 +69,14 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     //{
         //_updateSettingsHolder.setVisible(false);
     //}
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setEnabled(false);
+
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&ChartOptions::onDataEventTree, this, std::placeholders::_1));
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&ChartOptions::onDataEventTreeMeta, this, std::placeholders::_1));
 
 
     //_mainSettingsHolder.getMainReferenceTreeSelectionAction().setShowFullPathName(false);
     //_mainSettingsHolder.getComparisonTreeSelectionAction().setShowFullPathName(false);
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setDefaultWidgetFlags(OptionAction::ComboBox);
+ 
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDefaultWidgetFlags(OptionAction::ComboBox);
     /*_extraSettingsHolder.getNumOfClustersAction().setDefaultWidgetFlags(DecimalAction::SpinBox| DecimalAction::Slider);
     _extraSettingsHolder.getNumOfClustersAction().setMaximum(0);
@@ -121,8 +121,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
 
 
-    Datasets treeDatasets;
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setDatasets(treeDatasets);
+    //Datasets treeDatasets;
 
     _extraSettingsHolder.getColorMapAction().getSettingsAction().getColorMapAction().getDiscretizeAction().setDisabled(true);
     _extraSettingsHolder.getColorMapAction().getSettingsAction().getColorMapAction().getDiscretizeAction().setVisible(false);
@@ -158,36 +157,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setVisible(true);
     _updateSettingsHolder.getUpdateViewsButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
 
-
-    const auto treeSelection = [this]() -> void
-        {
-
-            if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
-            {
-                _mainSettingsHolder.getMainReferenceTreeSelectionAction().setEnabled(true);
-                _extraSettingsHolder.setEnabled(true);
-                updateChartDataJS();
-            }
-            if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid())
-            {
-                auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset()->getId());
-                if (temp.isValid())
-                {
-
-
-                    _viewerPlugin.getComparisonTreeDataset().setDataset(temp.getDataset());
-                    //_extraSettingsHolder.getNumOfClustersAction().setMaximum(temp->getTreeSpeciesNames().size());
-                    //_extraSettingsHolder.getNumOfClustersAction().setMinimum(1);
-                    //_extraSettingsHolder.getNumOfClustersAction().setValue(temp->getTreeSpeciesNames().size() - 1);
-                }
-
-            }
-
-
-
-        };
-    connect(&_mainSettingsHolder.getComparisonTreeSelectionAction(), &DatasetPickerAction::currentIndexChanged, this, treeSelection);
-
     const auto referenceTreeSelection = [this]() -> void
         {
 
@@ -216,7 +185,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     const auto traitSelectionColor = [this]() -> void
         {
 
-            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
                 if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
                 {
@@ -229,7 +198,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     const auto traitSelectionNumeric = [this]() -> void
         {
 
-            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
 
                 if (_metaDataSettingsHolder.getNumericTraitAction().getCurrentText() != "")
@@ -243,7 +212,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     const auto traitSelectionString = [this]() -> void
         {
 
-            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
                 if (_metaDataSettingsHolder.getStringTraitAction().getCurrentText() != "")
                 {
@@ -256,22 +225,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     connect(&_metaDataSettingsHolder.getColorTraitAction(), &OptionAction::currentIndexChanged, this, traitSelectionColor);
     connect(&_metaDataSettingsHolder.getStringTraitAction(), &OptionAction::currentIndexChanged, this, traitSelectionString);
     connect(&_metaDataSettingsHolder.getNumericTraitAction(), &OptionAction::currentIndexChanged, this, traitSelectionNumeric);
-    /*const auto clusteringMethod = [this]() -> void
-        {
-            if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
-            {
-                updateChartDataJS();
-            }
-        };
-    connect(&_extraSettingsHolder.getClusteringMethodAction(), &OptionAction::currentIndexChanged, this, clusteringMethod);
-    const auto numOfClustersAction = [this]() -> void
-        {
-            if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
-            {
-                updateChartDataJS();
-            }
-        };
-    connect(&_extraSettingsHolder.getNumOfClustersAction(), &IntegralAction::valueChanged, this, numOfClustersAction); */
+
     const auto traitDatasetSelection = [this]() -> void
         {
             //TODO :
@@ -443,98 +397,17 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
 void ChartOptions::updateChartDataJS()
 {
-    /*
 
-        Datasets datasets = mv::data().getAllDatasets(std::vector<DataType>({ PointType }));
-
-
-        if (!datasets.isEmpty())
-        {
-            QString selectedSubCluster = _extraSettingsHolder.getSubClusterSelectionAction().getCurrentText();
-            //QStringList clusterSet = _extraSettingsHolder.getSubClusterSelectionAction().getOptions();
-
-            std::map<std::string, double> elements;
-            double totalCount = 0.0;
-            for (auto dataset : datasets)
-            {
-                std::string str1 = dataset->getGuiName().toStdString();
-                //qDebug() << "Size: " << _totalSpeciesForTreeConstruction.size();
-                std::string str2 = std::to_string(_totalSpeciesForTreeConstruction.size()) + "Species-Hierarchy";
-                //qDebug()<<"***str1***" <<QString::fromStdString(str1);
-                //qDebug()<< "***str2***" << QString::fromStdString(str2);
-                //Use std::string::find instead of strstr for string searching
-                if (str1 == str2)
-                {
-                    std::map<std::string, std::string> referenceValues;
-
-                    auto candidateDataset = mv::data().getDataset<Points>(dataset->getId());
-
-                    auto dimensionNames = candidateDataset->getDimensionNames();
-                    int numTemp = 0;
-                    for (const QString& dimensionNameValue : dimensionNames)
-                    {
-                        std::string tempDimensionNameValue = dimensionNameValue.toStdString();
-                        std::string tempValue = ":[";
-                        std::vector<float> dimensionValuesTemp;
-                        candidateDataset->extractDataForDimension(dimensionValuesTemp, numTemp);
-                        numTemp = numTemp + 1;
-                        for (int i = 0; i < dimensionValuesTemp.size(); i++)
-                        {
-                            tempValue = tempValue + std::to_string(int(dimensionValuesTemp[i]));
-                            tempValue = tempValue + ",";
-                        }
-                        if (!tempValue.empty()) {
-                            //qDebug() << "********************************Four*************************";
-                            // Remove the last character using erase
-                            tempValue.erase(tempValue.end() - 1);
-                        }
-                        tempValue = tempValue + "]";
-                        referenceValues[tempDimensionNameValue] = tempValue;
-
-                    }
-
-
-
-                    std::string valueStringReference = "{";
-                    for (const auto& pair : referenceValues) {
-                        valueStringReference += "\"" + pair.first + "\"" + pair.second + ",";
-                    }
-
-                    // Remove the trailing comma and close the JSON string
-                    valueStringReference.pop_back();
-                    valueStringReference += "}";
-
-                    //std::cout << valueStringReference << std::endl;
-
-                    //std::string valueStringReference = "{\"Human\":[1,0,0,0,0],\"Chimpanzee\":[0,1,0,0,0],\"Gorilla\":[0,0,1,0,0],\"Rhesus\":[0,0,0,1,0],\"Marmoset\":[0,0,0,0,1]}";
-                    std::string resultString = valueStringReference + "%$%$" + jsonString;
-
-                    //std::cout << "\nMatrix as a string QT:\n" << resultString << "\n";
-
-                    _viewerPlugin.getChartWidget().setData(QString::fromStdString(resultString));
-
-
-
-
-                }
-            }
-
-
-
-
-
-        }
-        */
     std::string resultString = "";
-    if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid()  && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
-        std::string valueString = extractFormatData(_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().getDatasetId());
+
 
         std::string valueStringReference = extractFormatData(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().getDatasetId());
 
-        if (valueStringReference != "" && valueString != "")
+        if (valueStringReference != "" )
         {
-            std::string resultString = valueStringReference + "@#&%$splithere%$&#@" + valueString;
+            std::string resultString = valueStringReference;
 
             _showDataDrop.setChecked(false);
 
@@ -543,14 +416,7 @@ void ChartOptions::updateChartDataJS()
 
     }
 
-    /*
-        std::string valueStringReference = "{\"Human\":[1,0,0,0,0],\"Chimpanzee\":[0,1,0,0,0],\"Gorilla\":[0,0,1,0,0],\"Rhesus\":[0,0,0,1,0],\"Marmoset\":[0,0,0,0,1]}";
-        std::string resultString = valueStringReference + "%$%$" + valueStringReference;//jsonString;
-        _showDataDrop.setChecked(false);
 
-        _viewerPlugin.getChartWidget().setData(QString::fromStdString(resultString));
-
-        */
 }
 std::vector<double> getCondensedDistanceMatrix(const std::vector<double>& distanceMatrix, int n) {
     std::vector<double> condensedMatrix;
@@ -1031,15 +897,15 @@ void ChartOptions::referenceDatasetPickerActionModify()
 
 void ChartOptions::traitDatasetPickerActionModify()
 {
-    if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+    if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
     {
         QStringList referenceTreeLeafNames = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
-        QStringList comparisonTreeLeafNames = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
+       
         referenceTreeLeafNames.sort();
-        comparisonTreeLeafNames.sort();
 
 
-        if (referenceTreeLeafNames == comparisonTreeLeafNames)
+
+        //if (referenceTreeLeafNames)
         {
 
             bool compareFlag = false;
@@ -1092,7 +958,7 @@ void ChartOptions::traitDatasetPickerActionModify()
 
 
 
-            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid() && tempDatasetholderflag && compareFlag && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid())
+            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid() && tempDatasetholderflag && compareFlag )
             {
                 _metaDataSettingsHolder.getTraitDatasetSelectionAction().setDatasets(treeMetaDatasets);
                 _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentText("");
@@ -1186,7 +1052,6 @@ void ChartOptions::traitDatasetPickerActionModify()
 
 void ChartOptions::treeDatasetPickerActionModify()
 {
-    _mainSettingsHolder.getComparisonTreeSelectionAction().setEnabled(false);
     _extraSettingsHolder.setEnabled(false);
     _metaDataSettingsHolder.setEnabled(false);
     _linkerSettingsHolder.setEnabled(false);
@@ -1206,10 +1071,6 @@ void ChartOptions::treeDatasetPickerActionModify()
         bool tempDatasetholderflag = false;
         Datasets treeDatasets;
         QStringList compareDimensions;
-        if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "")
-        {
-            tempDatasetholder = _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset();
-        }
 
 
 
@@ -1252,44 +1113,16 @@ void ChartOptions::treeDatasetPickerActionModify()
 
         }
 
-        if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && tempDatasetholderflag)
-        {
-            //tempDatasetholder = _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset();
-            _mainSettingsHolder.getComparisonTreeSelectionAction().setDatasets(treeDatasets);
-            _mainSettingsHolder.getComparisonTreeSelectionAction().setCurrentText("");
-            _mainSettingsHolder.getComparisonTreeSelectionAction().setCurrentDataset(tempDatasetholder);
 
-        }
-        else
-        {
-
-            _mainSettingsHolder.getComparisonTreeSelectionAction().setDatasets(treeDatasets);
-            _mainSettingsHolder.getComparisonTreeSelectionAction().setCurrentText("");
-            if (_mainSettingsHolder.getComparisonTreeSelectionAction().getNumberOfOptions() > 0)
-            {
-                _mainSettingsHolder.getComparisonTreeSelectionAction().setCurrentIndex(0);
-            }
-
-        }
-
-        //_viewerPlugin.getComparisonTreeDataset() = _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset();
 
     }
-    if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
-        _mainSettingsHolder.getComparisonTreeSelectionAction().setEnabled(true);
+
         _extraSettingsHolder.setEnabled(true);
         _metaDataSettingsHolder.setEnabled(true);
         _linkerSettingsHolder.setEnabled(true);
-        //_updateSettingsHolder.setEnabled(true);
-        //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-        //{
-        //    _updateSettingsHolder.setVisible(true);
-        //}
-        //else
-        //{
-        ////    _updateSettingsHolder.setVisible(false);
-       // }
+
     }
 }
 void ChartOptions::onDataEventTree(mv::DatasetEvent* dataEvent)
@@ -1389,7 +1222,7 @@ void ChartOptions::initLoader()
         {
             _viewerPlugin.getChartWidget().setShowReferenceTree("F");
         }
-        if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+        if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             //TODO: Add trait calculation
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
@@ -1417,7 +1250,7 @@ void ChartOptions::initLoader()
 }
 void ChartOptions::triggerChart()
 {
-    if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
         _mainSettingsHolder.getMainReferenceTreeSelectionAction().setEnabled(true);
         _extraSettingsHolder.setEnabled(true);
@@ -1455,7 +1288,7 @@ void ChartOptions::changeLoader()
 {
 
 
-    if (_mainSettingsHolder.getComparisonTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
         _mainSettingsHolder.getMainReferenceTreeSelectionAction().setEnabled(true);
         _extraSettingsHolder.setEnabled(true);
@@ -1539,8 +1372,7 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
 inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartOptions) :
     VerticalGroupAction(&chartOptions, "Chart Options"),
     _chartOptions(chartOptions),
-    _mainReferenceTreeSelectionAction(this, "Reference tree"),
-    _comparisonTreeSelectionAction(this, "Comparison tree")
+    _mainReferenceTreeSelectionAction(this, "Reference tree")
 
 
 
@@ -1551,7 +1383,7 @@ inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartO
     setIcon(Application::getIconFont("FontAwesome").getIcon("atom"));
     setPopupSizeHint(QSize(350, 0));
     addAction(&_mainReferenceTreeSelectionAction);
-    addAction(&_comparisonTreeSelectionAction);
+
 
 
 
@@ -1580,7 +1412,6 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
 {
     WidgetAction::fromVariantMap(variantMap);
 
-    _mainSettingsHolder.getComparisonTreeSelectionAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getColorMapAction().fromParentVariantMap(variantMap);
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().fromParentVariantMap(variantMap);
@@ -1600,7 +1431,6 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
 QVariantMap ChartOptions::toVariantMap() const
 {
     QVariantMap variantMap = WidgetAction::toVariantMap();
-    _mainSettingsHolder.getComparisonTreeSelectionAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getColorMapAction().insertIntoVariantMap(variantMap);
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().insertIntoVariantMap(variantMap);

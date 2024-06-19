@@ -1,36 +1,44 @@
 <!DOCTYPE html>
 <html oncontextmenu="return false;">
-<head>
+  <head>
     <title>Compare CrossSpeciesComparison Phylo Tree Chart</title>
-    <meta content="utf8" http-equiv="encoding">
+    <meta content="utf8" http-equiv="encoding" />
 
-    <link rel="stylesheet" type="text/css" href="CrossSpeciesComparisonPhyloTreeView_chart.css">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="CrossSpeciesComparisonPhyloTreeView_chart.css"
+    />
     <style></style>
 
     <script>
-        // This prevents zooming in using CTRL + mouse wheel.
-        document.addEventListener('wheel', function (e) {
-            e.ctrlKey && e.preventDefault();
-        }, {
-            passive: false,
-        });
-        //disable shidt + text selection from mouse
-        document.onselectstart = function () {
-            return false;
-        };
+      // This prevents zooming in using CTRL + mouse wheel.
+      document.addEventListener(
+        "wheel",
+        function (e) {
+          e.ctrlKey && e.preventDefault();
+        },
+        {
+          passive: false,
+        }
+      );
+      //disable shidt + text selection from mouse
+      document.onselectstart = function () {
+        return false;
+      };
     </script>
-</head>
-<body oncontextmenu="return false;" style="overflow: hidden;">
+  </head>
+  <body oncontextmenu="return false;" style="overflow: hidden">
     <div id="my_dataviz"></div>
-    <script src="../js_libs/d3.v4.js"></script>
+    <script src="../js_libs/d3.v5.js"></script>
     <script src="../js_libs/d3-scale-chromatic.v1.min.js"></script>
     <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
     <script type="text/javascript" src="../js_libs/qwebchannel.tools.js"></script>
 
-    <script src="DataFile.js"></script>
     <script src="FunctionFile.js"></script>
     <script src="ChartFile.js"></script>
 
     <script src="CrossSpeciesComparisonPhyloTreeView_chart.js"></script>
-</body>
+
+  </body>
 </html>

@@ -10,6 +10,7 @@
     <qresource prefix="CrossSpeciesComparisonPhyloTreeView">
         <file>js_libs/d3.v6.js</file>
 		<file>js_libs/d3.v4.js</file>
+		<file>js_libs/d3.v5.js</file>
 		<file>js_libs/d3-scale-chromatic.v1.min.js</file>
         <file>js_libs/qwebchannel.tools.js</file>
 	</qresource>

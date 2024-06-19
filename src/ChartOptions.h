@@ -126,11 +126,10 @@ public:
     {
     public:
         MainSettingsHolder(ChartOptions& chartOptions);
-        const DatasetPickerAction& getComparisonTreeSelectionAction() const { return _comparisonTreeSelectionAction; }
         const DatasetPickerAction& getMainReferenceTreeSelectionAction() const { return _mainReferenceTreeSelectionAction; }
 
 
-        DatasetPickerAction& getComparisonTreeSelectionAction() { return _comparisonTreeSelectionAction; }
+
         DatasetPickerAction& getMainReferenceTreeSelectionAction() { return _mainReferenceTreeSelectionAction; }
 
 
@@ -138,7 +137,6 @@ public:
 
     protected:
         ChartOptions& _chartOptions;
-        DatasetPickerAction            _comparisonTreeSelectionAction;
         DatasetPickerAction            _mainReferenceTreeSelectionAction;
 
 
