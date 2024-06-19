@@ -40,6 +40,7 @@ var legendYValue = 0;
 var shiftPressed = false;
 var removeLeafSelections = false;
 var altPressed = false;
+var altShiftPressed = false;
 var removeSelection = false;
 var splitGroupsAltKey = false;
 var legendTextContainer = [];
