@@ -123,20 +123,20 @@ function generateVis() {
         .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    /*
+
     let colorScale;
     let scaleType = colorScales[qtColor]
-      ? colorScales[qtColor]
-      : colorScales["default"];
+        ? colorScales[qtColor]
+        : colorScales["default"];
     let domain = colorMirror
-      ? [mindistanceColor, maxdistanceColor]
-      : [maxdistanceColor, mindistanceColor];
-  
+        ? [mindistanceColor, maxdistanceColor]
+        : [maxdistanceColor, mindistanceColor];
+
     if (qtColor === "qualitative") {
-      colorScale = d3.scaleOrdinal(scaleType).domain(domain);
+        colorScale = d3.scaleOrdinal(scaleType).domain(domain);
     } else {
-      colorScale = d3.scaleSequential(scaleType).domain(domain);
-    }*/
+        colorScale = d3.scaleSequential(scaleType).domain(domain);
+    }
     var i = 0,
         duration = 750,
         root;
@@ -283,7 +283,7 @@ function generateVis() {
                 ) {
                     return traitValueColorContainer[d.data.name];
                 } else {
-                    return "black"; //colorScale(d.data.score);
+                    return colorScale(d.data.score);
                 }
             })
             .append("title")
