@@ -110,7 +110,7 @@ function generateVis() {
         top: 0,
         right: 0,
         bottom: 20,
-        left: 27,
+        left: 30,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -123,20 +123,20 @@ function generateVis() {
         .attr("height", height)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    /*
+
     let colorScale;
     let scaleType = colorScales[qtColor]
-      ? colorScales[qtColor]
-      : colorScales["default"];
+        ? colorScales[qtColor]
+        : colorScales["default"];
     let domain = colorMirror
-      ? [mindistanceColor, maxdistanceColor]
-      : [maxdistanceColor, mindistanceColor];
-  
+        ? [mindistanceColor, maxdistanceColor]
+        : [maxdistanceColor, mindistanceColor];
+
     if (qtColor === "qualitative") {
-      colorScale = d3.scaleOrdinal(scaleType).domain(domain);
+        colorScale = d3.scaleOrdinal(scaleType).domain(domain);
     } else {
-      colorScale = d3.scaleSequential(scaleType).domain(domain);
-    }*/
+        colorScale = d3.scaleSequential(scaleType).domain(domain);
+    }
     var i = 0,
         duration = 750,
         root;
@@ -283,7 +283,7 @@ function generateVis() {
                 ) {
                     return traitValueColorContainer[d.data.name];
                 } else {
-                    return "black"; //colorScale(d.data.score);
+                    return colorScale(d.data.score);
                 }
             })
             .append("title")
@@ -341,9 +341,9 @@ function generateVis() {
             .append("text")
             .attr("id", "nodeScore")
             .attr("y", function (d) {
-                return isRightChild(d) ? 9 : -4;
+                return isRightChild(d) ? 10 : -5;
             })
-            .attr("x", -20)
+            .attr("x", -24)
             .attr("dy", ".10em")
             .attr("dx", "-.55em")
             .style("font-size", "10px")
@@ -1152,11 +1152,15 @@ L ${d.y} ${d.x}`;
         function getFontWeight(d) {
             return speciesSelected.includes(d.data.name) ? "bold" : "normal";
         }
+        function getFontSize(d) {
+            return speciesSelected.includes(d.data.name) ? 14 : 12;
+        }
         // Update styles for .node text and .species-names text/path
         svg
             .selectAll(".node text, .species-names text, .species-names path")
             .style("fill", getNodeFillColor)
             .style("font-weight", getFontWeight)
+            .style("font-size", getFontSize)
             .filter(".species-names path")
             .style("stroke", getPathStrokeColor)
             .style("stroke-width", getStrokeWidth);

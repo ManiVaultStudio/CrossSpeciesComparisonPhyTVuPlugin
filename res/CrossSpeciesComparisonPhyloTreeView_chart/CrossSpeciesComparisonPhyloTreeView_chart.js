@@ -31,8 +31,8 @@ var speciesSelected = [];
 var nodesWithChildren = [];
 var showTestTree = 1;
 var m_aLoadedTrees = [];
-//var mindistanceColor = 0;
-//var maxdistanceColor = 1;
+var mindistanceColor = 0;
+var maxdistanceColor = 1;
 var maxNameLength = 10;
 var symbolsPerLine = 10;
 var legendXValue = 0;
@@ -284,10 +284,10 @@ function drawChart(jsonValue) {
     dataReference = copyDataWithCollapsedFlag(dataVariableReference);
     averageMeanValues(dataReference);
 
-    //const allScores = collectScores(dataReference);
+    const allScores = collectScores(dataReference);
     // Step 3: Calculate min and max scores
-    //mindistanceColor = d3.min(allScores);
-    //maxdistanceColor = d3.max(allScores);
+    mindistanceColor = d3.min(allScores);
+    maxdistanceColor = d3.max(allScores);
     leftSpeciesSelected = [];
     rightSpeciesSelected = [];
     speciesSelected = [];
