@@ -827,7 +827,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _metaDataSettingsHolder.getColorTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
-    _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
+    _metaDataSettingsHolder.getDisableTraitOptions().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getShowReferenceTreeAction().fromParentVariantMap(variantMap);
@@ -847,7 +847,7 @@ QVariantMap ChartOptions::toVariantMap() const
     _metaDataSettingsHolder.getColorTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
-    _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
+    _metaDataSettingsHolder.getDisableTraitOptions().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getShowReferenceTreeAction().insertIntoVariantMap(variantMap);
