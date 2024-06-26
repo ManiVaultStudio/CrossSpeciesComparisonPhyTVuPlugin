@@ -14,10 +14,21 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include <QStringList>
+#include <QSet>
 #include <QJsonValue>
 using namespace mv;
 using namespace mv::gui;
+
+
+bool areStringListsEqual(const QStringList& list1, const QStringList& list2) {
+    // Convert QStringList to QSet for efficient comparison using QSet constructor
+    QSet<QString> set1(list1.begin(), list1.end());
+    QSet<QString> set2(list2.begin(), list2.end());
+
+    // Compare the sets
+    return set1 == set2;
+}
 
 ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core) :
     WidgetAction(&CrossSpeciesComparisonPhyloTreeViewPlugin, "CrossSpeciesComparisonPhyloTreeViewPlugin Chart"),
@@ -37,6 +48,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _metaDataSettingsHolder.getColorTraitAction().setSerializationName("CSCPTV:Color type trait selection");
     _metaDataSettingsHolder.getNumericTraitAction().setSerializationName("Numeric type trait selection");
     _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
+    _metaDataSettingsHolder.getDisableTraitOptions().setSerializationName("CSCPTV:Disable Trait Options");
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
     _extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSCPTV:Show reference tree selection");
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
@@ -90,7 +102,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _metaDataSettingsHolder.getStringTraitAction().initialize(QStringList({  }));
 
 
-
+    _metaDataSettingsHolder.getStringTraitAction().setDefaultWidgetFlags(ToggleAction::CheckBox);
+    _metaDataSettingsHolder.getStringTraitAction().setChecked(false);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
     _linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
@@ -170,8 +183,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
     const auto traitDatasetSelection = [this]() -> void
         {
-
-            auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
+            traitDatasetModify();
+           /* auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
             auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
             if (dataset.isValid() && datasetText != "")
             {
@@ -218,7 +231,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
                 }
 
             }
-
+            */
 
 
         };
@@ -509,114 +522,46 @@ void ChartOptions::numericTraitCalculation()
     }
 
 }
-
-/*
-void ChartOptions::traitDatasetPickerActionModify()
+void ChartOptions::disableTraitOptions()
 {
+    if (_metaDataSettingsHolder.getStringTraitAction().isChecked())
+    {
+        //_viewerPlugin.getChartWidget().setDisableTraitOptions("True");
+        
+    }
+    else
+    {
+       // _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
+    }
+
+
+}
+
+void ChartOptions::traitDatasetModify()
+{
+    if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "")
+    {
+        Dataset<CrossSpeciesComparisonTreeMeta> metaDataDataset = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getId());
+
+        QStringList metaDataLeafNames = metaDataDataset->getTreeMetaLeafNames();
+        if (metaDataLeafNames.size() > 0)
+        {
+
     if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
     {
         QStringList referenceTreeLeafNames = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
        
-        referenceTreeLeafNames.sort();
-
-
-
-        //if (referenceTreeLeafNames)
+        if (areStringListsEqual(referenceTreeLeafNames, metaDataLeafNames))
         {
-
-            bool compareFlag = false;
-            Dataset<CrossSpeciesComparisonTreeMeta> tempDatasetholder;
-            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "")
-            {
-                tempDatasetholder = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
-                compareFlag = true;
-            }
-
-            Datasets treeMetaDatasets;
-            bool tempDatasetholderflag = false;
+            _viewerPlugin.getMetaInfoDataset().setDataset(metaDataDataset.getDataset());
             std::vector<QString> compareDimensions;
 
-
-
-            auto datasets = mv::data().getAllDatasets(std::vector<DataType>({ CrossSpeciesComparisonTreeMetaType }));
-
-
-            for (auto dataset : datasets)
-            {
-                if (dataset->getDataType() == CrossSpeciesComparisonTreeMetaType)
-                {
-                    Dataset<CrossSpeciesComparisonTreeMeta> checkDataset = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset.getDatasetId());
-
-                    QStringList tempLeafNames = checkDataset->getTreeMetaLeafNames();
-                    tempLeafNames.sort();
-                    if (referenceTreeLeafNames == tempLeafNames)
-                    {
-                        treeMetaDatasets.append(dataset);
-                        if (compareFlag)
-                        {
-                            if (dataset.getDatasetId() == tempDatasetholder.getDatasetId())
-                            {
-                                tempDatasetholderflag = true;
-                            }
-                        }
-
-
-                    }
-
-                }
-
-            }
-
-
-
-
-
-
-
-
-            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid() && tempDatasetholderflag && compareFlag )
-            {
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setDatasets(treeMetaDatasets);
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentText("");
-                if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getNumberOfOptions() > 0)
-                {
-                    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentDataset(tempDatasetholder);
-
-                    if (tempDatasetholder.isValid())
-                    {
-                        _viewerPlugin.getMetaInfoDataset().setDataset(tempDatasetholder.getDataset());
-
-                    }
-
-                }
-
-
-
-            }
-            else
             {
 
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setDatasets(treeMetaDatasets);
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentText("");
-                if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getNumberOfOptions() > 0)
+
+                if (metaDataDataset.isValid())
                 {
-                    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentIndex(0);
-
-                }
-
-
-            }
-
-            //TODO : Need to populate the color, string and the numeric options
-            auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
-            auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
-            if (dataset.isValid() && datasetText != "")
-            {
-
-                auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
-                if (data.isValid())
-                {
-                    auto propertyString = data->getTreeMetaPropertyNames();
+                    auto propertyString = metaDataDataset->getTreeMetaPropertyNames();
                     QStringList propertyOptionsString = extractTraitPropertyOptionValues("String", propertyString);
                     QStringList propertyOptionsNumeric = extractTraitPropertyOptionValues("Numeric", propertyString);
                     QStringList propertyOptionsColor = extractTraitPropertyOptionValues("Color", propertyString);
@@ -657,12 +602,23 @@ void ChartOptions::traitDatasetPickerActionModify()
 
 
         }
-
+        else
+        {
+            qDebug()<<"The leaf names of the reference tree and the meta data tree do not match";
+        }
     }
-
+    else
+    {
+        qDebug()<<"Tree Dataset not valid";
+    }
+    }
+    }
+    else
+    {
+        qDebug()<<"Meta Data Dataset not valid";
+        }
 }
 
-*/
 void ChartOptions::onDataEventTree(mv::DatasetEvent* dataEvent)
 {
 
@@ -790,7 +746,8 @@ inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions
     _traitDatasetSelectionAction(this, "Trait dataset"),
     _colorTrait(this, "Color type trait"),
     _numericTrait(this, "Numeric type trait"),
-    _stringTrait(this, "String type trait")
+    _stringTrait(this, "String type trait"),
+    _disableTraitOptions(this, "Disable Trait Options")
 
 {
     setText("Metadata Options");
@@ -870,6 +827,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _metaDataSettingsHolder.getColorTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
+    _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getShowReferenceTreeAction().fromParentVariantMap(variantMap);
@@ -888,6 +846,7 @@ QVariantMap ChartOptions::toVariantMap() const
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getColorTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().insertIntoVariantMap(variantMap);
+    _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().insertIntoVariantMap(variantMap);

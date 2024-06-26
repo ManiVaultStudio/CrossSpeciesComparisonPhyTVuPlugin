@@ -84,12 +84,14 @@ public:
         const OptionAction& getColorTraitAction() const { return _colorTrait; }
         const OptionAction& getNumericTraitAction() const { return _numericTrait; }
         const OptionAction& getStringTraitAction() const { return _stringTrait; }
+        const ToggleAction& getDisableTraitOptions() const { return _disableTraitOptions; }
 
 
         DatasetPickerAction& getTraitDatasetSelectionAction() { return _traitDatasetSelectionAction; }
         OptionAction& getColorTraitAction() { return _colorTrait; }
         OptionAction& getNumericTraitAction() { return _numericTrait; }
         OptionAction& getStringTraitAction() { return _stringTrait; }
+        ToggleAction& getDisableTraitOptions() { return _disableTraitOptions; }
 
     protected:
         ChartOptions& _chartOptions;
@@ -98,6 +100,7 @@ public:
         OptionAction               _colorTrait;
         OptionAction                _numericTrait;
         OptionAction                _stringTrait;
+        ToggleAction                _disableTraitOptions;
 
     };
 
@@ -176,7 +179,7 @@ public:
 private:
     //void createJsonStringCluster();
     std::string extractFormatData(QString datasetValue);
-
+    void traitDatasetModify();
 
 public: // Action getters
     ExtraSettingsHolder& getExtraSettingsHolder() { return _extraSettingsHolder; }
@@ -186,6 +189,7 @@ public: // Action getters
     UpdateSettingsHolder& getUpdateSettingsHolder() { return _updateSettingsHolder; }
     QCheckBox& getShowDataDrop() { return _showDataDrop; }
 public:
+    void disableTraitOptions();
     void initLoader();
     void changeLoader();
     void updateChartDataJS();
