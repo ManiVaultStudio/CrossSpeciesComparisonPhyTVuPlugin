@@ -176,9 +176,6 @@ public:
 private:
     //void createJsonStringCluster();
     std::string extractFormatData(QString datasetValue);
-    void referenceDatasetPickerActionModify();
-    void traitDatasetPickerActionModify();
-    void treeDatasetPickerActionModify();
 
 
 public: // Action getters
