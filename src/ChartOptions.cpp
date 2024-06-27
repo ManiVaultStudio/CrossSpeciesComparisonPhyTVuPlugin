@@ -14,10 +14,21 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-
+#include <QStringList>
+#include <QSet>
 #include <QJsonValue>
 using namespace mv;
 using namespace mv::gui;
+
+
+bool areStringListsEqual(const QStringList& list1, const QStringList& list2) {
+    // Convert QStringList to QSet for efficient comparison using QSet constructor
+    QSet<QString> set1(list1.begin(), list1.end());
+    QSet<QString> set2(list2.begin(), list2.end());
+
+    // Compare the sets
+    return set1 == set2;
+}
 
 ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core) :
     WidgetAction(&CrossSpeciesComparisonPhyloTreeViewPlugin, "CrossSpeciesComparisonPhyloTreeViewPlugin Chart"),
@@ -37,7 +48,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _metaDataSettingsHolder.getColorTraitAction().setSerializationName("CSCPTV:Color type trait selection");
     _metaDataSettingsHolder.getNumericTraitAction().setSerializationName("Numeric type trait selection");
     _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
-    //_extraSettingsHolder.getClusteringMethodAction().setSerializationName("ClusterMethod");
+    _metaDataSettingsHolder.getDisableTraitOptions().setSerializationName("CSCPTV:Disable Trait Options");
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
     _extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSCPTV:Show reference tree selection");
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
@@ -49,8 +60,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
     _linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSCPTV:Reembedding Options");
 
-    //_extraSettingsHolder.getNumOfClustersAction().setSerializationName("Number of clusters");
-
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetAdded));
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetRemoved));
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetChildAdded));
@@ -60,68 +69,20 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _extraSettingsHolder.setEnabled(false);
     _metaDataSettingsHolder.setEnabled(false);
     _linkerSettingsHolder.setEnabled(false);
-    //_updateSettingsHolder.setEnabled(false);
-    //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-    //{
-        //_updateSettingsHolder.setVisible(true);
-    //}
-    //else
-    //{
-        //_updateSettingsHolder.setVisible(false);
-    //}
+    _mainSettingsHolder.getMainReferenceTreeSelectionAction().setFilterFunction([this](mv::Dataset<DatasetImpl> dataset) -> bool {
+        return dataset->getDataType() == CrossSpeciesComparisonTreeType;
+        });
+    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setFilterFunction([this](mv::Dataset<DatasetImpl> dataset) -> bool {
+        return dataset->getDataType() == CrossSpeciesComparisonTreeMetaType;
+        });
+
 
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&ChartOptions::onDataEventTree, this, std::placeholders::_1));
     _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&ChartOptions::onDataEventTreeMeta, this, std::placeholders::_1));
 
 
-    //_mainSettingsHolder.getMainReferenceTreeSelectionAction().setShowFullPathName(false);
-    //_mainSettingsHolder.getComparisonTreeSelectionAction().setShowFullPathName(false);
- 
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDefaultWidgetFlags(OptionAction::ComboBox);
-    /*_extraSettingsHolder.getNumOfClustersAction().setDefaultWidgetFlags(DecimalAction::SpinBox| DecimalAction::Slider);
-    _extraSettingsHolder.getNumOfClustersAction().setMaximum(0);
-    _extraSettingsHolder.getNumOfClustersAction().setMinimum(0);
-    _extraSettingsHolder.getNumOfClustersAction().setValue(0);*/
-    /*
-    _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDatasetsFilterFunction([this](const mv::Datasets& datasets) ->mv::Datasets {
-        Datasets treeDatasets;
-        if (!datasets.isEmpty())
-        {
 
-            for (auto dataset : datasets)
-            {
-                if (dataset->getDataType() == PointType)
-                {
-                    Dataset<Points> checkDataset = mv::data().getDataset(dataset.getDatasetId());// dataset->getFullDataset<Points>();
-
-                    auto tempDimensionNames = checkDataset->getDimensionNames();
-                    if (tempDimensionNames.size() == 1)
-                    {
-                        if (tempDimensionNames[0] == "CrossspeciesComparisonTreeDataset")
-                        {
-                            treeDatasets << dataset;
-
-                        }
-
-                    }
-                }
-
-            }
-
-        }
-
-
-        return treeDatasets;
-        });
-    */
-    //_metaDataSettingsHolder.getTraitDatasetSelectionAction().setShowFullPathName(false);
-
-
-
-
-
-
-    //Datasets treeDatasets;
 
     _extraSettingsHolder.getColorMapAction().getSettingsAction().getColorMapAction().getDiscretizeAction().setDisabled(true);
     _extraSettingsHolder.getColorMapAction().getSettingsAction().getColorMapAction().getDiscretizeAction().setVisible(false);
@@ -141,7 +102,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     _metaDataSettingsHolder.getStringTraitAction().initialize(QStringList({  }));
 
 
-
+    _metaDataSettingsHolder.getStringTraitAction().setDefaultWidgetFlags(ToggleAction::CheckBox);
+    _metaDataSettingsHolder.getStringTraitAction().setChecked(false);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
     _linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
@@ -159,19 +121,12 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
     const auto referenceTreeSelection = [this]() -> void
         {
-
-            treeDatasetPickerActionModify();
-            traitDatasetPickerActionModify();
             if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
                 auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
                 if (temp.isValid())
                 {
                     _viewerPlugin.getReferenceTreeDataset().setDataset(temp.getDataset());
-
-                    //_extraSettingsHolder.getNumOfClustersAction().setMaximum(temp->getTreeSpeciesNames().size());
-                    //_extraSettingsHolder.getNumOfClustersAction().setMinimum(1);
-                    //_extraSettingsHolder.getNumOfClustersAction().setValue(temp->getTreeSpeciesNames().size() - 1);
                 }
 
 
@@ -228,64 +183,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
 
     const auto traitDatasetSelection = [this]() -> void
         {
-            //TODO :
-
-/*
-            if (_extraSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _extraSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid())
-            {
-                QStringList optionvalues = {};
-                _extraSettingsHolder.getTraitSelectionAction().initialize(optionvalues);
-
-                auto childrendatasetsPoint1 = _extraSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getChildren();
-                for (auto childPoint1 : childrendatasetsPoint1)
-                {
-                    if (childPoint1->getDataType() == PointType)
-                    {
-                        auto checkPointDataset1 = mv::data().getDataset<Points>(childPoint1.getDatasetId());
-                        auto checkPointDimensions1 = checkPointDataset1->getDimensionNames();
-
-                        auto childrendatasetsPoint2 = checkPointDataset1->getChildren();
-                        for (auto childPoint2 : childrendatasetsPoint1)
-                        {
-                            if (childPoint2->getDataType() == ClusterType)
-                            {
-                                auto checkPClusterDataset2 = mv::data().getDataset<Clusters>(childPoint2.getDatasetId());
-                                auto checkClusternames = checkPClusterDataset2->getClusters();
-                                for(auto cluster: checkClusternames)
-                                {
-                                    //if(cluster.getName()!="")
-                                    {
-                                        optionvalues.append(cluster.getName());
-                                    }
-                                }
-
-                            }
-                        }
-
-                    }
-                }
-                _extraSettingsHolder.getTraitSelectionAction().initialize(optionvalues);
-                if (_extraSettingsHolder.getTraitSelectionAction().getNumberOfOptions() > 0)
-                {
-                    _extraSettingsHolder.getTraitSelectionAction().setCurrentIndex(0);
-                }
-
-                if (_extraSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid())
-                {
-                    auto temp = mv::data().getDataset<Points>(_extraSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getId());
-                    if (temp.isValid())
-                    {
-                        _viewerPlugin.getMetaInfoDataset().setDataset(temp.getDataset());
-                        _extraSettingsHolder.getNumOfClustersAction().setMaximum(temp->getNumDimensions());
-                        _extraSettingsHolder.getNumOfClustersAction().setMinimum(1);
-                        _extraSettingsHolder.getNumOfClustersAction().setValue(temp->getNumDimensions() - 1);
-                }
-                }
-
-            }
-
-            */
-            auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
+            traitDatasetModify();
+           /* auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
             auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
             if (dataset.isValid() && datasetText != "")
             {
@@ -332,7 +231,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
                 }
 
             }
-
+            */
 
 
         };
@@ -390,7 +289,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeci
     connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
 
 
-    referenceDatasetPickerActionModify();
 }
 
 
@@ -493,229 +391,22 @@ std::string createDendrogramJson(int* merge, std::vector<QString> dimensionNames
         nodes[n + i]["children"].push_back(nodes[right]);
         nodes[right] = {};  // Clear the node after using it
     }
-    // Build internal nodes
-    /*for (int i = 0; i < n - 1; i++) {
-        QString description = "Merge Step " + QString::number(i + 1) + ": ";
-        int cluster1 = merge[2 * i];
-        int cluster2 = merge[2 * i + 1];
 
-        // Decode cluster1
-        if (cluster1 < 0) {
-            description += dimensionNames[-cluster1 - 1];
-        }
-        else {
-            description += "Cluster formed at step " + QString::number(cluster1);
-        }
-        description += " merged with ";
-
-        // Decode cluster2
-        if (cluster2 < 0) {
-            description += dimensionNames[-cluster2 - 1];
-        }
-        else {
-            description += "Cluster formed at step " + QString::number(cluster2);
-        }
-
-        nodes[n + i] = createInternalNode(i + 1, 1.0, 2, description);  // Adjust score and width as needed
-        int left = cluster1 < 0 ? -cluster1 - 1 : cluster1 + n - 1;
-        int right = cluster2 < 0 ? -cluster2 - 1 : cluster2 + n - 1;
-        nodes[n + i]["children"].push_back(nodes[left]);
-        nodes[left] = {};  // Clear the node after using it
-        nodes[n + i]["children"].push_back(nodes[right]);
-        nodes[right] = {};  // Clear the node after using it
-    }*/
 
     nlohmann::json root = nodes.back();
     std::string jsonString = root.dump(4);
 
-    //std::cout << jsonString << std::endl;
     return jsonString;
 }
 
 std::string ChartOptions::extractFormatData(QString datasetValue)
 {
-    //std::string valueStringReference = "";
+
     Dataset<CrossSpeciesComparisonTree> dataset = mv::data().getDataset<CrossSpeciesComparisonTree>(datasetValue);
     auto temp = dataset->getTreeData();
     std::string valueStringReference = QJsonDocument(temp).toJson().toStdString();
 
-
-    /*
-    if(dataset->getNumDimensions()== dataset->getNumPoints())
-  {
-
-    auto dimensionNames = dataset->getDimensionNames();
-    int n = dataset->getNumDimensions();
-
-    std::vector<std::vector<float>> distanceMatrix(n, std::vector<float>(n));
-    int ittr = 0;
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            distanceMatrix[i][j]=dataset->getValueAt(ittr) ;
-            ittr++;
-        }
-    }
-    // Print the distanceMatrix in a n*n format
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            std::cout << distanceMatrix[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-
-    double* distmat = new double[(n * (n - 1)) / 2];
-    int k = 0;
-
-    for (int i = 0; i < n; ++i) {
-        for (int j = i + 1; j < n; ++j) {
-            distmat[k++] = distanceMatrix[i][j];
-        }
-    }
-
-    // Print the condensed distance matrix in a triangular format
-    k = 0;
-    for (int i = 0; i < n - 1; ++i) {
-        for (int j = 0; j < i + 1; ++j) {
-            std::cout << "   ";
-        }
-        for (int j = i + 1; j < n; ++j) {
-            std::cout << distmat[k++] << " ";
-        }
-        std::cout << "\n";
-    }
-
-
-
-    // Clustering (assuming hclust_fast, cutree_k, and cutree_cdist are defined)
-
-
-        int method = 0;
-        if(_extraSettingsHolder.getClusteringMethodAction().getCurrentText()=="single")
-        {
-            method = 0;
-
-        }
-        else if(_extraSettingsHolder.getClusteringMethodAction().getCurrentText() == "complete")
-        {
-            method = 1;
-        }
-        else if (_extraSettingsHolder.getClusteringMethodAction().getCurrentText() == "average")
-        {
-            method = 2;
-        }
-        else if (_extraSettingsHolder.getClusteringMethodAction().getCurrentText() == "median")
-        {
-            method = 3;
-        }
-    int* merge = new int[2 * (n - 1)];
-    double* height = new double[n - 1];
-    hclust_fast(n, distmat, method, merge, height);
-    */
-
-    /* https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/hclust, https://github.com/cdalitz/hclust-cpp/tree/master* /
-        /*
-         *
-         *
-merge: an n-1 by 2 matrix. Row i of merge describes the merging of clusters at step i of the clustering. If an element j in the row is negative, then observation -j was merged at this stage. If j is positive then the merge was with the cluster formed at the (earlier) stage j of the algorithm. Thus negative entries in merge indicate agglomerations of singletons, and positive entries indicate agglomerations of non-singletons.
-height: a set of n-1 real values (non-decreasing for ultrametric trees). The clustering height: that is, the value of the criterion associated with the clustering method for the particular agglomeration.
-order: a vector giving the permutation of the original observations suitable for plotting, in the sense that a cluster plot using this ordering and matrix merge will not have crossings of the branches.
-labels: labels for each of the objects being clustered.
-method: the cluster method that has been used.
-     */
-     /* int* labels = new int[n];
-      //cutree_k(n, merge, _extraSettingsHolder.getNumOfClustersAction().getValue(), labels);
-      cutree_cdist(n, merge, height, 0, labels);*/
-      /*
-      // Print labels
-      for (int i = 0; i < n; i++) {
-          std::cout << dimensionNames.at(i).toStdString()<< " belongs to cluster " << labels[i] << std::endl;
-      }
-      // stop clustering at step with custer distance >= cdist
-      //cutree_cdist(n, merge, height, 0, labels);
-      // Print merge matrix
-      std::cout << "Merge matrix:" << std::endl;
-      for (int i = 0; i < n - 1; i++) {
-          std::cout << "Merge " << i << ": " << merge[2 * i] << " and " << merge[2 * i + 1]
-              << " at height " << height[i] << std::endl;
-      } */
-      // inspect dendrogram ----------------------------------------begin
-      /*
-      std::cout << "Clustering method: " << _extraSettingsHolder.getClusteringMethodAction().getCurrentText() .toStdString()<< std::endl;
-      std::cout << "Number of clusters: " << std::to_string(_extraSettingsHolder.getNumOfClustersAction().getValue()) << std::endl;
-      for (int i = 0; i < n - 1; ++i) { // For each merge step
-          int cluster1 = merge[2 * i];
-          int cluster2 = merge[2 * i + 1];
-
-          std::cout << "Merge Step " << (i + 1) << ": ";
-
-          // Decode cluster1
-          if (cluster1 < 0) {
-              std::cout << dimensionNames[-cluster1 - 1].toStdString();
-          }
-          else {
-              std::cout << "Cluster formed at step " << cluster1;
-          }
-          std::cout << " merged with ";
-
-          // Decode cluster2
-          if (cluster2 < 0) {
-              std::cout << dimensionNames[-cluster2 - 1].toStdString();
-          }
-          else {
-              std::cout << "Cluster formed at step " << cluster2;
-          }
-
-          std::cout << std::endl;
-      }
-      // inspect dendrogram ----------------------------------------end
-      std::cout << "\n**************************************\n";
-      std::string valueStringReference =createDendrogramJson( merge,dimensionNames,  n);
-
-      // Clean up memory
-      delete[] distmat;
-      delete[] merge;
-      delete[] height;
-      delete[] labels;
-
-      */
-      /*
-          std::map<std::string, std::string> referenceValues;
-          int numTemp = 0;
-          for (const QString& dimensionNameValue : dimensionNames)
-          {
-              std::string tempDimensionNameValue = dimensionNameValue.toStdString();
-              std::string tempValue = ":[";
-              std::vector<float> dimensionValuesTemp;
-              dataset->extractDataForDimension(dimensionValuesTemp, numTemp);
-              numTemp = numTemp + 1;
-              for (int i = 0; i < dimensionValuesTemp.size(); i++)
-              {
-                  tempValue = tempValue + std::to_string(int(dimensionValuesTemp[i]));
-                  tempValue = tempValue + ",";
-              }
-              if (!tempValue.empty()) {
-                  //qDebug() << "********************************Four*************************";
-                  // Remove the last character using erase
-                  tempValue.erase(tempValue.end() - 1);
-              }
-              tempValue = tempValue + "]";
-              referenceValues[tempDimensionNameValue] = tempValue;
-
-          }
-          std::string valueStringReference = "{";
-          for (const auto& pair : referenceValues) {
-              valueStringReference += "\"" + pair.first + "\"" + pair.second + ",";
-          }
-
-          // Remove the trailing comma and close the JSON string
-          valueStringReference.pop_back();
-          valueStringReference += "}";
-              */
     return valueStringReference;
-
-    //}
 
 }
 
@@ -723,11 +414,11 @@ QStringList ChartOptions::extractTraitPropertyOptionValues(QString propertyType,
     QStringList lines = propertyString.split("\n");
     for (QString line : lines) {
         if (line.startsWith(propertyType)) {
-            line = line.remove(0, propertyType.length() + 1); // remove the property type and the colon
+            line = line.remove(0, propertyType.length() + 1); 
             return line.split(", ");
         }
     }
-    return QStringList(); // return an empty list if the property type is not found
+    return QStringList(); 
 }
 
 
@@ -743,8 +434,6 @@ QString extractMetaOptionValues(QString key, QJsonObject data) {
             result.insert(it.key(), QJsonObject({ {key, it.value().toObject().value(key)} }));
         }
     }
-
-    // Convert the result to a JSON string and return it
     return QString(QJsonDocument(result).toJson(QJsonDocument::Compact));
 }
 
@@ -783,7 +472,6 @@ void ChartOptions::colorTraitCalculation()
         {
             auto dataString = data->getTreeMetaData();
             QString metaOptions = filterData(value, "Color", dataString);
-            //qDebug() << "\n\npropertyOptionsColor =" << metaOptions;
             _viewerPlugin.getChartWidget().setTraitColor(metaOptions);
         }
 
@@ -807,8 +495,6 @@ void ChartOptions::stringTraitCalculation()
             auto dataString = data->getTreeMetaData();
 
             QString metaOptions = filterData(value, "String", dataString);
-
-            //qDebug() << "\n\npropertyOptionsString =" << metaOptions;
             _viewerPlugin.getChartWidget().setTraitString(metaOptions);
         }
 
@@ -830,177 +516,52 @@ void ChartOptions::numericTraitCalculation()
             auto dataString = data->getTreeMetaData();
             QString metaOptions = filterData(value, "Numeric", dataString);
 
-            //qDebug() << "\n\npropertyOptionsNumeric =" << metaOptions;
-
             _viewerPlugin.getChartWidget().setTraitNumeric(metaOptions);
         }
 
     }
 
 }
-
-void ChartOptions::referenceDatasetPickerActionModify()
+void ChartOptions::disableTraitOptions()
 {
-    Datasets treeDatasets;
-    Dataset<CrossSpeciesComparisonTree> currectDataset;
-    auto datasets = mv::data().getAllDatasets(std::vector<DataType>({ CrossSpeciesComparisonTreeType }));
-
-    if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    if (_metaDataSettingsHolder.getStringTraitAction().isChecked())
     {
-        currectDataset = _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset();
-
+        //_viewerPlugin.getChartWidget().setDisableTraitOptions("True");
+        
+    }
+    else
+    {
+       // _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
     }
 
-    bool available = false;
-
-    if (!datasets.isEmpty())
-    {
-
-        for (auto dataset : datasets)
-        {
-            if (dataset->getDataType() == CrossSpeciesComparisonTreeType)
-            {
-
-                treeDatasets << dataset;
-                if (dataset == currectDataset)
-                {
-                    available = true;
-                }
-
-            }
-        }
-        if (available)
-        {
-            _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDatasets(treeDatasets);
-            _mainSettingsHolder.getMainReferenceTreeSelectionAction().setCurrentDataset(currectDataset);
-        }
-        else
-        {
-            _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDatasets(treeDatasets);
-            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getNumberOfOptions() > 0)
-            {
-                //_mainSettingsHolder.getMainReferenceTreeSelectionAction().setCurrentIndex(0);
-            }
-
-
-
-        }
-
-        /*
-
-        */
-
-
-    }
 
 }
 
-void ChartOptions::traitDatasetPickerActionModify()
+void ChartOptions::traitDatasetModify()
 {
+    if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "")
+    {
+        Dataset<CrossSpeciesComparisonTreeMeta> metaDataDataset = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getId());
+
+        QStringList metaDataLeafNames = metaDataDataset->getTreeMetaLeafNames();
+        if (metaDataLeafNames.size() > 0)
+        {
+
     if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
     {
         QStringList referenceTreeLeafNames = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
        
-        referenceTreeLeafNames.sort();
-
-
-
-        //if (referenceTreeLeafNames)
+        if (areStringListsEqual(referenceTreeLeafNames, metaDataLeafNames))
         {
-
-            bool compareFlag = false;
-            Dataset<CrossSpeciesComparisonTreeMeta> tempDatasetholder;
-            if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "")
-            {
-                tempDatasetholder = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
-                compareFlag = true;
-            }
-
-            Datasets treeMetaDatasets;
-            bool tempDatasetholderflag = false;
+            _viewerPlugin.getMetaInfoDataset().setDataset(metaDataDataset.getDataset());
             std::vector<QString> compareDimensions;
 
-
-
-            auto datasets = mv::data().getAllDatasets(std::vector<DataType>({ CrossSpeciesComparisonTreeMetaType }));
-
-
-            for (auto dataset : datasets)
-            {
-                if (dataset->getDataType() == CrossSpeciesComparisonTreeMetaType)
-                {
-                    Dataset<CrossSpeciesComparisonTreeMeta> checkDataset = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset.getDatasetId());
-
-                    QStringList tempLeafNames = checkDataset->getTreeMetaLeafNames();
-                    tempLeafNames.sort();
-                    if (referenceTreeLeafNames == tempLeafNames)
-                    {
-                        treeMetaDatasets.append(dataset);
-                        if (compareFlag)
-                        {
-                            if (dataset.getDatasetId() == tempDatasetholder.getDatasetId())
-                            {
-                                tempDatasetholderflag = true;
-                            }
-                        }
-
-
-                    }
-
-                }
-
-            }
-
-
-
-
-
-
-
-
-            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid() && tempDatasetholderflag && compareFlag )
-            {
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setDatasets(treeMetaDatasets);
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentText("");
-                if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getNumberOfOptions() > 0)
-                {
-                    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentDataset(tempDatasetholder);
-
-                    if (tempDatasetholder.isValid())
-                    {
-                        _viewerPlugin.getMetaInfoDataset().setDataset(tempDatasetholder.getDataset());
-
-                    }
-
-                }
-
-
-
-            }
-            else
             {
 
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setDatasets(treeMetaDatasets);
-                _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentText("");
-                if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getNumberOfOptions() > 0)
+
+                if (metaDataDataset.isValid())
                 {
-                    _metaDataSettingsHolder.getTraitDatasetSelectionAction().setCurrentIndex(0);
-
-                }
-
-
-            }
-
-            //TODO : Need to populate the color, string and the numeric options
-            auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
-            auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
-            if (dataset.isValid() && datasetText != "")
-            {
-
-                auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
-                if (data.isValid())
-                {
-                    auto propertyString = data->getTreeMetaPropertyNames();
+                    auto propertyString = metaDataDataset->getTreeMetaPropertyNames();
                     QStringList propertyOptionsString = extractTraitPropertyOptionValues("String", propertyString);
                     QStringList propertyOptionsNumeric = extractTraitPropertyOptionValues("Numeric", propertyString);
                     QStringList propertyOptionsColor = extractTraitPropertyOptionValues("Color", propertyString);
@@ -1041,161 +602,33 @@ void ChartOptions::traitDatasetPickerActionModify()
 
 
         }
-
-    }
-
-}
-
-
-
-
-
-void ChartOptions::treeDatasetPickerActionModify()
-{
-    _extraSettingsHolder.setEnabled(false);
-    _metaDataSettingsHolder.setEnabled(false);
-    _linkerSettingsHolder.setEnabled(false);
-    //_updateSettingsHolder.setEnabled(false);
-    //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-    //{
-    //    _updateSettingsHolder.setVisible(true);
-    //}
-    //else
-    //{
-    //    _updateSettingsHolder.setVisible(false);
-    //}
-
-    if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
-    {
-        Dataset<CrossSpeciesComparisonTree> tempDatasetholder;
-        bool tempDatasetholderflag = false;
-        Datasets treeDatasets;
-        QStringList compareDimensions;
-
-
-
-        auto currentReference = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
-
-        auto currentReferencedimensionNames = currentReference->getTreeLeafNames();
-
-
-        auto datasets = mv::data().getAllDatasets(std::vector<DataType>({ CrossSpeciesComparisonTreeType }));
-
-
-        for (auto dataset : datasets)
+        else
         {
-            if (dataset->getDataType() == CrossSpeciesComparisonTreeType)
-            {
-                Dataset<CrossSpeciesComparisonTree> checkDataset = mv::data().getDataset<CrossSpeciesComparisonTree>(dataset.getDatasetId());
-
-                QStringList tempDimensionNames = checkDataset->getTreeLeafNames();
-                if (tempDimensionNames.size() > 0 && currentReferencedimensionNames.size() > 0)
-                {
-                    currentReferencedimensionNames.sort();
-                    tempDimensionNames.sort();
-                    if (tempDimensionNames == currentReferencedimensionNames) {
-                        treeDatasets << dataset;
-                        if (dataset.getDatasetId() == tempDatasetholder.getDatasetId())
-                        {
-                            tempDatasetholderflag = true;
-                        }
-                    }
-
-                }
-
-
-
-
-
-
-
-            }
-
+            qDebug()<<"The leaf names of the reference tree and the meta data tree do not match";
         }
-
-
-
     }
-    if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "")
+    else
     {
-
-        _extraSettingsHolder.setEnabled(true);
-        _metaDataSettingsHolder.setEnabled(true);
-        _linkerSettingsHolder.setEnabled(true);
-
+        qDebug()<<"Tree Dataset not valid";
     }
+    }
+    }
+    else
+    {
+        qDebug()<<"Meta Data Dataset not valid";
+        }
 }
+
 void ChartOptions::onDataEventTree(mv::DatasetEvent* dataEvent)
 {
-    if (dataEvent->getType() == mv::EventType::DatasetAdded)
-    {
-        referenceDatasetPickerActionModify();
-        traitDatasetPickerActionModify();
-        treeDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetRemoved)
-    {
-        referenceDatasetPickerActionModify();
-        traitDatasetPickerActionModify();
-        treeDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetChildAdded)
-    {
-        referenceDatasetPickerActionModify();
-        traitDatasetPickerActionModify();
-        treeDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetChildRemoved)
-    {
-        referenceDatasetPickerActionModify();
-        traitDatasetPickerActionModify();
-        treeDatasetPickerActionModify();
 
 
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetDataChanged)
-    {
-        referenceDatasetPickerActionModify();
-        treeDatasetPickerActionModify();
-        traitDatasetPickerActionModify();
-        changeLoader();
-    }
-
-
+    changeLoader();
 }
 
 void ChartOptions::onDataEventTreeMeta(mv::DatasetEvent* dataEvent)
 {
-    if (dataEvent->getType() == mv::EventType::DatasetAdded)
-    {
-        traitDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetRemoved)
-    {
-        traitDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetChildAdded)
-    {
-        traitDatasetPickerActionModify();
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetChildRemoved)
-    {
-        traitDatasetPickerActionModify();
-
-
-    }
-    if (dataEvent->getType() == mv::EventType::DatasetDataChanged)
-    {
-        traitDatasetPickerActionModify();
-        changeLoader();
-    }
-
+    changeLoader();
 
 }
 void ChartOptions::initLoader()
@@ -1224,7 +657,6 @@ void ChartOptions::initLoader()
         }
         if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
-            //TODO: Add trait calculation
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
             {
                 colorTraitCalculation();
@@ -1256,15 +688,7 @@ void ChartOptions::triggerChart()
         _extraSettingsHolder.setEnabled(true);
         _metaDataSettingsHolder.setEnabled(true);
         _linkerSettingsHolder.setEnabled(true);
-        //_updateSettingsHolder.setEnabled(true);
-        //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-        //{
-        //    _updateSettingsHolder.setVisible(true);
-       // }
-       // else
-       // {
-       //     _updateSettingsHolder.setVisible(false);
-        //}
+
         updateChartDataJS();
     }
     else
@@ -1273,15 +697,7 @@ void ChartOptions::triggerChart()
         _extraSettingsHolder.setEnabled(false);
         _metaDataSettingsHolder.setEnabled(false);
         _linkerSettingsHolder.setEnabled(false);
-        //_updateSettingsHolder.setEnabled(false);
-        //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-        //{
-        //    _updateSettingsHolder.setVisible(true);
-        //}
-       // else
-        //{
-       //     _updateSettingsHolder.setVisible(false);
-       // }
+
     }
 }
 void ChartOptions::changeLoader()
@@ -1294,15 +710,7 @@ void ChartOptions::changeLoader()
         _extraSettingsHolder.setEnabled(true);
         _metaDataSettingsHolder.setEnabled(true);
         _linkerSettingsHolder.setEnabled(true);
-        //_updateSettingsHolder.setEnabled(true);
-        //if (_updateSettingsHolder.getUpdateViewsButtonAction().isConnected())
-        //{
-        //    _updateSettingsHolder.setVisible(true);
-       // }
-       // else
-       // {
-        //    _updateSettingsHolder.setVisible(false);
-       // }
+
         updateChartDataJS();
     }
 
@@ -1338,7 +746,8 @@ inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions
     _traitDatasetSelectionAction(this, "Trait dataset"),
     _colorTrait(this, "Color type trait"),
     _numericTrait(this, "Numeric type trait"),
-    _stringTrait(this, "String type trait")
+    _stringTrait(this, "String type trait"),
+    _disableTraitOptions(this, "Disable Trait Options")
 
 {
     setText("Metadata Options");
@@ -1418,6 +827,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _metaDataSettingsHolder.getColorTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
+    _metaDataSettingsHolder.getDisableTraitOptions().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getShowReferenceTreeAction().fromParentVariantMap(variantMap);
@@ -1437,6 +847,7 @@ QVariantMap ChartOptions::toVariantMap() const
     _metaDataSettingsHolder.getColorTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
+    _metaDataSettingsHolder.getDisableTraitOptions().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getReembeddingOptions().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getShowReferenceTreeAction().insertIntoVariantMap(variantMap);

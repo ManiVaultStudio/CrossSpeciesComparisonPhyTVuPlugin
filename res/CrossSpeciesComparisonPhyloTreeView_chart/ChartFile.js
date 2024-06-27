@@ -315,6 +315,8 @@ function generateVis() {
                         return (
                             "leaf : " +
                             d.data.name +
+                            "\nCell counts : " +
+                            d.data.cellCounts +
                             "\nMean: " +
                             d.data.mean +
                             returnStringADd
@@ -447,7 +449,7 @@ function generateVis() {
 
                 if (traitValueStringFlag || traitValueNumericFlag) {
                     return (
-                        "leaf : " + d.data.name + "\nMean: " + d.data.mean + returnStringADd
+                        "Leaf : " + d.data.name + "\nCell counts : " + d.data.cellCounts + "\nMean: " + d.data.mean + returnStringADd
                     );
                 }
             });
@@ -1136,6 +1138,9 @@ L ${d.y} ${d.x}`;
 
         // Helper function to determine stroke color for paths
         function getPathStrokeColor(d) {
+            // Check if d or d.data is undefined
+            if (!d || !d.data) return "black"; // Return default color if d or d.data is undefined
+
             if (splitGroupsAltKey) {
                 if (leftSpeciesSelected.includes(d.data.name)) return "#FF5733";
                 if (rightSpeciesSelected.includes(d.data.name)) return "#1D8ECE";
@@ -1147,13 +1152,21 @@ L ${d.y} ${d.x}`;
 
         // Helper function to determine stroke width
         function getStrokeWidth(d) {
-            return speciesSelected.includes(d.data.name) ? "2px" : "1px";
+
+
+            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+                return speciesSelected.includes(d.data.name) ? "2px" : "1px";
+            }
         }
         function getFontWeight(d) {
-            return speciesSelected.includes(d.data.name) ? "bold" : "normal";
+            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+                return speciesSelected.includes(d.data.name) ? "bold" : "normal";
+            }
         }
         function getFontSize(d) {
-            return speciesSelected.includes(d.data.name) ? 14 : 12;
+            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+                return speciesSelected.includes(d.data.name) ? 14 : 12;
+            }
         }
         // Update styles for .node text and .species-names text/path
         svg
