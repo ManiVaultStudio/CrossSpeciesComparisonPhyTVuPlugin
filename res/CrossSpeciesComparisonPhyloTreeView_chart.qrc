@@ -1,13 +1,13 @@
 <RCC>
-    <qresource prefix="CrossSpeciesComparisonPhyloTreeView">
-		<file>CrossSpeciesComparisonPhyloTreeView_chart/ChartFile.js</file>
-		<file>CrossSpeciesComparisonPhyloTreeView_chart/DataFile.js</file>
-		<file>CrossSpeciesComparisonPhyloTreeView_chart/FunctionFile.js</file>
-		<file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.html</file>
-		<file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.css</file>
-        <file>CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.js</file>
+    <qresource prefix="CrossSpeciesComparisonPhyTVu">
+		<file>CrossSpeciesComparisonPhyTVu_chart/ChartFile.js</file>
+		<file>CrossSpeciesComparisonPhyTVu_chart/DataFile.js</file>
+		<file>CrossSpeciesComparisonPhyTVu_chart/FunctionFile.js</file>
+		<file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html</file>
+		<file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.css</file>
+        <file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js</file>
     </qresource>
-    <qresource prefix="CrossSpeciesComparisonPhyloTreeView">
+    <qresource prefix="CrossSpeciesComparisonPhyTVu">
         <file>js_libs/d3.v6.js</file>
 		<file>js_libs/d3.v4.js</file>
 		<file>js_libs/d3.v5.js</file>

@@ -38,7 +38,7 @@
 #include <actions/VerticalToolbarAction.h>
 using namespace mv::gui;
 class QMenu;
-class CrossSpeciesComparisonPhyloTreeViewPlugin;
+class CrossSpeciesComparisonPhyTVuPlugin;
 namespace mv
 {
     class CoreInterface;
@@ -174,7 +174,7 @@ public:
 protected:
 
 public:
-    ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core);
+    ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core);
 
 private:
     //void createJsonStringCluster();
@@ -205,7 +205,7 @@ public: // Serialization
 
 
 protected:
-    CrossSpeciesComparisonPhyloTreeViewPlugin& _viewerPlugin;
+    CrossSpeciesComparisonPhyTVuPlugin& _viewerPlugin;
     mv::CoreInterface* _core;
     ExtraSettingsHolder              _extraSettingsHolder;
     MetaDataSettingsHolder              _metaDataSettingsHolder;

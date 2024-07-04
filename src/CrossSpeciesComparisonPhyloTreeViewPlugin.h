@@ -22,7 +22,7 @@ using namespace mv::util;
 
 
 
-class CrossSpeciesComparisonPhyloTreeViewPlugin : public ViewPlugin
+class CrossSpeciesComparisonPhyTVuPlugin : public ViewPlugin
 {
     Q_OBJECT
 
@@ -31,10 +31,10 @@ public:
      * Constructor
      * @param factory Pointer to the plugin factory
      */
-    CrossSpeciesComparisonPhyloTreeViewPlugin(const PluginFactory* factory);
+    CrossSpeciesComparisonPhyTVuPlugin(const PluginFactory* factory);
 
     /** Destructor */
-    ~CrossSpeciesComparisonPhyloTreeViewPlugin() override = default;
+    ~CrossSpeciesComparisonPhyTVuPlugin() override = default;
 
     /** This function is called by the core after the view plugin has been created */
     void init() override;
@@ -99,32 +99,32 @@ private:
 };
 
 /**
- * CrossSpeciesComparisonPhyloTreeView view plugin factory class
+ * CrossSpeciesComparisonPhyTVu view plugin factory class
  *
  * Note: Factory does not need to be altered (merely responsible for generating new plugins when requested)
  */
-class CrossSpeciesComparisonPhyloTreeViewPluginFactory : public ViewPluginFactory
+class CrossSpeciesComparisonPhyTVuPluginFactory : public ViewPluginFactory
 {
     Q_INTERFACES(mv::plugin::ViewPluginFactory mv::plugin::PluginFactory)
         Q_OBJECT
-        Q_PLUGIN_METADATA(IID   "nl.BioVault.CrossSpeciesComparisonPhyloTreeViewPlugin"
-            FILE  "CrossSpeciesComparisonPhyloTreeViewPlugin.json")
+        Q_PLUGIN_METADATA(IID   "nl.BioVault.CrossSpeciesComparisonPhyTVuPlugin"
+            FILE  "CrossSpeciesComparisonPhyTVuPlugin.json")
 
 public:
 
     /** Default constructor */
-    CrossSpeciesComparisonPhyloTreeViewPluginFactory() {}
+    CrossSpeciesComparisonPhyTVuPluginFactory() {}
 
     /** Destructor */
-    ~CrossSpeciesComparisonPhyloTreeViewPluginFactory() override {}
+    ~CrossSpeciesComparisonPhyTVuPluginFactory() override {}
 
     /** Get plugin icon */
     QIcon getIcon(const QColor& color = Qt::black) const override;
 
-    /** Creates an instance of the CrossSpeciesComparisonPhyloTreeView view plugin */
+    /** Creates an instance of the CrossSpeciesComparisonPhyTVu view plugin */
     ViewPlugin* produce() override;
 
-    /** Returns the data types that are supported by the CrossSpeciesComparisonPhyloTreeView view plugin */
+    /** Returns the data types that are supported by the CrossSpeciesComparisonPhyTVu view plugin */
     mv::DataTypes supportedDataTypes() const override;
 
     /**
