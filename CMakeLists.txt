@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.17)
 
 # -----------------------------------------------------------------------------
-# CrossSpeciesComparisonPhyloTreeView Plugin
+# CrossSpeciesComparisonPhyTVu Plugin
 # -----------------------------------------------------------------------------
-set(CrossSpeciesComparisonPhyloTreeView "CrossSpeciesComparisonPhyloTreeViewPlugin")
-PROJECT(${CrossSpeciesComparisonPhyloTreeView})
+set(CrossSpeciesComparisonPhyTVu "CrossSpeciesComparisonPhyTVuPlugin")
+PROJECT(${CrossSpeciesComparisonPhyTVu})
 
 # -----------------------------------------------------------------------------
 # CMake Options
@@ -39,29 +39,29 @@ find_package(Qt6 COMPONENTS Widgets WebEngineWidgets Concurrent REQUIRED)
 # Source files
 # -----------------------------------------------------------------------------
 # Define the plugin sources
-set(CrossSpeciesComparisonPhyloTreeView_SOURCES
-    src/CrossSpeciesComparisonPhyloTreeViewPlugin.h
-    src/CrossSpeciesComparisonPhyloTreeViewPlugin.cpp
+set(CrossSpeciesComparisonPhyTVu_SOURCES
+    src/CrossSpeciesComparisonPhyTVuPlugin.h
+    src/CrossSpeciesComparisonPhyTVuPlugin.cpp
     src/ChartWidget.h
     src/ChartWidget.cpp
 	src/ChartOptions.h
     src/ChartOptions.cpp
 	src/ReembedOptions.h
 	src/ReembedOptions.cpp
-    src/CrossSpeciesComparisonPhyloTreeViewPlugin.json
+    src/CrossSpeciesComparisonPhyTVuPlugin.json
 )
 
 set(PLUGIN_MOC_HEADERS
-	src/CrossSpeciesComparisonPhyloTreeViewPlugin.h
+	src/CrossSpeciesComparisonPhyTVuPlugin.h
 )
 
 set(WEB_MAIN
-    res/CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.html
-    res/CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.js
-    res/CrossSpeciesComparisonPhyloTreeView_chart/ChartFile.js
-    res/CrossSpeciesComparisonPhyloTreeView_chart/DataFile.js
-    res/CrossSpeciesComparisonPhyloTreeView_chart/FunctionFile.js
-	res/CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.js
+    res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html
+    res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js
+    res/CrossSpeciesComparisonPhyTVu_chart/ChartFile.js
+    res/CrossSpeciesComparisonPhyTVu_chart/DataFile.js
+    res/CrossSpeciesComparisonPhyTVu_chart/FunctionFile.js
+	res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js
 )
 
 set(WEB_LIBS
@@ -81,12 +81,12 @@ set(Lib
 	src/lib/JSONnlohmann/json_fwd.hpp
 )
 set(AUX
-    res/CrossSpeciesComparisonPhyloTreeView_chart.qrc
+    res/CrossSpeciesComparisonPhyTVu_chart.qrc
 )
 
-qt6_add_resources(RESOURCE_FILES res/CrossSpeciesComparisonPhyloTreeView_chart.qrc)
+qt6_add_resources(RESOURCE_FILES res/CrossSpeciesComparisonPhyTVu_chart.qrc)
 
-source_group( Plugin FILES ${CrossSpeciesComparisonPhyloTreeView_SOURCES})
+source_group( Plugin FILES ${CrossSpeciesComparisonPhyTVu_SOURCES})
 source_group(Web\\MainCode FILES ${WEB_MAIN})
 source_group(Web\\LibraryFiles FILES ${WEB_LIBS})
 source_group( ResourceFiles FILES ${RESOURCES})
@@ -97,29 +97,29 @@ source_group( Aux FILES ${AUX})
 # CMake Target
 # -----------------------------------------------------------------------------
 # Create dynamic library for the plugin
-add_library(${CrossSpeciesComparisonPhyloTreeView} SHARED ${CrossSpeciesComparisonPhyloTreeView_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
-qt_wrap_cpp(CrossSpeciesComparisonPhyloTreeView_MOC ${PLUGIN_MOC_HEADERS} TARGET ${CrossSpeciesComparisonPhyloTreeView})
-target_sources(${CrossSpeciesComparisonPhyloTreeView} PRIVATE ${CrossSpeciesComparisonPhyloTreeView_MOC})
+add_library(${CrossSpeciesComparisonPhyTVu} SHARED ${CrossSpeciesComparisonPhyTVu_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
+qt_wrap_cpp(CrossSpeciesComparisonPhyTVu_MOC ${PLUGIN_MOC_HEADERS} TARGET ${CrossSpeciesComparisonPhyTVu})
+target_sources(${CrossSpeciesComparisonPhyTVu} PRIVATE ${CrossSpeciesComparisonPhyTVu_MOC})
 
 # -----------------------------------------------------------------------------
 # Target include directories
 # -----------------------------------------------------------------------------
 # Include HDPS headers, including system data plugins
-target_include_directories(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${MV_INSTALL_DIR}/$<CONFIGURATION>/include/")
+target_include_directories(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_INSTALL_DIR}/$<CONFIGURATION>/include/")
 
 # -----------------------------------------------------------------------------
 # Target properties
 # -----------------------------------------------------------------------------
 # Request C++17
-target_compile_features(${CrossSpeciesComparisonPhyloTreeView} PRIVATE cxx_std_17)
+target_compile_features(${CrossSpeciesComparisonPhyTVu} PRIVATE cxx_std_17)
 
 # -----------------------------------------------------------------------------
 # Target library linking
 # -----------------------------------------------------------------------------
 # Link to Qt libraries
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE Qt6::Widgets)
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE Qt6::WebEngineWidgets)
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE Qt6::Concurrent)
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::Widgets)
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::WebEngineWidgets)
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::Concurrent)
 
 # Link to HDPS and data plugins
 # The link path in this repo assumes that the ManiVault core was built locally
@@ -135,22 +135,22 @@ set(CLUSTERDATA_LINK_LIBRARY "${PLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}
 set(CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY "${PLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeData${MV_LINK_SUFFIX}") 
 set(CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY "${PLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeMetaData${MV_LINK_SUFFIX}") 
 
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${MV_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${POINTDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${CLUSTERDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyloTreeView} PRIVATE "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}")
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_LINK_LIBRARY}")
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${POINTDATA_LINK_LIBRARY}")
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CLUSTERDATA_LINK_LIBRARY}")
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}")
+target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}")
 
 # -----------------------------------------------------------------------------
 # Target installation
 # -----------------------------------------------------------------------------
 # Install the shared plugin libary to the "Plugins" folder in the ManiVault install directory
-install(TARGETS ${CrossSpeciesComparisonPhyloTreeView}
+install(TARGETS ${CrossSpeciesComparisonPhyTVu}
     RUNTIME DESTINATION Plugins COMPONENT PLUGINS # Windows .dll
     LIBRARY DESTINATION Plugins COMPONENT PLUGINS # Linux/Mac .so
 )
 
-add_custom_command(TARGET ${CrossSpeciesComparisonPhyloTreeView} POST_BUILD
+add_custom_command(TARGET ${CrossSpeciesComparisonPhyTVu} POST_BUILD
     COMMAND "${CMAKE_COMMAND}"
         --install ${CMAKE_CURRENT_BINARY_DIR}
         --config $<CONFIGURATION>
@@ -162,6 +162,6 @@ add_custom_command(TARGET ${CrossSpeciesComparisonPhyloTreeView} POST_BUILD
 # -----------------------------------------------------------------------------
 # Automatically set the debug environment (command + working directory) for MSVC
 if(MSVC)
-    set_property(TARGET ${CrossSpeciesComparisonPhyloTreeView} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<IF:$<CONFIG:DEBUG>,${MV_INSTALL_DIR}/debug,${MV_INSTALL_DIR}/release>)
-    set_property(TARGET ${CrossSpeciesComparisonPhyloTreeView} PROPERTY VS_DEBUGGER_COMMAND $<IF:$<CONFIG:DEBUG>,"${MV_INSTALL_DIR}/debug/ManiVault Studio.exe","${MV_INSTALL_DIR}/release/ManiVault Studio.exe">)
+    set_property(TARGET ${CrossSpeciesComparisonPhyTVu} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<IF:$<CONFIG:DEBUG>,${MV_INSTALL_DIR}/debug,${MV_INSTALL_DIR}/release>)
+    set_property(TARGET ${CrossSpeciesComparisonPhyTVu} PROPERTY VS_DEBUGGER_COMMAND $<IF:$<CONFIG:DEBUG>,"${MV_INSTALL_DIR}/debug/ManiVault Studio.exe","${MV_INSTALL_DIR}/release/ManiVault Studio.exe">)
 endif()

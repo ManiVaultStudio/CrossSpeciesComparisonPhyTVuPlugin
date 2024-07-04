@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "CrossSpeciesComparisonPhyloTreeViewPlugin.h"
+#include "CrossSpeciesComparisonPhyTVuPlugin.h"
 #include<string>  
 #include <QFileDialog>
 #include <QPageLayout>
@@ -56,9 +56,9 @@ std::vector<int> convertToSigned(const std::vector<uint32_t>& vec) {
     return result;
 }
 
-ReembedOptions::ReembedOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core) :
-    WidgetAction(&CrossSpeciesComparisonPhyloTreeViewPlugin, "CrossSpeciesComparisonPhyloTreeViewPlugin ReEmbed"),
-    _viewerPlugin(CrossSpeciesComparisonPhyloTreeViewPlugin),
+ReembedOptions::ReembedOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core) :
+    WidgetAction(&CrossSpeciesComparisonPhyTVuPlugin, "CrossSpeciesComparisonPhyTVuPlugin ReEmbed"),
+    _viewerPlugin(CrossSpeciesComparisonPhyTVuPlugin),
     _core(core),
     _reembeddingSettingsHolder(*this)
 

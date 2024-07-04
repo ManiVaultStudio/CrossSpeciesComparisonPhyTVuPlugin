@@ -63,7 +63,7 @@ void ChartCommunicationObject::js_addLeftRightSelectionToScatterplot(QVariant da
 ChartWidget::ChartWidget() :
     loaded(false)
 {
-    Q_INIT_RESOURCE(CrossSpeciesComparisonPhyloTreeView_chart);
+    Q_INIT_RESOURCE(CrossSpeciesComparisonPhyTVu_chart);
     _communicationObject = new ChartCommunicationObject(this);
     init(_communicationObject);
     setMinimumHeight(140);

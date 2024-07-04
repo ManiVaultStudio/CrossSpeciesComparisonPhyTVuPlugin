@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "CrossSpeciesComparisonPhyloTreeViewPlugin.h"
+#include "CrossSpeciesComparisonPhyTVuPlugin.h"
 #include<string>  
 #include <QFileDialog>
 #include <QPageLayout>
@@ -30,9 +30,9 @@ bool areStringListsEqual(const QStringList& list1, const QStringList& list2) {
     return set1 == set2;
 }
 
-ChartOptions::ChartOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core) :
-    WidgetAction(&CrossSpeciesComparisonPhyloTreeViewPlugin, "CrossSpeciesComparisonPhyloTreeViewPlugin Chart"),
-    _viewerPlugin(CrossSpeciesComparisonPhyloTreeViewPlugin),
+ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core) :
+    WidgetAction(&CrossSpeciesComparisonPhyTVuPlugin, "CrossSpeciesComparisonPhyTVuPlugin Chart"),
+    _viewerPlugin(CrossSpeciesComparisonPhyTVuPlugin),
     _core(core),
     _extraSettingsHolder(*this),
     _mainSettingsHolder(*this),

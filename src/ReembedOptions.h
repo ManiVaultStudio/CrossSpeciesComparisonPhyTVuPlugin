@@ -39,7 +39,7 @@
 #include <actions/VerticalToolbarAction.h>
 using namespace mv::gui;
 class QMenu;
-class CrossSpeciesComparisonPhyloTreeViewPlugin;
+class CrossSpeciesComparisonPhyTVuPlugin;
 namespace mv
 {
     class CoreInterface;
@@ -149,7 +149,7 @@ public:
 
 
 public:
-    ReembedOptions(CrossSpeciesComparisonPhyloTreeViewPlugin& CrossSpeciesComparisonPhyloTreeViewPlugin, mv::CoreInterface* core);
+    ReembedOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core);
     ReembeddingSettingsHolder& getReembeddingSettingsHolder() { return _reembeddingSettingsHolder; }
 
     
@@ -167,7 +167,7 @@ public:
 
 
 protected:
-    CrossSpeciesComparisonPhyloTreeViewPlugin& _viewerPlugin;
+    CrossSpeciesComparisonPhyTVuPlugin& _viewerPlugin;
     mv::CoreInterface* _core;
     ReembeddingSettingsHolder       _reembeddingSettingsHolder;
     std::map<QString, QString>  _deDatasetColorMap;

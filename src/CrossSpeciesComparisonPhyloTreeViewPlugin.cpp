@@ -1,4 +1,4 @@
-#include "CrossSpeciesComparisonPhyloTreeViewPlugin.h"
+#include "CrossSpeciesComparisonPhyTVuPlugin.h"
 #include "ChartWidget.h"
 #include <vector>
 #include <random>
@@ -7,11 +7,11 @@
 #include <QMimeData>
 #include <DatasetsMimeData.h>
 
-Q_PLUGIN_METADATA(IID "nl.BioVault.CrossSpeciesComparisonPhyloTreeViewPlugin")
+Q_PLUGIN_METADATA(IID "nl.BioVault.CrossSpeciesComparisonPhyTVuPlugin")
 
 using namespace mv;
 
-CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPlugin(const PluginFactory* factory) :
+CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const PluginFactory* factory) :
     ViewPlugin(factory),
     _chartWidget(),
     _chartOptions(*this, _core),
@@ -19,7 +19,7 @@ CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPl
     _toolbarAction(this, "Toolbar")
     , _originalName(getGuiName())
 {
-    setSerializationName("CSCPTV:CrossSpeciesComparisonPhyloTreeView");
+    setSerializationName("CSCPTV:CrossSpeciesComparisonPhyTVu");
 
     _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 6, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 5, GroupAction::Horizontal);
@@ -31,14 +31,14 @@ CrossSpeciesComparisonPhyloTreeViewPlugin::CrossSpeciesComparisonPhyloTreeViewPl
     
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
+void CrossSpeciesComparisonPhyTVuPlugin::init()
 {
 
 
-    connect(&_chartWidget, &ChartWidget::widgetInitialized, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::triggerInitialChart);
+    connect(&_chartWidget, &ChartWidget::widgetInitialized, this, &CrossSpeciesComparisonPhyTVuPlugin::triggerInitialChart);
 
     getWidget().setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    _chartWidget.setPage(":CrossSpeciesComparisonPhyloTreeView/CrossSpeciesComparisonPhyloTreeView_chart/CrossSpeciesComparisonPhyloTreeView_chart.html", "qrc:/CrossSpeciesComparisonPhyloTreeView/CrossSpeciesComparisonPhyloTreeView_chart/");
+    _chartWidget.setPage(":CrossSpeciesComparisonPhyTVu/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html", "qrc:/CrossSpeciesComparisonPhyTVu/CrossSpeciesComparisonPhyTVu_chart/");
     _chartWidget.setContentsMargins(0, 0, 0, 0);
     _chartWidget.layout()->setContentsMargins(0, 0, 0, 0);
     //connect(&_chartWidget, &ChartWidget::widgetInitialized, &_chartOptions, &ChartOptions::initLoader);
@@ -92,14 +92,14 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
         };
     connect(&_chartOptions.getLinkerSettingsHolder().getReembeddingOptions(), &ToggleAction::toggled, this, optionsforreembedding);
     _chartOptions.getShowDataDrop().setChecked(true);
-    connect(&_chartOptions.getShowDataDrop(), &QCheckBox::stateChanged, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::ShowDataDropOptions);
+    connect(&_chartOptions.getShowDataDrop(), &QCheckBox::stateChanged, this, &CrossSpeciesComparisonPhyTVuPlugin::ShowDataDropOptions);
 
-    connect(&_chartWidget, &ChartWidget::removeSelectionFromScatterplot, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::removeSelectionFromScatterplot);
+    connect(&_chartWidget, &ChartWidget::removeSelectionFromScatterplot, this, &CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot);
 
-    connect(&_chartWidget, &ChartWidget::addSelectionToScatterplot, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::addSelectionToScatterplot);
-    connect(&_chartWidget, &ChartWidget::addLeftRightSelectionToScatterplot, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::addLeftRightSelectionToScatterplot);
+    connect(&_chartWidget, &ChartWidget::addSelectionToScatterplot, this, &CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot);
+    connect(&_chartWidget, &ChartWidget::addLeftRightSelectionToScatterplot, this, &CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot);
 
-    connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyloTreeViewPlugin::passScatterplotLeafPointSelection);
+    connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection);
     
     const auto updateTreeLeafSelectionFromQT = [this]() -> void
         {
@@ -299,10 +299,10 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::init()
         });
 
 
-    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTree, this, std::placeholders::_1));
-    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTreeMeta, this, std::placeholders::_1));
+    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&CrossSpeciesComparisonPhyTVuPlugin::onDataEventTree, this, std::placeholders::_1));
+    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&CrossSpeciesComparisonPhyTVuPlugin::onDataEventTreeMeta, this, std::placeholders::_1));
 }
-void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerInitialChart()
+void CrossSpeciesComparisonPhyTVuPlugin::triggerInitialChart()
 {
     if(_chartOptions.getMainSettingsHolder().getMainReferenceTreeSelectionAction().getCurrentText() != "")
     {
@@ -324,7 +324,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerInitialChart()
     }
 
 }
-void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerChartJS()
+void CrossSpeciesComparisonPhyTVuPlugin::triggerChartJS()
 {
     _dropWidget->setShowDropIndicator(false);
 
@@ -350,7 +350,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::triggerChartJS()
     //_chartOptions.updateChartDataJS();
 }
 
-bool CrossSpeciesComparisonPhyloTreeViewPlugin::vectorsHaveSameOrder(const std::vector<QString>& vec1, const std::vector<QString>& vec2) {
+bool CrossSpeciesComparisonPhyTVuPlugin::vectorsHaveSameOrder(const std::vector<QString>& vec1, const std::vector<QString>& vec2) {
     // Check if the vectors have the same size
     if (vec1.size() != vec2.size()) {
         return false;
@@ -367,7 +367,7 @@ bool CrossSpeciesComparisonPhyloTreeViewPlugin::vectorsHaveSameOrder(const std::
     return true;
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::ShowDataDropOptions()
+void CrossSpeciesComparisonPhyTVuPlugin::ShowDataDropOptions()
 {
     if (_chartOptions.getShowDataDrop().isChecked())
     {
@@ -379,7 +379,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::ShowDataDropOptions()
     }
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::loadData(const Dataset<CrossSpeciesComparisonTree>& dataset)
+void CrossSpeciesComparisonPhyTVuPlugin::loadData(const Dataset<CrossSpeciesComparisonTree>& dataset)
 {
     // Exit if there is nothing to load
     if (!dataset.isValid())
@@ -400,7 +400,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::loadData(const Dataset<CrossSpec
 }
 
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTreeMeta(mv::DatasetEvent* dataEvent)
+void CrossSpeciesComparisonPhyTVuPlugin::onDataEventTreeMeta(mv::DatasetEvent* dataEvent)
 {
     // Get smart pointer to dataset that changed
     const auto changedDataSet = dataEvent->getDataset();
@@ -463,7 +463,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTreeMeta(mv::DatasetE
         break;
     }
 }
-void CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTree(mv::DatasetEvent* dataEvent)
+void CrossSpeciesComparisonPhyTVuPlugin::onDataEventTree(mv::DatasetEvent* dataEvent)
 {
     // Get smart pointer to dataset that changed
     const auto changedDataSet = dataEvent->getDataset();
@@ -519,7 +519,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::onDataEventTree(mv::DatasetEvent
 
 
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::publishSelection(const std::vector<unsigned int>& selectedIDs)
+void CrossSpeciesComparisonPhyTVuPlugin::publishSelection(const std::vector<unsigned int>& selectedIDs)
 {
 
 }
@@ -529,17 +529,17 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::publishSelection(const std::vect
 // Plugin Factory 
 // =============================================================================
 
-QIcon CrossSpeciesComparisonPhyloTreeViewPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
+QIcon CrossSpeciesComparisonPhyTVuPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
 {
     return mv::Application::getIconFont("FontAwesome").getIcon("project-diagram", color);
 }
 
-ViewPlugin* CrossSpeciesComparisonPhyloTreeViewPluginFactory::produce()
+ViewPlugin* CrossSpeciesComparisonPhyTVuPluginFactory::produce()
 {
-    return new CrossSpeciesComparisonPhyloTreeViewPlugin(this);
+    return new CrossSpeciesComparisonPhyTVuPlugin(this);
 }
 
-mv::DataTypes CrossSpeciesComparisonPhyloTreeViewPluginFactory::supportedDataTypes() const
+mv::DataTypes CrossSpeciesComparisonPhyTVuPluginFactory::supportedDataTypes() const
 {
     // This example analysis plugin is compatible with points datasets
     DataTypes supportedTypes;
@@ -547,12 +547,12 @@ mv::DataTypes CrossSpeciesComparisonPhyloTreeViewPluginFactory::supportedDataTyp
     return supportedTypes;
 }
 
-mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyloTreeViewPluginFactory::getPluginTriggerActions(const mv::Datasets& datasets) const
+mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPluginTriggerActions(const mv::Datasets& datasets) const
 {
     PluginTriggerActions pluginTriggerActions;
 
-    const auto getPluginInstance = [this]() -> CrossSpeciesComparisonPhyloTreeViewPlugin* {
-        return dynamic_cast<CrossSpeciesComparisonPhyloTreeViewPlugin*>(plugins().requestViewPlugin(getKind()));
+    const auto getPluginInstance = [this]() -> CrossSpeciesComparisonPhyTVuPlugin* {
+        return dynamic_cast<CrossSpeciesComparisonPhyTVuPlugin*>(plugins().requestViewPlugin(getKind()));
         };
 
     const auto number_of_datasets = datasets.count();
@@ -567,9 +567,9 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyloTreeViewPluginFactory::
         //if (tempDimensionNumber== tempPointNumber) 
         {
             const auto pluginTriggerAction = new PluginTriggerAction(
-                const_cast<CrossSpeciesComparisonPhyloTreeViewPluginFactory*>(this),
+                const_cast<CrossSpeciesComparisonPhyTVuPluginFactory*>(this),
                 this,
-                "CrossSpeciesComparisonPhyloTreeView",
+                "CrossSpeciesComparisonPhyTVu",
                 "View JavaScript visualization",
                 getIcon(),
                 [this, getPluginInstance, checkDataset](PluginTriggerAction& pluginTriggerAction) -> void {
@@ -584,7 +584,7 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyloTreeViewPluginFactory::
     return pluginTriggerActions;
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::removeSelectionFromScatterplot(std::string clusterName)
+void CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot(std::string clusterName)
 {
 
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
@@ -592,14 +592,14 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::removeSelectionFromScatterplot(s
 
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::addSelectionToScatterplot(std::string clusterName)
+void CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot(std::string clusterName)
 {
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(false);
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(QString::fromStdString(clusterName));
     
 }
-void CrossSpeciesComparisonPhyloTreeViewPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)
+void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)
 {
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
     _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(true);
@@ -607,13 +607,13 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::addLeftRightSelectionToScatterpl
     
 }
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::passScatterplotLeafPointSelection(std::string selectedSpecies)
+void CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection(std::string selectedSpecies)
 {
     _chartOptions.getLinkerSettingsHolder().getScatterplotLeafSelectionValue().setString(QString::fromStdString(selectedSpecies));
 }
 
 
-void CrossSpeciesComparisonPhyloTreeViewPlugin::fromVariantMap(const QVariantMap& variantMap)
+void CrossSpeciesComparisonPhyTVuPlugin::fromVariantMap(const QVariantMap& variantMap)
 {
     ViewPlugin::fromVariantMap(variantMap);
     mv::util::variantMapMustContain(variantMap, "CSCPTV:CrossSpecies Comparison Phylo Tree View Settings");
@@ -622,7 +622,7 @@ void CrossSpeciesComparisonPhyloTreeViewPlugin::fromVariantMap(const QVariantMap
     _reembedOptions.fromVariantMap(variantMap["CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings"].toMap());
 }
 
-QVariantMap CrossSpeciesComparisonPhyloTreeViewPlugin::toVariantMap() const
+QVariantMap CrossSpeciesComparisonPhyTVuPlugin::toVariantMap() const
 {
     QVariantMap variantMap = ViewPlugin::toVariantMap();
 
