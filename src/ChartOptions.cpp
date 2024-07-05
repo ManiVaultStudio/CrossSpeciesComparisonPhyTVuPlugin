@@ -50,10 +50,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
-
     _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Explore Species Button");
-
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSCPTV:Scatterplot Leaf Selection Value");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
     _linkerSettingsHolder.getSelectedLeafValues().setSerializationName("CSCPTV:Selected Leaf Values");
     _linkerSettingsHolder.getLeafDatasetPicker().setSerializationName("CSCPTV:Leaf Dataset Picker");
@@ -106,8 +103,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     _metaDataSettingsHolder.getDisableTraitOptions().setDefaultWidgetFlags(ToggleAction::CheckBox);
     _metaDataSettingsHolder.getDisableTraitOptions().setChecked(false);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setString("");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setDefaultWidgetFlags(StringAction::LineEdit);
 
@@ -676,7 +671,6 @@ inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions
 inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& chartOptions) :
     VerticalGroupAction(&chartOptions, "Meta data options"),
     _chartOptions(chartOptions),
-    _scatterplotLeafSelectionValue(this, "Scatterplot Leaf Selection Value"),
     _treeLeafSelectionValue(this, "Tree Leaf Selection Value"),
     _selectedLeafValues(this, "Selected Leaf Values"),
     _leafDatasetPicker(this, "Leaf Dataset Picker")
@@ -686,7 +680,6 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
     setIcon(Application::getIconFont("FontAwesome").getIcon("link"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    addAction(&_scatterplotLeafSelectionValue);
     addAction(&_treeLeafSelectionValue);
     addAction(&_selectedLeafValues);
     addAction(&_leafDatasetPicker);
@@ -744,7 +737,6 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _metaDataSettingsHolder.getNumericTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().fromParentVariantMap(variantMap);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
@@ -764,7 +756,6 @@ QVariantMap ChartOptions::toVariantMap() const
     _metaDataSettingsHolder.getNumericTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().insertIntoVariantMap(variantMap);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);

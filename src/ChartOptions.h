@@ -103,9 +103,6 @@ public:
     {
     public:
         LinkerSettingsHolder(ChartOptions& chartOptions);
-
-        const StringAction& getScatterplotLeafSelectionValue() const { return _scatterplotLeafSelectionValue; }
-        StringAction& getScatterplotLeafSelectionValue() { return _scatterplotLeafSelectionValue; }
         const StringAction& getTreeLeafSelectionValueQT() const { return _treeLeafSelectionValue; }
         StringAction& getTreeLeafSelectionValueQT() { return _treeLeafSelectionValue; }
         const DatasetPickerAction& getLeafDatasetPicker() const { return _leafDatasetPicker; }
@@ -115,8 +112,6 @@ public:
 
     protected:
         ChartOptions& _chartOptions;
-
-        StringAction                _scatterplotLeafSelectionValue;
         StringAction                _treeLeafSelectionValue;
         DatasetPickerAction                _leafDatasetPicker;
         OptionsAction                        _selectedLeafValues;

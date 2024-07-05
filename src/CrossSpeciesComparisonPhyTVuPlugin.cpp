@@ -562,7 +562,6 @@ void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std:
 
 void CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection(std::string selectedSpecies)
 {
-    _chartOptions.getLinkerSettingsHolder().getScatterplotLeafSelectionValue().setString(QString::fromStdString(selectedSpecies));
 }
 
 
