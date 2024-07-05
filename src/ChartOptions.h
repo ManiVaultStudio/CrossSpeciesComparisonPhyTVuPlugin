@@ -54,14 +54,10 @@ public:
     public:
         ExtraSettingsHolder(ChartOptions& chartOptions);
 
-
-
-        const ToggleAction& getShowReferenceTreeAction() const { return _showReferenceTree; }
         const ColorMap1DAction& getColorMapAction() const { return _treeColorMapAction; }
         const ToggleAction& getExpandAllAction() const { return _expandAllAction; }
         ToggleAction& getExpandAllAction() { return _expandAllAction; }
         ColorMap1DAction& getColorMapAction() { return _treeColorMapAction; }
-        ToggleAction& getShowReferenceTreeAction() { return _showReferenceTree; }
         const ToggleAction& getDisableAcceptDatasetDrops() const { return _disableAcceptDatasetDrops; }
         ToggleAction& getDisableAcceptDatasetDrops() { return _disableAcceptDatasetDrops; }
 
@@ -70,7 +66,6 @@ public:
 
         ColorMap1DAction              _treeColorMapAction;
         ToggleAction                _expandAllAction;
-        ToggleAction                _showReferenceTree;
         ToggleAction                _disableAcceptDatasetDrops;
 
     };
@@ -111,8 +106,6 @@ public:
 
         const StringAction& getScatterplotLeafSelectionValue() const { return _scatterplotLeafSelectionValue; }
         StringAction& getScatterplotLeafSelectionValue() { return _scatterplotLeafSelectionValue; }
-        const ToggleAction& getReembeddingOptions() const { return _reembeddingOptions; }
-        ToggleAction& getReembeddingOptions() { return _reembeddingOptions; }
         const StringAction& getTreeLeafSelectionValueQT() const { return _treeLeafSelectionValue; }
         StringAction& getTreeLeafSelectionValueQT() { return _treeLeafSelectionValue; }
 
@@ -121,7 +114,6 @@ public:
 
         StringAction                _scatterplotLeafSelectionValue;
         StringAction                _treeLeafSelectionValue;
-        ToggleAction                _reembeddingOptions;
 
     };
 

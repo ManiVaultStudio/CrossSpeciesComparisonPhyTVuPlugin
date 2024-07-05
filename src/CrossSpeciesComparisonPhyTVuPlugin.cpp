@@ -15,7 +15,6 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     ViewPlugin(factory),
     _chartWidget(),
     _chartOptions(*this, _core),
-    _reembedOptions(*this, _core),
     _toolbarAction(this, "Toolbar")
     , _originalName(getGuiName())
 {
@@ -25,7 +24,6 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 5, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 4, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 2, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_reembedOptions.getReembeddingSettingsHolder(), 3, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 1, GroupAction::Horizontal);
 
     
@@ -45,7 +43,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
 
     const auto triggerUpdateButtonForChartSelection = [this]() -> void
         {
-
+            /*
             if (_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().getString() != "" || _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().getString() != "")
             {
                 _reembedOptions.reembedSelection();
@@ -54,7 +52,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             {
                 qDebug()<<"Please select a point to reembed";
             }
-
+            */
 
         };
     connect(&_chartOptions.getUpdateSettingsHolder().getUpdateViewsButtonAction(), &TriggerAction::triggered, this, triggerUpdateButtonForChartSelection);
@@ -76,7 +74,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             }
         };
     connect(&_chartOptions.getExtraSettingsHolder().getDisableAcceptDatasetDrops(), &ToggleAction::toggled, this, disableAcceptDrops);
-
+    /*
     const auto optionsforreembedding = [this]() -> void
         {
             if (_chartOptions.getLinkerSettingsHolder().getReembeddingOptions().isChecked())
@@ -91,6 +89,8 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             }
         };
     connect(&_chartOptions.getLinkerSettingsHolder().getReembeddingOptions(), &ToggleAction::toggled, this, optionsforreembedding);
+
+    */
     _chartOptions.getShowDataDrop().setChecked(true);
     connect(&_chartOptions.getShowDataDrop(), &QCheckBox::stateChanged, this, &CrossSpeciesComparisonPhyTVuPlugin::ShowDataDropOptions);
 
@@ -108,7 +108,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             _chartWidget.setLeafSelectionFromQT(selectionString);
             //if (selectionString != "")
             {
-                _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
+                //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
             }
         };
 
@@ -587,23 +587,23 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
 void CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot(std::string clusterName)
 {
 
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
 
 }
 
 void CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot(std::string clusterName)
 {
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(false);
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(QString::fromStdString(clusterName));
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(false);
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(QString::fromStdString(clusterName));
     
 }
 void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)
 {
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(true);
-    _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString(QString::fromStdString(clusterName));
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(true);
+    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString(QString::fromStdString(clusterName));
     
 }
 
@@ -617,9 +617,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::fromVariantMap(const QVariantMap& varia
 {
     ViewPlugin::fromVariantMap(variantMap);
     mv::util::variantMapMustContain(variantMap, "CSCPTV:CrossSpecies Comparison Phylo Tree View Settings");
-    mv::util::variantMapMustContain(variantMap, "CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings");
     _chartOptions.fromVariantMap(variantMap["CSCPTV:CrossSpecies Comparison Phylo Tree View Settings"].toMap());
-    _reembedOptions.fromVariantMap(variantMap["CSCPTV:CrossSpecies Comparison Phylo Tree View Reembed Settings"].toMap());
 }
 
 QVariantMap CrossSpeciesComparisonPhyTVuPlugin::toVariantMap() const
@@ -627,6 +625,5 @@ QVariantMap CrossSpeciesComparisonPhyTVuPlugin::toVariantMap() const
     QVariantMap variantMap = ViewPlugin::toVariantMap();
 
     _chartOptions.insertIntoVariantMap(variantMap);
-    _reembedOptions.insertIntoVariantMap(variantMap);
     return variantMap;
 }
