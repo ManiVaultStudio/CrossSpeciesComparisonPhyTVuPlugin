@@ -108,12 +108,18 @@ public:
         StringAction& getScatterplotLeafSelectionValue() { return _scatterplotLeafSelectionValue; }
         const StringAction& getTreeLeafSelectionValueQT() const { return _treeLeafSelectionValue; }
         StringAction& getTreeLeafSelectionValueQT() { return _treeLeafSelectionValue; }
+        const DatasetPickerAction& getLeafDatasetPicker() const { return _leafDatasetPicker; }
+        DatasetPickerAction& getLeafDatasetPicker() { return _leafDatasetPicker; }
+        const OptionsAction& getSelectedLeafValues() const { return _selectedLeafValues; }
+        OptionsAction& getSelectedLeafValues() { return _selectedLeafValues; }
 
     protected:
         ChartOptions& _chartOptions;
 
         StringAction                _scatterplotLeafSelectionValue;
         StringAction                _treeLeafSelectionValue;
+        DatasetPickerAction                _leafDatasetPicker;
+        OptionsAction                        _selectedLeafValues;
 
     };
 
