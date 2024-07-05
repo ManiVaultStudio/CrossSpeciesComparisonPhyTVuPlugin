@@ -151,7 +151,19 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     connect(&_linkerSettingsHolder.getLeafDatasetPicker(), &DatasetPickerAction::currentIndexChanged, this, leafDatasetSelection);
 
 
+    const auto updatespeciesExplorerInMap = [this]() -> void
+        {
+            if (_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().size() > 0)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            }
+            else
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+            }
 
+        };
+    connect(&_linkerSettingsHolder.getSelectedLeafValues(), &OptionsAction::selectedOptionsChanged, this, updatespeciesExplorerInMap);
 
     const auto referenceTreeSelection = [this]() -> void
         {
