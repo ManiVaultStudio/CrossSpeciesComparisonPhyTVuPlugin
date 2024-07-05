@@ -39,20 +39,10 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
     _chartWidget.setPage(":CrossSpeciesComparisonPhyTVu/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html", "qrc:/CrossSpeciesComparisonPhyTVu/CrossSpeciesComparisonPhyTVu_chart/");
     _chartWidget.setContentsMargins(0, 0, 0, 0);
     _chartWidget.layout()->setContentsMargins(0, 0, 0, 0);
-    //connect(&_chartWidget, &ChartWidget::widgetInitialized, &_chartOptions, &ChartOptions::initLoader);
 
     const auto triggerUpdateButtonForChartSelection = [this]() -> void
         {
-            /*
-            if (_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().getString() != "" || _reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().getString() != "")
-            {
-                _reembedOptions.reembedSelection();
-            }
-            else
-            {
-                qDebug()<<"Please select a point to reembed";
-            }
-            */
+
 
         };
     connect(&_chartOptions.getUpdateSettingsHolder().getUpdateViewsButtonAction(), &TriggerAction::triggered, this, triggerUpdateButtonForChartSelection);
@@ -63,7 +53,6 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             if (_chartOptions.getExtraSettingsHolder().getDisableAcceptDatasetDrops().isChecked())
             {
                 _chartWidget.setAcceptDrops(false);
-                //hide drop indicator widget
                 _dropWidget->setShowDropIndicator(false);
             }
             else
@@ -74,23 +63,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
             }
         };
     connect(&_chartOptions.getExtraSettingsHolder().getDisableAcceptDatasetDrops(), &ToggleAction::toggled, this, disableAcceptDrops);
-    /*
-    const auto optionsforreembedding = [this]() -> void
-        {
-            if (_chartOptions.getLinkerSettingsHolder().getReembeddingOptions().isChecked())
-            {
-                _chartOptions.getUpdateSettingsHolder().setEnabled(true);
-                _reembedOptions.getReembeddingSettingsHolder().setEnabled(true);
-            }
-            else
-            {
-                _chartOptions.getUpdateSettingsHolder().setEnabled(false);
-                _reembedOptions.getReembeddingSettingsHolder().setEnabled(false);
-            }
-        };
-    connect(&_chartOptions.getLinkerSettingsHolder().getReembeddingOptions(), &ToggleAction::toggled, this, optionsforreembedding);
 
-    */
     _chartOptions.getShowDataDrop().setChecked(true);
     connect(&_chartOptions.getShowDataDrop(), &QCheckBox::stateChanged, this, &CrossSpeciesComparisonPhyTVuPlugin::ShowDataDropOptions);
 
@@ -106,10 +79,6 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
 
             QString selectionString = _chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT().getString();
             _chartWidget.setLeafSelectionFromQT(selectionString);
-            //if (selectionString != "")
-            {
-                //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(selectionString);
-            }
         };
 
     connect(&_chartOptions.getLinkerSettingsHolder().getTreeLeafSelectionValueQT(), &StringAction::stringChanged, this, updateTreeLeafSelectionFromQT);
@@ -200,10 +169,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
                     }
                     else
                     {
-                        // The number of points is equal, so offer the option to use the points dataset as source for points colors
                         dropRegions << new DropWidget::DropRegion(this, "Reference CrossSpeciesComparisonTree", QString("Compare %1 tree ").arg(datasetGuiName), "project-diagram", true, [this, candidateTreeDataset]() {
-                            //_settingsAction.getColoringAction().addColorDataset(candidateDataset);
-                            //_settingsAction.getColoringAction().setCurrentColorDataset(candidateDataset);
                             _referenceTree = candidateTreeDataset;
 
                             if ( _referenceTree.isValid())
@@ -559,12 +525,7 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
 
     if (number_of_datasets == 1 && PluginFactory::areAllDatasetsOfTheSameType(datasets, CrossSpeciesComparisonTreeType)) {
         Dataset<CrossSpeciesComparisonTree> checkDataset = datasets[0]->getFullDataset<CrossSpeciesComparisonTree>();
-        //Dataset<CrossSpeciesComparisonTree> checkDataset = mv::data().getDataset<CrossSpeciesComparisonTree>(datasets[0]->getId());
-        
-        //int tempDimensionNumber = checkDataset->getNumDimensions();
-        //int tempPointNumber = checkDataset->getNumPoints();
 
-        //if (tempDimensionNumber== tempPointNumber) 
         {
             const auto pluginTriggerAction = new PluginTriggerAction(
                 const_cast<CrossSpeciesComparisonPhyTVuPluginFactory*>(this),
@@ -587,24 +548,16 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
 void CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot(std::string clusterName)
 {
 
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
-
 }
 
 void CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot(std::string clusterName)
 {
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString("");
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(false);
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString(QString::fromStdString(clusterName));
+
     
 }
 void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)
 {
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeafNames().setString("");
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNamesFlag().setChecked(true);
-    //_reembedOptions.getReembeddingSettingsHolder().getselectedLeftRightLeafNames().setString(QString::fromStdString(clusterName));
-    
+
 }
 
 void CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection(std::string selectedSpecies)
