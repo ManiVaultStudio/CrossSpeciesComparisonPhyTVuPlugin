@@ -48,7 +48,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
     _metaDataSettingsHolder.getDisableTraitOptions().setSerializationName("CSCPTV:Disable Trait Options");
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
-    //_extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSCPTV:Show reference tree selection");
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
 
@@ -56,7 +55,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSCPTV:Scatterplot Leaf Selection Value");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
-    //_linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSCPTV:Reembedding Options");
     _linkerSettingsHolder.getSelectedLeafValues().setSerializationName("CSCPTV:Selected Leaf Values");
     _linkerSettingsHolder.getLeafDatasetPicker().setSerializationName("CSCPTV:Leaf Dataset Picker");
 
@@ -110,8 +108,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.getDisableTraitOptions().setChecked(false);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
-    //_linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
-    //_linkerSettingsHolder.getReembeddingOptions().setChecked(false);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setString("");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setDefaultWidgetFlags(StringAction::LineEdit);
 
@@ -249,21 +245,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     connect(&_extraSettingsHolder.getColorMapAction(), &ColorMap1DAction::imageChanged, this, colormapFilter);
 
-    /*
-    const auto showReferenceTreeSelection = [this]() -> void
-        {
-            if (_extraSettingsHolder.getShowReferenceTreeAction().isChecked())
-            {
-                _viewerPlugin.getChartWidget().setShowReferenceTree("T");
-            }
-            else
-            {
-                _viewerPlugin.getChartWidget().setShowReferenceTree("F");
-            }
-        };
-    connect(&_extraSettingsHolder.getShowReferenceTreeAction(), &ToggleAction::toggled, this, showReferenceTreeSelection);
-
-    */
     const auto showExpandAllSelection = [this]() -> void
         {
             if (_extraSettingsHolder.getExpandAllAction().isChecked())
@@ -567,18 +548,6 @@ void ChartOptions::initLoader()
         {
             _viewerPlugin.getChartWidget().setExpandAll("F");
         }
-        /*
-        if (_extraSettingsHolder.getShowReferenceTreeAction().isChecked())
-        {
-            _viewerPlugin.getChartWidget().setShowReferenceTree("T");
-        }
-
-        else
-        {
-            _viewerPlugin.getChartWidget().setShowReferenceTree("F");
-        }
-        
-        */
         if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
@@ -648,7 +617,6 @@ void ChartOptions::changeLoader()
 inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& chartOptions) :
     VerticalGroupAction(&chartOptions, "Extra options"),
     _chartOptions(chartOptions),
-   // _showReferenceTree(this, "Show reference tree"),
     _treeColorMapAction(this, "Color map"),
     _expandAllAction(this, "Expand all"),
     _disableAcceptDatasetDrops(this, "Disable accept dataset drops")
@@ -658,7 +626,6 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     setIcon(Application::getIconFont("FontAwesome").getIcon("toolbox"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    //addAction(&_showReferenceTree);
     addAction(&_expandAllAction);
     addAction(&_treeColorMapAction);
     addAction(&_disableAcceptDatasetDrops);
@@ -690,7 +657,6 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
     VerticalGroupAction(&chartOptions, "Meta data options"),
     _chartOptions(chartOptions),
     _scatterplotLeafSelectionValue(this, "Scatterplot Leaf Selection Value"),
-    //_reembeddingOptions(this, "Reembedding Options"),
     _treeLeafSelectionValue(this, "Tree Leaf Selection Value"),
     _selectedLeafValues(this, "Selected Leaf Values"),
     _leafDatasetPicker(this, "Leaf Dataset Picker")
@@ -759,8 +725,6 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
-    //_linkerSettingsHolder.getReembeddingOptions().fromParentVariantMap(variantMap);
-    //_extraSettingsHolder.getShowReferenceTreeAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
@@ -781,8 +745,6 @@ QVariantMap ChartOptions::toVariantMap() const
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
-    //_linkerSettingsHolder.getReembeddingOptions().insertIntoVariantMap(variantMap);
-    //_extraSettingsHolder.getShowReferenceTreeAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);
