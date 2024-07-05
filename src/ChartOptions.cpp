@@ -9,8 +9,6 @@
 #include <QWebEngineView>
 #include <string>
 #include <typeinfo>
-#include "lib/JSONnlohmann/json.hpp"
-#include "lib/Clustering/fastcluster.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -50,15 +48,12 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.getStringTraitAction().setSerializationName("CSCPTV:String type trait selection");
     _metaDataSettingsHolder.getDisableTraitOptions().setSerializationName("CSCPTV:Disable Trait Options");
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setSerializationName("CSCPTV:Trait Dataset selection");
-    _extraSettingsHolder.getShowReferenceTreeAction().setSerializationName("CSCPTV:Show reference tree selection");
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
-
-    _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Update Views Button");
-
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setSerializationName("CSCPTV:Scatterplot Leaf Selection Value");
+    _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Explore Species Button");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
-    _linkerSettingsHolder.getReembeddingOptions().setSerializationName("CSCPTV:Reembedding Options");
+    _linkerSettingsHolder.getSelectedLeafValues().setSerializationName("CSCPTV:Selected Leaf Values");
+    _linkerSettingsHolder.getLeafDatasetPicker().setSerializationName("CSCPTV:Leaf Dataset Picker");
 
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetAdded));
     _eventListener.addSupportedEventType(static_cast<std::uint32_t>(EventType::DatasetRemoved));
@@ -101,13 +96,13 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.getStringTraitAction().setDefaultWidgetFlags(OptionAction::ComboBox);
     _metaDataSettingsHolder.getStringTraitAction().initialize(QStringList({  }));
 
+    _linkerSettingsHolder.getSelectedLeafValues().setDefaultWidgetFlags(OptionsAction::ComboBox);
+    _linkerSettingsHolder.getSelectedLeafValues().initialize(QStringList({  }));
+    _linkerSettingsHolder.getLeafDatasetPicker().setDefaultWidgetFlags(OptionAction::ComboBox);
+    _linkerSettingsHolder.getLeafDatasetPicker().initialize(QStringList({  }));
 
-    _metaDataSettingsHolder.getStringTraitAction().setDefaultWidgetFlags(ToggleAction::CheckBox);
-    _metaDataSettingsHolder.getStringTraitAction().setChecked(false);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setString("");
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().setDefaultWidgetFlags(StringAction::LineEdit);
-    _linkerSettingsHolder.getReembeddingOptions().setDefaultWidgetFlags(TriggerAction::IconText);
-    _linkerSettingsHolder.getReembeddingOptions().setChecked(false);
+    _metaDataSettingsHolder.getDisableTraitOptions().setDefaultWidgetFlags(ToggleAction::CheckBox);
+    _metaDataSettingsHolder.getDisableTraitOptions().setChecked(false);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setString("");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setDefaultWidgetFlags(StringAction::LineEdit);
 
@@ -118,6 +113,52 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setChecked(false);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setVisible(true);
     _updateSettingsHolder.getUpdateViewsButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
+
+
+
+
+    const auto leafDatasetSelection = [this]() -> void
+        {
+            QStringList clusterValues = {};
+            if (_linkerSettingsHolder.getLeafDatasetPicker().getCurrentDataset().isValid())
+            {
+                auto temp = mv::data().getDataset<Clusters>(_linkerSettingsHolder.getLeafDatasetPicker().getCurrentDataset()->getId());
+                if (temp.isValid())
+                {
+                    auto clusters = temp->getClusters();
+                    if (clusters.size() > 0)
+                    {
+                        for (auto cluster : clusters)
+                        {
+                            auto name = cluster.getName();
+                            if (name != "")
+                            {
+                                clusterValues.append(name);
+                            }
+
+                        }
+                    }
+
+                }
+            }
+            _linkerSettingsHolder.getSelectedLeafValues().setOptions(clusterValues);
+        };
+    connect(&_linkerSettingsHolder.getLeafDatasetPicker(), &DatasetPickerAction::currentIndexChanged, this, leafDatasetSelection);
+
+
+    const auto updatespeciesExplorerInMap = [this]() -> void
+        {
+            if (_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().size() > 0)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            }
+            else
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+            }
+
+        };
+    connect(&_linkerSettingsHolder.getSelectedLeafValues(), &OptionsAction::selectedOptionsChanged, this, updatespeciesExplorerInMap);
 
     const auto referenceTreeSelection = [this]() -> void
         {
@@ -184,58 +225,16 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     const auto traitDatasetSelection = [this]() -> void
         {
             traitDatasetModify();
-           /* auto dataset = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset();
-            auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
-            if (dataset.isValid() && datasetText != "")
-            {
-
-                auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
-                if (data.isValid())
-                {
-
-                    _viewerPlugin.getMetaInfoDataset().setDataset(data.getDataset());
-                    auto propertyString = data->getTreeMetaPropertyNames();
-                    QStringList propertyOptionsString = extractTraitPropertyOptionValues("String", propertyString);
-                    QStringList propertyOptionsNumeric = extractTraitPropertyOptionValues("Numeric", propertyString);
-                    QStringList propertyOptionsColor = extractTraitPropertyOptionValues("Color", propertyString);
-
-                    auto traitSelectedColor = _metaDataSettingsHolder.getColorTraitAction().getCurrentText();
-                    auto traitSelectedNumeric = _metaDataSettingsHolder.getNumericTraitAction().getCurrentText();
-                    auto traitSelectedString = _metaDataSettingsHolder.getStringTraitAction().getCurrentText();
-
-                    _metaDataSettingsHolder.getStringTraitAction().setOptions(propertyOptionsString);
-                    _metaDataSettingsHolder.getColorTraitAction().setOptions(propertyOptionsColor);
-                    _metaDataSettingsHolder.getNumericTraitAction().setOptions(propertyOptionsNumeric);
-                    if (traitSelectedColor != "")
-                    {
-                        if (propertyOptionsColor.contains(traitSelectedColor))
-                        {
-                            _metaDataSettingsHolder.getColorTraitAction().setCurrentText(traitSelectedColor);
-                        }
-                    }
-                    if (traitSelectedString != "")
-                    {
-                        if (propertyOptionsString.contains(traitSelectedString))
-                        {
-                            _metaDataSettingsHolder.getStringTraitAction().setCurrentText(traitSelectedString);
-                        }
-                    }
-                    if (traitSelectedNumeric != "")
-                    {
-                        if (propertyOptionsNumeric.contains(traitSelectedNumeric))
-                        {
-                            _metaDataSettingsHolder.getNumericTraitAction().setCurrentText(traitSelectedNumeric);
-                        }
-                    }
-
-                }
-
-            }
-            */
-
 
         };
     connect(&_metaDataSettingsHolder.getTraitDatasetSelectionAction(), &DatasetPickerAction::currentIndexChanged, this, traitDatasetSelection);
+
+        const auto showTraitValues = [this]() -> void
+        {
+                disableTraitOptions();
+
+        };
+    connect(&_metaDataSettingsHolder.getDisableTraitOptions(), &ToggleAction::toggled, this, showTraitValues);
 
 
 
@@ -259,21 +258,6 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
         };
 
     connect(&_extraSettingsHolder.getColorMapAction(), &ColorMap1DAction::imageChanged, this, colormapFilter);
-
-
-    const auto showReferenceTreeSelection = [this]() -> void
-        {
-            if (_extraSettingsHolder.getShowReferenceTreeAction().isChecked())
-            {
-                _viewerPlugin.getChartWidget().setShowReferenceTree("T");
-            }
-            else
-            {
-                _viewerPlugin.getChartWidget().setShowReferenceTree("F");
-            }
-        };
-    connect(&_extraSettingsHolder.getShowReferenceTreeAction(), &ToggleAction::toggled, this, showReferenceTreeSelection);
-
 
     const auto showExpandAllSelection = [this]() -> void
         {
@@ -329,74 +313,6 @@ std::vector<double> getCondensedDistanceMatrix(const std::vector<double>& distan
     }
 
     return condensedMatrix;
-}
-
-nlohmann::json createLeafNode(QString name, int cluster) {
-    nlohmann::json node;
-    node["cluster"] = cluster;
-    node["name"] = name.toStdString();
-    node["color"] = "#000000";
-    node["hastrait"] = false;
-    node["iscollapsed"] = false;
-    return node;
-}
-
-nlohmann::json createInternalNode(int id, double score, int width, QString description) {
-    nlohmann::json node;
-    node["id"] = id;
-    node["score"] = score;
-    node["width"] = width;
-    node["description"] = description.toStdString();
-    node["children"] = nlohmann::json::array();
-    return node;
-}
-
-std::string createDendrogramJson(int* merge, std::vector<QString> dimensionNames, int n) {
-    std::vector<nlohmann::json> nodes(2 * n - 1);
-
-    // Initialize leaf nodes
-    for (int i = 0; i < n; i++) {
-        nodes[i] = createLeafNode(dimensionNames[i], i);
-    }
-    for (int i = 0; i < n - 1; i++) {
-        QString description = "Merge Step " + QString::number(i + 1) + ": ";
-        int cluster1 = merge[2 * i];
-        int cluster2 = merge[2 * i + 1];
-
-        // Decode cluster1
-        if (cluster1 < 0) {
-            description += dimensionNames[-cluster1 - 1];
-            nodes[n + i] = createInternalNode(i + 1, 1.0, 2, description);  // Adjust score and width as needed
-        }
-        else {
-            description += "Cluster formed at step " + QString::number(cluster1);
-            nodes[n + i] = createInternalNode(i + 1, 1.0, 2, description);  // Adjust score and width as needed
-        }
-        description += " merged with ";
-
-        // Decode cluster2
-        if (cluster2 < 0) {
-            description += dimensionNames[-cluster2 - 1];
-            nodes[n + i] = createInternalNode(i + 1, 1.0, 2, description);  // Adjust score and width as needed
-        }
-        else {
-            description += "Cluster formed at step " + QString::number(cluster2);
-            nodes[n + i] = createInternalNode(i + 1, 1.0, 2, description);  // Adjust score and width as needed
-        }
-
-        int left = cluster1 < 0 ? -cluster1 - 1 : cluster1 + n - 1;
-        int right = cluster2 < 0 ? -cluster2 - 1 : cluster2 + n - 1;
-        nodes[n + i]["children"].push_back(nodes[left]);
-        nodes[left] = {};  // Clear the node after using it
-        nodes[n + i]["children"].push_back(nodes[right]);
-        nodes[right] = {};  // Clear the node after using it
-    }
-
-
-    nlohmann::json root = nodes.back();
-    std::string jsonString = root.dump(4);
-
-    return jsonString;
 }
 
 std::string ChartOptions::extractFormatData(QString datasetValue)
@@ -524,14 +440,14 @@ void ChartOptions::numericTraitCalculation()
 }
 void ChartOptions::disableTraitOptions()
 {
-    if (_metaDataSettingsHolder.getStringTraitAction().isChecked())
+    if (_metaDataSettingsHolder.getDisableTraitOptions().isChecked())
     {
-        //_viewerPlugin.getChartWidget().setDisableTraitOptions("True");
+        _viewerPlugin.getChartWidget().setDisableTraitOptions("True");
         
     }
     else
     {
-       // _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
+       _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
     }
 
 
@@ -646,15 +562,6 @@ void ChartOptions::initLoader()
         {
             _viewerPlugin.getChartWidget().setExpandAll("F");
         }
-
-        if (_extraSettingsHolder.getShowReferenceTreeAction().isChecked())
-        {
-            _viewerPlugin.getChartWidget().setShowReferenceTree("T");
-        }
-        else
-        {
-            _viewerPlugin.getChartWidget().setShowReferenceTree("F");
-        }
         if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
@@ -674,6 +581,7 @@ void ChartOptions::initLoader()
 
         _viewerPlugin.setInitialLoadCompleteflag(true);
         triggerChart();
+        disableTraitOptions();
     }
 
 
@@ -724,7 +632,6 @@ void ChartOptions::changeLoader()
 inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& chartOptions) :
     VerticalGroupAction(&chartOptions, "Extra options"),
     _chartOptions(chartOptions),
-    _showReferenceTree(this, "Show reference tree"),
     _treeColorMapAction(this, "Color map"),
     _expandAllAction(this, "Expand all"),
     _disableAcceptDatasetDrops(this, "Disable accept dataset drops")
@@ -734,7 +641,6 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     setIcon(Application::getIconFont("FontAwesome").getIcon("toolbox"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    addAction(&_showReferenceTree);
     addAction(&_expandAllAction);
     addAction(&_treeColorMapAction);
     addAction(&_disableAcceptDatasetDrops);
@@ -758,24 +664,25 @@ inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions
     addAction(&_colorTrait);
     addAction(&_numericTrait);
     addAction(&_stringTrait);
+    addAction(&_disableTraitOptions);
 }
 
 
 inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& chartOptions) :
     VerticalGroupAction(&chartOptions, "Meta data options"),
     _chartOptions(chartOptions),
-    _scatterplotLeafSelectionValue(this, "Scatterplot Leaf Selection Value"),
-    _reembeddingOptions(this, "Reembedding Options"),
-    _treeLeafSelectionValue(this, "Tree Leaf Selection Value")
+    _treeLeafSelectionValue(this, "Tree Leaf Selection Value"),
+    _selectedLeafValues(this, "Selected Leaf Values"),
+    _leafDatasetPicker(this, "Leaf Dataset Picker")
 
 {
     setText("Linker Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("link"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    addAction(&_scatterplotLeafSelectionValue);
     addAction(&_treeLeafSelectionValue);
-    addAction(&_reembeddingOptions);
+    addAction(&_selectedLeafValues);
+    addAction(&_leafDatasetPicker);
 }
 
 inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartOptions) :
@@ -805,14 +712,14 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     VerticalGroupAction(&chartOptions, "Update Options"),
     _chartOptions(chartOptions),
 
-    _updateViewsButton(this, "Update Views")
+    _updateViewsButton(this, "Explore Leaves")
 
 
 {
     setText("Update Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
     setPopupSizeHint(QSize(350, 0));
-    _updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
+    _updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
     addAction(&_updateViewsButton);
 
 }
@@ -823,14 +730,13 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
 
     _extraSettingsHolder.getColorMapAction().fromParentVariantMap(variantMap);
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().fromParentVariantMap(variantMap);
+    _linkerSettingsHolder.getLeafDatasetPicker().fromParentVariantMap(variantMap);
+    _linkerSettingsHolder.getSelectedLeafValues().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getColorTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().fromParentVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().fromParentVariantMap(variantMap);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().fromParentVariantMap(variantMap);
-    _linkerSettingsHolder.getReembeddingOptions().fromParentVariantMap(variantMap);
-    _extraSettingsHolder.getShowReferenceTreeAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
@@ -843,14 +749,13 @@ QVariantMap ChartOptions::toVariantMap() const
     QVariantMap variantMap = WidgetAction::toVariantMap();
     _extraSettingsHolder.getColorMapAction().insertIntoVariantMap(variantMap);
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().insertIntoVariantMap(variantMap);
+    _linkerSettingsHolder.getLeafDatasetPicker().insertIntoVariantMap(variantMap);
+    _linkerSettingsHolder.getSelectedLeafValues().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getColorTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getNumericTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getStringTraitAction().insertIntoVariantMap(variantMap);
     _metaDataSettingsHolder.getDisableTraitOptions().insertIntoVariantMap(variantMap);
-    _linkerSettingsHolder.getScatterplotLeafSelectionValue().insertIntoVariantMap(variantMap);
-    _linkerSettingsHolder.getReembeddingOptions().insertIntoVariantMap(variantMap);
-    _extraSettingsHolder.getShowReferenceTreeAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);

@@ -17,9 +17,7 @@ var traitValueNumericContainer;
 var traitValueStringKey = "";
 var traitValueColorKey = "";
 var traitValueNumericKey = "";
-var showTraitValueString = false;
-var showTraitValueColor = false;
-var showTraitValueNumeric = false;
+var showTraitValues = false;
 let showReferenceTree = false;
 let showExpandAll = true;
 var colorMirror = false;
@@ -347,6 +345,18 @@ function setLeafSelectionFromQT(speciesStringValue) {
       generateVis();
     }
   }
+}
+function setDisableTraitOptions(traitHideFlag) {
+    if (traitHideFlag == "True") {
+        showTraitValues = false;
+    }
+    else {
+        showTraitValues = true;
+    }
+
+    if (dataReference != "") {
+        generateVis();
+    }
 }
 function setExpandAll(setExpandAllValue) {
   // log("showReferenceTreeValue: " + showReferenceTreeValue);

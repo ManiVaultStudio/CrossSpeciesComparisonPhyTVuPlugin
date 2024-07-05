@@ -46,8 +46,6 @@ set(CrossSpeciesComparisonPhyTVu_SOURCES
     src/ChartWidget.cpp
 	src/ChartOptions.h
     src/ChartOptions.cpp
-	src/ReembedOptions.h
-	src/ReembedOptions.cpp
     src/CrossSpeciesComparisonPhyTVuPlugin.json
 )
 

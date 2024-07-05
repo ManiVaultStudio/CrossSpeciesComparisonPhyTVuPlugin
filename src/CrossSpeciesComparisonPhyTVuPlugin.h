@@ -6,7 +6,6 @@
 #include <CrossSpeciesComparisonTreeMetaData.h>
 #include "ChartWidget.h"
 #include "ChartOptions.h"
-#include "ReembedOptions.h"
 #include <QWidget>
 #include <widgets/DropWidget.h>
 #include <actions/HorizontalToolbarAction.h>
@@ -61,7 +60,6 @@ public slots:
     /** Converts ManiVault's point data to a json-like data structure that Qt can pass to the JS code */
     ChartWidget& getChartWidget() { return _chartWidget; }
     ChartOptions& getChartOptions() { return _chartOptions; }
-    ReembedOptions& getReembedOptions() { return _reembedOptions; }
 
     mv::Dataset<CrossSpeciesComparisonTree>& getReferenceTreeDataset() { return _referenceTree; }
     mv::Dataset<CrossSpeciesComparisonTreeMeta>& getMetaInfoDataset() { return _metaInfo; }
@@ -85,7 +83,6 @@ private:
     ChartWidget            _chartWidget;       // WebWidget that sets up the HTML page
     //mv::Dataset<Points>   _currentDataSet;    // Reference to currently shown data set
     ChartOptions            _chartOptions;
-    ReembedOptions        _reembedOptions;
     HorizontalToolbarAction     _toolbarAction;     // Toolbar action that is shown in the main window
     DropWidget* _dropWidget;                /** Widget for drag and drop behavior */
     QLabel* _comparisonDatasetNameLabel;   /** Label that show the current dataset name */

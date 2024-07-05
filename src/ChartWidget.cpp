@@ -103,6 +103,11 @@ void ChartWidget::setLeafSelectionFromQT(QString visColorContent)
     emit _communicationObject->qt_setLeafSelectionFromQT(visColorContent);
 }
 
+void ChartWidget::setDisableTraitOptions(QString visColorContent)
+{
+    emit _communicationObject->qt_setDisableTraitOptions(visColorContent);
+}
+
 void ChartWidget::setExpandAll(QString visColorContent)
 {
     emit _communicationObject->qt_setExpandAll(visColorContent);
