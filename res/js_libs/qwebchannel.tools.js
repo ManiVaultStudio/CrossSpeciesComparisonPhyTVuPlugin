@@ -21,6 +21,9 @@ try {
         QtBridge.qt_setLeafSelectionFromQT.connect(function () {
             setLeafSelectionFromQT(arguments[0]);
         });
+        QtBridge.qt_setDisableTraitOptions.connect(function () {
+            setDisableTraitOptions(arguments[0]);
+        });
         QtBridge.qt_setExpandAll.connect(function () {
             setExpandAll(arguments[0]);
         });

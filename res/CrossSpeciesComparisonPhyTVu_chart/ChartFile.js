@@ -85,7 +85,7 @@ function generateVis() {
     var maxValNumeric;
     var sizeScale;
 
-    if (traitValueNumericFlag) {
+    if (traitValueNumericFlag && showTraitValues) {
         valuesNumeric = Object.values(traitValueNumericContainer);
         minValNumeric = Math.min(...valuesNumeric);
         maxValNumeric = Math.max(...valuesNumeric);
@@ -98,7 +98,7 @@ function generateVis() {
     var dataValuesString;
     var uniqueValuesString;
     var shapeScale;
-    if (traitValueStringFlag) {
+    if (traitValueStringFlag && showTraitValues) {
         dataValuesString = Object.values(traitValueStringContainer);
         uniqueValuesString = Array.from(new Set(dataValuesString));
 
@@ -249,7 +249,7 @@ function generateVis() {
                 ) {
                     let symbol = d3.symbol();
 
-                    if (traitValueStringFlag) {
+                    if (traitValueStringFlag && showTraitValues) {
                         symbol = symbol.type(
                             shapeScale(traitValueStringContainer[d.data.name])
                         );
@@ -257,7 +257,7 @@ function generateVis() {
                         symbol = symbol.type(d3.symbolSquare);
                     }
 
-                    if (traitValueNumericFlag) {
+                    if (traitValueNumericFlag && showTraitValues) {
                         symbol = symbol.size(
                             sizeScale(traitValueNumericContainer[d.data.name])
                         );
@@ -279,7 +279,7 @@ function generateVis() {
                 if (
                     d.data.name !== undefined &&
                     d.data.name !== "" &&
-                    traitValueColorFlag
+                    traitValueColorFlag && showTraitValues
                 ) {
                     return traitValueColorContainer[d.data.name];
                 } else {
@@ -295,14 +295,14 @@ function generateVis() {
                 ) {
                     var returnStringADd = "";
                     if (d.data.name !== undefined && d.data.name !== "") {
-                        if (traitValueStringFlag) {
+                        if (traitValueStringFlag && showTraitValues) {
                             returnStringADd +=
                                 "\n" +
                                 traitValueStringKey +
                                 " : " +
                                 traitValueStringContainer[d.data.name];
                         }
-                        if (traitValueNumericFlag) {
+                        if (traitValueNumericFlag && showTraitValues) {
                             returnStringADd +=
                                 "\n" +
                                 traitValueNumericKey +
@@ -311,7 +311,7 @@ function generateVis() {
                         }
                     }
 
-                    if (traitValueStringFlag || traitValueNumericFlag) {
+                    if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
                         return (
                             "leaf : " +
                             d.data.name +
@@ -431,14 +431,14 @@ function generateVis() {
             .text(function (d) {
                 if (d.data.name !== undefined && d.data.name !== "") {
                     var returnStringADd = "";
-                    if (traitValueStringFlag) {
+                    if (traitValueStringFlag && showTraitValues) {
                         returnStringADd +=
                             "\n" +
                             traitValueStringKey +
                             " : " +
                             traitValueStringContainer[d.data.name];
                     }
-                    if (traitValueNumericFlag) {
+                    if (traitValueNumericFlag && showTraitValues) {
                         returnStringADd +=
                             "\n" +
                             traitValueNumericKey +
@@ -447,7 +447,7 @@ function generateVis() {
                     }
                 }
 
-                if (traitValueStringFlag || traitValueNumericFlag) {
+                if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
                     return (
                         "Leaf : " + d.data.name + "\nCell counts : " + d.data.cellCounts + "\nMean: " + d.data.mean + returnStringADd
                     );
@@ -826,12 +826,12 @@ L ${d.y} ${d.x}`;
                 d3
                     .symbol()
                     .type((d) =>
-                        traitValueStringFlag
+                        traitValueStringFlag && showTraitValues
                             ? shapeScale(traitValueStringContainer[d.name])
                             : d3.symbolCircle
                     )
                     .size((d) =>
-                        traitValueNumericFlag
+                        traitValueNumericFlag && showTraitValues
                             ? sizeScale(traitValueNumericContainer[d.name])
                             : 50
                     )
@@ -864,7 +864,7 @@ L ${d.y} ${d.x}`;
             })
             .style("stroke-width", "1px")
             .style("fill", (d) =>
-                traitValueColorFlag && traitValueColorContainer[d.name]
+                traitValueColorFlag && showTraitValues && traitValueColorContainer[d.name]
                     ? traitValueColorContainer[d.name]
                     : colorScale(d.score) || "black"
             )
@@ -874,10 +874,10 @@ L ${d.y} ${d.x}`;
             .style("font-size", "12px")
             .text((d) => {
                 let info = d.name;
-                if (traitValueStringFlag)
+                if (traitValueStringFlag && showTraitValues)
                     info += `\n${traitValueStringKey} : ${traitValueStringContainer[d.name]
                         }`;
-                if (traitValueNumericFlag)
+                if (traitValueNumericFlag && showTraitValues)
                     info += `\n${traitValueNumericKey} : ${traitValueNumericContainer[d.name]
                         }`;
                 return info;
@@ -1128,7 +1128,7 @@ L ${d.y} ${d.x}`;
                     // Default color for selected species
                     return "#1D8ECE";
                 }
-            } else if (d?.name && traitValueColorFlag) {
+            } else if (d?.name && traitValueColorFlag && showTraitValues) {
                 // Node has a name and traitValueColorFlag is true
                 return traitValueColorContainer[d.data.name];
             }
@@ -1209,7 +1209,7 @@ L ${d.y} ${d.x}`;
     updateNamesBelowNodes();
     var removeAnimation = false;
 
-    if (traitValueStringFlag || traitValueNumericFlag) {
+    if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
         legendUpdate();
     }
 
@@ -1226,7 +1226,7 @@ L ${d.y} ${d.x}`;
         var legendX = legendXValue;
         var legendY = 0 + legendYValue;
         var sizeLegend;
-        if (traitValueNumericFlag) {
+        if (traitValueNumericFlag && showTraitValues) {
             // Create a group for the size legend
             sizeLegend = svg
                 .append("g")
@@ -1275,9 +1275,9 @@ L ${d.y} ${d.x}`;
                 });
         }
         var shapeLegend;
-        if (traitValueStringFlag) {
+        if (traitValueStringFlag && showTraitValues) {
             var shapeLegendY;
-            if (traitValueNumericFlag) {
+            if (traitValueNumericFlag && showTraitValues) {
                 shapeLegendY = legendY + 70;
             } else {
                 shapeLegendY = legendY;

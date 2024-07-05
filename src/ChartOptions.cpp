@@ -234,6 +234,13 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
         };
     connect(&_metaDataSettingsHolder.getTraitDatasetSelectionAction(), &DatasetPickerAction::currentIndexChanged, this, traitDatasetSelection);
 
+        const auto showTraitValues = [this]() -> void
+        {
+                disableTraitOptions();
+
+        };
+    connect(&_metaDataSettingsHolder.getDisableTraitOptions(), &ToggleAction::toggled, this, showTraitValues);
+
 
 
 
@@ -438,14 +445,14 @@ void ChartOptions::numericTraitCalculation()
 }
 void ChartOptions::disableTraitOptions()
 {
-    if (_metaDataSettingsHolder.getStringTraitAction().isChecked())
+    if (_metaDataSettingsHolder.getDisableTraitOptions().isChecked())
     {
-        //_viewerPlugin.getChartWidget().setDisableTraitOptions("True");
+        _viewerPlugin.getChartWidget().setDisableTraitOptions("True");
         
     }
     else
     {
-       // _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
+       _viewerPlugin.getChartWidget().setDisableTraitOptions("False");
     }
 
 
@@ -579,6 +586,7 @@ void ChartOptions::initLoader()
 
         _viewerPlugin.setInitialLoadCompleteflag(true);
         triggerChart();
+        disableTraitOptions();
     }
 
 
