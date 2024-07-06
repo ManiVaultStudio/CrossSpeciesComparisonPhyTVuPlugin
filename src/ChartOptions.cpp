@@ -719,7 +719,7 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     setText("Update Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
     setPopupSizeHint(QSize(350, 0));
-    _updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
+    //_updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
     addAction(&_updateViewsButton);
 
 }
