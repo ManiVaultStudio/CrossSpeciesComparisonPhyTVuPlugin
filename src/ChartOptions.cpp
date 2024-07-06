@@ -712,7 +712,7 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     VerticalGroupAction(&chartOptions, "Update Options"),
     _chartOptions(chartOptions),
 
-    _updateViewsButton(this, "Explore Leaves")
+    _updateViewsButton(this, "Leaf Explore")
 
 
 {
