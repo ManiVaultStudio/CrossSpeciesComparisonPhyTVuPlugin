@@ -113,7 +113,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setChecked(false);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setVisible(true);
     _updateSettingsHolder.getUpdateViewsButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
-
+    _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
 
 
 
@@ -148,18 +148,80 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto updatespeciesExplorerInMap = [this]() -> void
         {
-            if (_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().size() > 0)
-            {
-                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty();
+            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(!hasSelectedOptions);
+
+            bool shouldDisableRevertButton = true;
+            if (hasSelectedOptions) {
+                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
+                if (!currentSelection.isEmpty()) {
+                    QStringList temp = currentSelection.split(" @%$,$%@ ");
+                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+
+                    std::sort(temp.begin(), temp.end());
+                    std::sort(species.begin(), species.end());
+
+                    shouldDisableRevertButton = (temp == species);
+                }
             }
-            else
-            {
-                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
-            }
+
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
 
         };
     connect(&_linkerSettingsHolder.getSelectedLeafValues(), &OptionsAction::selectedOptionsChanged, this, updatespeciesExplorerInMap);
+    const auto revertButtomUpdate = [this]() -> void
+        {
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+        };
+    connect(&_updateSettingsHolder.getRevertButtonAction(), &TriggerAction::triggered, this, revertButtomUpdate);
 
+    const auto leafStringUpdate = [this]() -> void
+        {
+            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
+            bool shouldDisableRevertButton = true;
+            if (hasSelectedOptions) {
+                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
+                if (!currentSelection.isEmpty()) {
+                    QStringList temp = currentSelection.split(" @%$,$%@ ");
+                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+
+                    std::sort(temp.begin(), temp.end());
+                    std::sort(species.begin(), species.end());
+
+                    shouldDisableRevertButton = (temp == species);
+                }
+            }
+
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
+
+        };
+    connect(&_linkerSettingsHolder.getTreeLeafSelectionValueQT(), &StringAction::changed, this, leafStringUpdate);
+
+
+    const auto viewsButtomUpdate = [this]() -> void
+        {
+            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty();
+            bool shouldDisableRevertButton = true;
+            if (hasSelectedOptions) {
+                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
+                if (!currentSelection.isEmpty()) {
+                    QStringList temp = currentSelection.split(" @%$,$%@ ");
+                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+
+                    std::sort(temp.begin(), temp.end());
+                    std::sort(species.begin(), species.end());
+
+                    shouldDisableRevertButton = (temp == species);
+                }
+            }
+
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
+
+        };
+    connect(&_updateSettingsHolder.getUpdateViewsButtonAction(), &TriggerAction::triggered, this, viewsButtomUpdate);
     const auto referenceTreeSelection = [this]() -> void
         {
             if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
@@ -712,7 +774,8 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     VerticalGroupAction(&chartOptions, "Update Options"),
     _chartOptions(chartOptions),
 
-    _updateViewsButton(this, "Leaf Explore")
+    _updateViewsButton(this, "Explore"),
+    _revertButton(this, "Revert")
 
 
 {
@@ -721,6 +784,7 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     setPopupSizeHint(QSize(350, 0));
     //_updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
     addAction(&_updateViewsButton);
+    addAction(&_revertButton);
 
 }
 
