@@ -148,7 +148,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto updatespeciesExplorerInMap = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty();
+            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
             _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(!hasSelectedOptions);
 
             bool shouldDisableRevertButton = true;
@@ -202,7 +202,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto viewsButtomUpdate = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty();
+            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
             bool shouldDisableRevertButton = true;
             if (hasSelectedOptions) {
                 QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
