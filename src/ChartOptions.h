@@ -144,9 +144,11 @@ public:
         UpdateSettingsHolder(ChartOptions& chartOptions);
 
         const TriggerAction& getUpdateViewsButtonAction() const { return _updateViewsButton; }
-
-
         TriggerAction& getUpdateViewsButtonAction() { return _updateViewsButton; }
+
+        const TriggerAction& getRevertButtonAction() const { return _revertButton; }
+        TriggerAction& getRevertButtonAction() { return _revertButton; }
+
 
 
 
@@ -154,7 +156,7 @@ public:
     protected:
         ChartOptions& _chartOptions;
         TriggerAction                   _updateViewsButton;
-
+        TriggerAction                   _revertButton;
 
     };
 
