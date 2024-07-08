@@ -116,6 +116,12 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
 
 
+    QIcon updateIcon = Application::getIconFont("FontAwesome").getIcon("play");
+    _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(updateIcon);
+
+    QIcon revertIcon = Application::getIconFont("FontAwesome").getIcon("history");
+    _updateSettingsHolder.getRevertButtonAction().setIcon(revertIcon);
+
 
     const auto leafDatasetSelection = [this]() -> void
         {
