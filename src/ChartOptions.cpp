@@ -116,8 +116,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
 
 
-    QIcon updateIcon = Application::getIconFont("FontAwesome").getIcon("play");
-    _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(updateIcon);
+    QIcon exploreIcon = Application::getIconFont("FontAwesome").getIcon("wpexplorer");
+    _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(exploreIcon);
 
     QIcon revertIcon = Application::getIconFont("FontAwesome").getIcon("history");
     _updateSettingsHolder.getRevertButtonAction().setIcon(revertIcon);
