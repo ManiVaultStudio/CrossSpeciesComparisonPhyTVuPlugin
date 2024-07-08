@@ -45,12 +45,13 @@ function isRightChild(node) {
     return index === 1;
 }
 function generateVis() {
-    if (expandedLeafNameID !== "") {
-        d3.select(expandedLeafNameID).style("font-size", "12px");
-        if (!isDebug) {
-            passScatterplotLeafPointSelectionToQt("");
-        }
-    }
+    //if (expandedLeafNameID !== "")
+    //{
+    //d3.select(expandedLeafNameID).style("font-size", "12px");
+    //if (!isDebug) {
+    //passScatterplotLeafPointSelectionToQt("");
+    //}
+    //}
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
     svg.selectAll("*").remove();
@@ -110,7 +111,7 @@ function generateVis() {
         top: 0,
         right: 0,
         bottom: 20,
-        left: 30,
+        left: 35,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -174,9 +175,11 @@ function generateVis() {
     }
 
     // Toggle nodes based on the showExpandAll flag
+    /*
     toggleNode(root, showExpandAll ? "expand" : "collapse");
+    
+    */
     update(root);
-
     // Collapse the node and all it's children
     function collapse(d) {
         if (d.children) {
@@ -234,9 +237,8 @@ function generateVis() {
             .attr("class", "node")
             .attr("transform", function (d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
-            })
-            .on("contextmenu", contextmenuNodes);
-
+            });
+        //.on("contextmenu", contextmenuNodes)
         // Add Square for the nodes
         nodeEnter
             .append("path") // Change "rect" to "path"
@@ -279,7 +281,8 @@ function generateVis() {
                 if (
                     d.data.name !== undefined &&
                     d.data.name !== "" &&
-                    traitValueColorFlag && showTraitValues
+                    traitValueColorFlag &&
+                    showTraitValues
                 ) {
                     return traitValueColorContainer[d.data.name];
                 } else {
@@ -311,7 +314,11 @@ function generateVis() {
                         }
                     }
 
-                    if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
+                    //if (
+                    //(traitValueStringFlag && showTraitValues) ||
+                    //(traitValueNumericFlag && showTraitValues)
+                    // )
+                    {
                         return (
                             "leaf : " +
                             d.data.name +
@@ -321,7 +328,9 @@ function generateVis() {
                             d.data.mean +
                             returnStringADd
                         );
-                    } else {
+                    }
+                    //else
+                    {
                         return d.data.name;
                     }
                 } else {
@@ -351,9 +360,8 @@ function generateVis() {
             .style("font-size", "10px")
 
             .text(function (d) {
-                if (showReferenceTree) {
-                } else {
-                    return d.data.score; // Assuming the score is stored in the 'score' property
+                {
+                    return d.data.score;
                 }
             });
         // Add labels for the nodes
@@ -366,44 +374,14 @@ function generateVis() {
             .style("cursor", "pointer")
             .style("font-size", "12px")
             .style("fill", function (d, i) {
-                /*
-                        legendTextContainer = [];
-              legendTextContainerAltFlag = false;
-              legendTextContainerActivateFlag = false;
-              changeLegendColor();
-                    */
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.data.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
-                        if (legendTextContainerAltFlag) {
-                            //if legendTextContainer includes d and index of d is 0
-
-                            if (
-                                legendTextContainer.includes(traitName) &&
-                                legendTextContainer.indexOf(traitName) === 0
-                            ) {
-                                rightSpeciesSelected.push(d.data.name);
-                                speciesSelected.push(d.data.name);
-                                return "#1D8ECE";
-                            }
-                            //else if legendTextContainer includes d and index of d is 1
-                            else if (
-                                legendTextContainer.includes(traitName) &&
-                                legendTextContainer.indexOf(traitName) === 1
-                            ) {
-                                leftSpeciesSelected.push(d.data.name);
-                                speciesSelected.push(d.data.name);
-                                return "#FF5733";
-                            } else {
-                                return "black";
-                            }
+                        if (legendTextContainer.includes(traitName)) {
+                            speciesSelected.push(d.data.name);
+                            return "#1D8ECE";
                         } else {
-                            if (legendTextContainer.includes(traitName)) {
-                                speciesSelected.push(d.data.name);
-                                return "#1D8ECE";
-                            } else {
-                                return "black";
-                            }
+                            return "black";
                         }
                     } else {
                         return "black";
@@ -447,9 +425,19 @@ function generateVis() {
                     }
                 }
 
-                if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
+                //if (
+                //(traitValueStringFlag && showTraitValues) ||
+                //(traitValueNumericFlag && showTraitValues)
+                //)
+                {
                     return (
-                        "Leaf : " + d.data.name + "\nCell counts : " + d.data.cellCounts + "\nMean: " + d.data.mean + returnStringADd
+                        "Leaf : " +
+                        d.data.name +
+                        "\nCell counts : " +
+                        d.data.cellCounts +
+                        "\nMean: " +
+                        d.data.mean +
+                        returnStringADd
                     );
                 }
             });
@@ -753,39 +741,41 @@ L ${d.y} ${d.x}`;
         return speciesNames;
     }
     // Toggle children on click.
+    /*
     function contextmenuNodes(d) {
-        //check if leaf node clicked else do something
-        if (!d.children && !d._children) {
-            //(d.data.name); //TODO: change here
-            if (expandedLeafNameID !== "") {
-                d3.select(expandedLeafNameID).style("font-size", "12px");
-                if (!isDebug) {
-                    passScatterplotLeafPointSelectionToQt("");
-                }
-            }
-            if (expandedLeafNameID !== "#leafName_" + d.data.name) {
-                expandedLeafNameID = "#leafName_" + d.data.name;
-                d3.select(expandedLeafNameID).style("font-size", "14px");
-                if (!isDebug) {
-                    passScatterplotLeafPointSelectionToQt(d.data.name);
-                }
-            }
-        } else {
-            if (d.children) {
-                d._children = d.children;
-                d.children = null;
-                d.data.iscollapsed = true;
-            } else {
-                d.children = d._children;
-                d._children = null;
-                d.data.iscollapsed = false;
-            }
-            update(d);
-            updateNamesBelowNodes();
-            updateNodeStyles();
-            legendUpdate();
+      //check if leaf node clicked else do something
+      if (!d.children && !d._children) {
+        //(d.data.name); //TODO: change here
+        if (expandedLeafNameID !== "") {
+          d3.select(expandedLeafNameID).style("font-size", "12px");
+          if (!isDebug) {
+            passScatterplotLeafPointSelectionToQt("");
+          }
         }
+        if (expandedLeafNameID !== "#leafName_" + d.data.name) {
+          expandedLeafNameID = "#leafName_" + d.data.name;
+          d3.select(expandedLeafNameID).style("font-size", "14px");
+          if (!isDebug) {
+            passScatterplotLeafPointSelectionToQt(d.data.name);
+          }
+        }
+      } else {
+        if (d.children) {
+          d._children = d.children;
+          d.children = null;
+          d.data.iscollapsed = true;
+        } else {
+          d.children = d._children;
+          d._children = null;
+          d.data.iscollapsed = false;
+        }
+        update(d);
+        updateNamesBelowNodes();
+        updateNodeStyles();
+        legendUpdate();
+      }
     }
+    */
     function findNodeByName(name, data, parent) {
         if (data.name === name) {
             return {
@@ -845,15 +835,7 @@ L ${d.y} ${d.x}`;
                 if (traitValueStringContainer) {
                     let traitName = traitValueStringContainer[d.name];
                     if (legendTextContainerActivateFlag && traitName !== undefined) {
-                        if (legendTextContainerAltFlag) {
-                            if (legendTextContainer.includes(traitName)) {
-                                speciesSelected.push(d.name);
-                                return legendTextContainer.indexOf(traitName) === 0
-                                    ? "#1D8ECE"
-                                    : "#FF5733";
-                            }
-                            return "black";
-                        } else {
+                        {
                             return legendTextContainer.includes(traitName)
                                 ? "#1D8ECE"
                                 : "black";
@@ -864,7 +846,9 @@ L ${d.y} ${d.x}`;
             })
             .style("stroke-width", "1px")
             .style("fill", (d) =>
-                traitValueColorFlag && showTraitValues && traitValueColorContainer[d.name]
+                traitValueColorFlag &&
+                    showTraitValues &&
+                    traitValueColorContainer[d.name]
                     ? traitValueColorContainer[d.name]
                     : colorScale(d.score) || "black"
             )
@@ -928,46 +912,27 @@ L ${d.y} ${d.x}`;
 
     function clickNodes(d) {
         legendTextContainer = [];
-        legendTextContainerAltFlag = false;
         legendTextContainerActivateFlag = false;
-        if (expandedLeafNameID !== "") {
-            d3.select(expandedLeafNameID).style("font-size", "12px");
-            if (!isDebug) {
-                passScatterplotLeafPointSelectionToQt("");
-            }
-        }
+        //if (expandedLeafNameID !== "")
+        //{
+        //d3.select(expandedLeafNameID).style("font-size", "12px");
+        //if (!isDebug) {
+        //passScatterplotLeafPointSelectionToQt("");
+        //}
+        //}
         changeLegendColor();
         if (d3.event.shiftKey) {
             shiftPressed = true;
         } else {
             shiftPressed = false;
         }
-        if (d3.event.altKey) {
-            altPressed = true;
-        } else {
-            altPressed = false;
-        }
 
-        if (!altPressed && !shiftPressed) {
+        if (!shiftPressed) {
             splitGroupsAltKey = false;
             speciesSelected = [];
-            leftSpeciesSelected = [];
-            rightSpeciesSelected = [];
-        } else if (shiftPressed && !altPressed) {
+        } else if (shiftPressed) {
             splitGroupsAltKey = false;
-            leftSpeciesSelected = [];
-            rightSpeciesSelected = [];
-        } else if (altPressed && !shiftPressed) {
-            splitGroupsAltKey = false;
-            speciesSelected = [];
-            leftSpeciesSelected = [];
-            rightSpeciesSelected = [];
-            if (d.children && altPressed) {
-                leftSpeciesSelected = extractLeftRightSpeciesNames(d, "left");
-                rightSpeciesSelected = extractLeftRightSpeciesNames(d, "right");
-                splitGroupsAltKey = true;
-            }
-        } else if (shiftPressed && altPressed) {
+        } else if (shiftPressed) {
             //splitGroupsAltKey = false;
         }
 
@@ -1000,100 +965,89 @@ L ${d.y} ${d.x}`;
 
         // Select the corresponding icons
         svg.selectAll(".species-names path").each(function (d) {
-            if (clickedSpecies.includes(d.data.name)) {
+            if (d.data && clickedSpecies.includes(d.data.name)) {
                 d3.select(this).classed(
                     "selected",
                     speciesSelected.includes(d.data.name)
                 );
+            } else {
+                if (d && clickedSpecies.includes(d.name)) {
+                    d3.select(this).classed("selected", speciesSelected.includes(d.name));
+                }
             }
         });
 
         shiftPressed = false;
-        altPressed = false;
     }
     function changeLegendColor() {
         // change the text color of .selectAll(".shape-legend-label") text to red
         svg.selectAll(".shape-legend-label").style("fill", "black");
     }
     function clickLegendText(d) {
-        if (expandedLeafNameID !== "") {
-            d3.select(expandedLeafNameID).style("font-size", "12px");
-            if (!isDebug) {
-                passScatterplotLeafPointSelectionToQt("");
-            }
+        //if shift pressed
+        if (d3.event.shiftKey) {
+            shiftPressed = true;
+        } else {
+            shiftPressed = false;
         }
-        if (legendTextContainer.includes(d)) {
-            //remove d from legendTextContainer
-            legendTextContainer = legendTextContainer.filter((item) => item !== d);
-        }
+        //if (expandedLeafNameID !== "")
+        //{
+        //d3.select(expandedLeafNameID).style("font-size", "12px");
+        //if (!isDebug) {
+        //passScatterplotLeafPointSelectionToQt("");
+        //}
+        //}
 
-        if (d3.event.altKey) {
-            if (legendTextContainer.length >= 2) {
-                legendTextContainer.shift();
-                legendTextContainer.push(d);
+        if (shiftPressed) {
+            if (legendTextContainer.includes(d)) {
+                legendTextContainer = legendTextContainer.filter((item) => item !== d);
             } else {
                 legendTextContainer.push(d);
             }
-            legendTextContainerAltFlag = true;
         } else {
             legendTextContainer = [];
             legendTextContainer.push(d);
-            legendTextContainerAltFlag = false;
         }
 
         if (legendTextContainer.length > 0) {
             legendTextContainerActivateFlag = true;
             speciesSelected = [];
-            rightSpeciesSelected = [];
-            leftSpeciesSelected = [];
+
             generateVis();
 
             if (speciesSelected.length > 0) {
-                if (legendTextContainerAltFlag) {
-                    var totalString = "";
-                    var leftString = "";
-                    var rightString = "";
-                    if (leftSpeciesSelected.length > 0) {
-                        leftString = leftSpeciesSelected.join(" @%$,$%@ ");
-                    }
-                    if (rightSpeciesSelected.length > 0) {
-                        rightString = rightSpeciesSelected.join(" @%$,$%@ ");
-                    }
-                    totalString = leftString + "@$LEFTSPLITRIGHT$@" + rightString;
-                    if (!isDebug) {
-                        passLeftRightSelectionToQT(totalString);
-                    }
-                } else {
+                {
                     speciesString = speciesSelected.join(" @%$,$%@ ");
 
                     if (!isDebug) {
                         passAddSelectionToQt(speciesString);
+                    } else {
+                        //console.log("passAddSelectionToQt(speciesString): ", speciesString);
                     }
                 }
             } else {
                 if (!isDebug) {
                     passRemoveSelectionToQt("");
+                } else {
+                    //console.log("passRemoveSelectionToQt('')");
                 }
             }
         } else {
             speciesSelected = [];
-            rightSpeciesSelected = [];
-            leftSpeciesSelected = [];
             legendTextContainer = [];
-            legendTextContainerAltFlag = false;
             legendTextContainerActivateFlag = false;
             changeLegendColor();
         }
     }
     function clickNames(d) {
-        if (expandedLeafNameID !== "") {
-            d3.select(expandedLeafNameID).style("font-size", "12px");
-            if (!isDebug) {
-                passScatterplotLeafPointSelectionToQt("");
-            }
-        }
+        //if (expandedLeafNameID !== "")
+        //{
+        //d3.select(expandedLeafNameID).style("font-size", "12px");
+        //if (!isDebug) {
+        //passScatterplotLeafPointSelectionToQt("");
+        //}
+        //}
         legendTextContainer = [];
-        legendTextContainerAltFlag = false;
         legendTextContainerActivateFlag = false;
         changeLegendColor();
 
@@ -1119,11 +1073,6 @@ L ${d.y} ${d.x}`;
                 if (altShiftPressed) {
                     // Alt+Shift+mouse click
                     return "#A52A2A"; // Unique color for Alt+Shift+mouse click
-                } else if (altPressed || splitGroupsAltKey) {
-                    // Alt+mouse click or splitGroupsAltKey
-                    return leftSpeciesSelected.includes(d.data.name)
-                        ? "#FF5733"
-                        : "#1D8ECE";
                 } else {
                     // Default color for selected species
                     return "#1D8ECE";
@@ -1142,8 +1091,6 @@ L ${d.y} ${d.x}`;
             if (!d || !d.data) return "black"; // Return default color if d or d.data is undefined
 
             if (splitGroupsAltKey) {
-                if (leftSpeciesSelected.includes(d.data.name)) return "#FF5733";
-                if (rightSpeciesSelected.includes(d.data.name)) return "#1D8ECE";
             } else if (speciesSelected.includes(d.data.name)) {
                 return "#1D8ECE";
             }
@@ -1152,19 +1099,32 @@ L ${d.y} ${d.x}`;
 
         // Helper function to determine stroke width
         function getStrokeWidth(d) {
-
-
-            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+            if (
+                d !== undefined &&
+                d.data !== undefined &&
+                d.data.name !== undefined &&
+                d.data.name !== ""
+            ) {
                 return speciesSelected.includes(d.data.name) ? "2px" : "1px";
             }
         }
         function getFontWeight(d) {
-            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+            if (
+                d !== undefined &&
+                d.data !== undefined &&
+                d.data.name !== undefined &&
+                d.data.name !== ""
+            ) {
                 return speciesSelected.includes(d.data.name) ? "bold" : "normal";
             }
         }
         function getFontSize(d) {
-            if (d !== undefined && d.data !== undefined && d.data.name !== undefined && d.data.name !== "") {
+            if (
+                d !== undefined &&
+                d.data !== undefined &&
+                d.data.name !== undefined &&
+                d.data.name !== ""
+            ) {
                 return speciesSelected.includes(d.data.name) ? 14 : 12;
             }
         }
@@ -1184,32 +1144,31 @@ L ${d.y} ${d.x}`;
             .style("stroke", getPathStrokeColor)
             .style("stroke-width", getStrokeWidth);
 
-        // Handle species selection string
-        let speciesString = speciesSelected.join(" @%$,$%@ ");
-        let selectionString = "";
+        if (speciesSelected.length > 0) {
+            {
+                speciesString = speciesSelected.join(" @%$,$%@ ");
 
-        if (altPressed && speciesSelected.length > 0) {
-            let leftString = leftSpeciesSelected.join(" @%$,$%@ ");
-            let rightString = rightSpeciesSelected.join(" @%$,$%@ ");
-            selectionString = `${leftString}@$LEFTSPLITRIGHT$@${rightString}`;
+                if (!isDebug) {
+                    passAddSelectionToQt(speciesString);
+                } else {
+                    //console.log("passAddSelectionToQt(speciesString): ", speciesString);
+                }
+            }
         } else {
-            selectionString = speciesString;
-        }
-
-        if (!isDebug) {
-            if (speciesSelected.length > 0) {
-                altPressed
-                    ? passLeftRightSelectionToQT(selectionString)
-                    : passAddSelectionToQt(speciesString);
-            } else {
+            if (!isDebug) {
                 passRemoveSelectionToQt("");
+            } else {
+                //console.log("passRemoveSelectionToQt('')");
             }
         }
     }
     updateNamesBelowNodes();
     var removeAnimation = false;
 
-    if (traitValueStringFlag && showTraitValues || traitValueNumericFlag && showTraitValues) {
+    if (
+        (traitValueStringFlag && showTraitValues) ||
+        (traitValueNumericFlag && showTraitValues)
+    ) {
         legendUpdate();
     }
 
@@ -1329,24 +1288,7 @@ L ${d.y} ${d.x}`;
                 .attr("cursor", "pointer")
                 .attr("fill", function (d, i) {
                     if (legendTextContainerActivateFlag) {
-                        if (legendTextContainerAltFlag) {
-                            //if legendTextContainer includes d and index of d is 0
-                            if (
-                                legendTextContainer.includes(d) &&
-                                legendTextContainer.indexOf(d) === 0
-                            ) {
-                                return "#1D8ECE";
-                            }
-                            //else if legendTextContainer includes d and index of d is 1
-                            else if (
-                                legendTextContainer.includes(d) &&
-                                legendTextContainer.indexOf(d) === 1
-                            ) {
-                                return "#FF5733";
-                            } else {
-                                return "black";
-                            }
-                        } else {
+                        {
                             if (legendTextContainer.includes(d)) {
                                 return "#1D8ECE";
                             } else {
@@ -1370,20 +1312,21 @@ L ${d.y} ${d.x}`;
 document.addEventListener("keydown", function (event) {
     if (event.key === "Escape") {
         speciesSelected = [];
-        leftSpeciesSelected = [];
-        rightSpeciesSelected = [];
         legendTextContainer = [];
         legendTextContainerActivateFlag = false;
-        legendTextContainerAltFlag = false;
         removeLeafSelections = true;
-        if (expandedLeafNameID !== "") {
-            d3.select(expandedLeafNameID).style("font-size", "12px");
-            if (!isDebug) {
-                passScatterplotLeafPointSelectionToQt("");
-            }
-        }
+        //if (expandedLeafNameID !== "")
+        //{
+        //d3.select(expandedLeafNameID).style("font-size", "12px");
+        //if (!isDebug) {
+        //passScatterplotLeafPointSelectionToQt("");
+        //}
+        //}
+
         if (!isDebug) {
             passRemoveSelectionToQt("");
+        } else {
+            //console.log("passRemoveSelectionToQt('')");
         }
 
         generateVis();

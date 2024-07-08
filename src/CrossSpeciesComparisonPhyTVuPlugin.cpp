@@ -19,12 +19,12 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     , _originalName(getGuiName())
 {
     setSerializationName("CSCPTV:CrossSpeciesComparisonPhyTVu");
+    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 5, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 2, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
+    //_toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
 
-    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 6, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 5, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 4, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 2, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 1, GroupAction::Horizontal);
 
     
 }
@@ -547,12 +547,27 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
 
 void CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot(std::string clusterName)
 {
+    QStringList listofLeaves = {};
+
+    if (_chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().getNumberOfOptions() > 0)
+    {
+        _chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().setSelectedOptions(listofLeaves);
+    }
 
 }
 
 void CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot(std::string clusterName)
 {
-
+    QStringList listofLeaves = {};
+    if (!clusterName.empty())
+    {
+        QString qClusterName = QString::fromStdString(clusterName);
+        listofLeaves = qClusterName.split(" @%$,$%@ ");
+    }
+    if (_chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().getNumberOfOptions() > 0)
+    {
+        _chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().setSelectedOptions(listofLeaves);
+    }
     
 }
 void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)

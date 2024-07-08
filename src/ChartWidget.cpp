@@ -53,13 +53,13 @@ void ChartCommunicationObject::js_passScatterplotLeafPointSelectionToQt(QVariant
 
     _parent->js_passScatterplotLeafPointSelectionToQt(data.toString().toStdString());
 }
-
+/*
 void ChartCommunicationObject::js_addLeftRightSelectionToScatterplot(QVariant data)
 {
 
     _parent->js_addLeftRightSelectionToScatterplot(data.toString().toStdString());
 }
-
+*/
 ChartWidget::ChartWidget() :
     loaded(false)
 {
@@ -92,12 +92,12 @@ void ChartWidget::setTreeColorMap(QString visColorContent)
 {
     emit _communicationObject->qt_setTreeColorMap(visColorContent);
 }
-
+/*
 void ChartWidget::setShowReferenceTree(QString visColorContent)
 {
     emit _communicationObject->qt_setShowReferenceTree(visColorContent);
 }
-
+*/
 void ChartWidget::setLeafSelectionFromQT(QString visColorContent)
 {
     emit _communicationObject->qt_setLeafSelectionFromQT(visColorContent);
@@ -107,11 +107,12 @@ void ChartWidget::setDisableTraitOptions(QString visColorContent)
 {
     emit _communicationObject->qt_setDisableTraitOptions(visColorContent);
 }
-
+/*
 void ChartWidget::setExpandAll(QString visColorContent)
 {
     emit _communicationObject->qt_setExpandAll(visColorContent);
 }
+*/
 void ChartWidget::setTraitColor(QString visColorContent)
 {
     emit _communicationObject->qt_setTraitColor(visColorContent);
@@ -124,11 +125,12 @@ void ChartWidget::setTraitNumeric(QString visColorContent)
 {
     emit _communicationObject->qt_setTraitNumeric(visColorContent);
 }
+/*
 void ChartWidget::setClusterMethod(QString visColorContent)
 {
        emit _communicationObject->qt_setClusterMethod(visColorContent);
 }
-
+*/
 void ChartWidget::setSpecies1(QString species1)
 {
 
@@ -167,10 +169,12 @@ void ChartWidget::js_passScatterplotLeafPointSelectionToQt(std::string selectedI
 {
     emit passScatterplotLeafPointSelectionToQt(selectedIDs);
 }
+/*
 void ChartWidget::js_addLeftRightSelectionToScatterplot(std::string selectedIDs)
 {
     emit addLeftRightSelectionToScatterplot(selectedIDs);
 }
+*/
 void ChartWidget::js_passSelectionSpecies2ToQt(std::string selectedIDs)
 {
     emit passSelectionSpecies2ToQt(selectedIDs);

@@ -51,6 +51,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
     _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Explore Species Button");
+    _updateSettingsHolder.getRevertButtonAction().setSerializationName("CSCPTV:Revert Button");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
     _linkerSettingsHolder.getSelectedLeafValues().setSerializationName("CSCPTV:Selected Leaf Values");
     _linkerSettingsHolder.getLeafDatasetPicker().setSerializationName("CSCPTV:Leaf Dataset Picker");
@@ -116,6 +117,12 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
 
 
+    QIcon exploreIcon = Application::getIconFont("FontAwesome").getIcon("wpexplorer");
+    _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(exploreIcon);
+
+    QIcon revertIcon = Application::getIconFont("FontAwesome").getIcon("history");
+    _updateSettingsHolder.getRevertButtonAction().setIcon(revertIcon);
+
 
     const auto leafDatasetSelection = [this]() -> void
         {
@@ -148,24 +155,49 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto updatespeciesExplorerInMap = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(!hasSelectedOptions);
 
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions&& stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            }
+            else
+            {
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
                 }
             }
 
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
+
 
 
         };
@@ -173,27 +205,54 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     const auto revertButtomUpdate = [this]() -> void
         {
             _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            QString selectionString = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
+            _viewerPlugin.getChartWidget().setLeafSelectionFromQT(selectionString);
         };
     connect(&_updateSettingsHolder.getRevertButtonAction(), &TriggerAction::triggered, this, revertButtomUpdate);
 
     const auto leafStringUpdate = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions && stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            }
+            else
+            {
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
                 }
             }
 
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
 
 
         };
@@ -202,22 +261,47 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto viewsButtomUpdate = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions && stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            }
+            else
+            {
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
                 }
             }
 
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
 
 
         };
@@ -320,9 +404,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
         };
 
     connect(&_extraSettingsHolder.getColorMapAction(), &ColorMap1DAction::imageChanged, this, colormapFilter);
-
+/*
     const auto showExpandAllSelection = [this]() -> void
         {
+            
             if (_extraSettingsHolder.getExpandAllAction().isChecked())
             {
                 _viewerPlugin.getChartWidget().setExpandAll("T");
@@ -331,9 +416,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
             {
                 _viewerPlugin.getChartWidget().setExpandAll("F");
             }
-        };
-    connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
-
+            
+        };*/
+    //connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
+    
 
 }
 
@@ -614,8 +700,9 @@ void ChartOptions::initLoader()
 
     if (!_viewerPlugin.getInitialLoadCompleteflag())
     {
-        _viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString("Magma*%*F"));
-
+        
+        //_viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString("Magma*%*F"));
+        /*
         if (_extraSettingsHolder.getExpandAllAction().isChecked())
         {
             _viewerPlugin.getChartWidget().setExpandAll("T");
@@ -624,6 +711,7 @@ void ChartOptions::initLoader()
         {
             _viewerPlugin.getChartWidget().setExpandAll("F");
         }
+        */
         if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
@@ -640,6 +728,21 @@ void ChartOptions::initLoader()
             }
 
         }
+
+        const auto& mirrorAction = _extraSettingsHolder.getColorMapAction().getMirrorAction(ColorMapAction::Axis::X);
+        std::string s1 = _extraSettingsHolder.getColorMapAction().getColorMap().toStdString();
+        std::string s2 = "*%*";
+        std::string s3;
+        if (mirrorAction.isChecked())
+        {
+            s3 = "T";
+        }
+        else
+        {
+            s3 = "F";
+        }
+        std::string full = s1 + s2 + s3;
+        _viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString(full));
 
         _viewerPlugin.setInitialLoadCompleteflag(true);
         triggerChart();
@@ -703,7 +806,8 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     setIcon(Application::getIconFont("FontAwesome").getIcon("toolbox"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    addAction(&_expandAllAction);
+    //addAction(&_expandAllAction);
+    _expandAllAction.setChecked(true);
     addAction(&_treeColorMapAction);
     addAction(&_disableAcceptDatasetDrops);
 }
@@ -760,6 +864,8 @@ inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartO
     setText("Chart Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("atom"));
     setPopupSizeHint(QSize(350, 0));
+    setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
+    setPopupSizeHint(QSize(350, 0));
     addAction(&_mainReferenceTreeSelectionAction);
 
 
@@ -782,7 +888,6 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     setText("Update Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
     setPopupSizeHint(QSize(350, 0));
-    //_updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
     addAction(&_updateViewsButton);
     addAction(&_revertButton);
 
@@ -804,6 +909,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
+    _updateSettingsHolder.getRevertButtonAction().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().fromParentVariantMap(variantMap);
 
 }
@@ -823,6 +929,7 @@ QVariantMap ChartOptions::toVariantMap() const
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);
+    _updateSettingsHolder.getRevertButtonAction().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().insertIntoVariantMap(variantMap);
     return variantMap;
 }
