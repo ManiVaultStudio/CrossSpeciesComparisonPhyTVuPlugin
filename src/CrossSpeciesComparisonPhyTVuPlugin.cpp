@@ -23,7 +23,7 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 2, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
+    //_toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
 
 
     
