@@ -700,7 +700,8 @@ void ChartOptions::initLoader()
 
     if (!_viewerPlugin.getInitialLoadCompleteflag())
     {
-        _viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString("Magma*%*F"));
+        
+        //_viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString("Magma*%*F"));
         /*
         if (_extraSettingsHolder.getExpandAllAction().isChecked())
         {
@@ -727,6 +728,21 @@ void ChartOptions::initLoader()
             }
 
         }
+
+        const auto& mirrorAction = _extraSettingsHolder.getColorMapAction().getMirrorAction(ColorMapAction::Axis::X);
+        std::string s1 = _extraSettingsHolder.getColorMapAction().getColorMap().toStdString();
+        std::string s2 = "*%*";
+        std::string s3;
+        if (mirrorAction.isChecked())
+        {
+            s3 = "T";
+        }
+        else
+        {
+            s3 = "F";
+        }
+        std::string full = s1 + s2 + s3;
+        _viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString(full));
 
         _viewerPlugin.setInitialLoadCompleteflag(true);
         triggerChart();
