@@ -20,11 +20,11 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
 {
     setSerializationName("CSCPTV:CrossSpeciesComparisonPhyTVu");
 
-    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 6, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 5, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 4, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 2, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 1, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 2, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 5, GroupAction::Horizontal);
 
     
 }
