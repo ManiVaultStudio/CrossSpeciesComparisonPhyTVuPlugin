@@ -29,14 +29,14 @@ signals:
     void qt_updateSelectionColor(QString data);
     //void qt_setBarhighlight(QString clusterName);
     void qt_setTreeColorMap(QString data);
-    void qt_setShowReferenceTree(QString data);
+    //void qt_setShowReferenceTree(QString data);
     void qt_setLeafSelectionFromQT(QString data);
     void qt_setDisableTraitOptions(QString data);
-    void qt_setExpandAll(QString data);
+    //void qt_setExpandAll(QString data);
     void qt_setTraitColor(QString data);
     void qt_setTraitString(QString data);
     void qt_setTraitNumeric(QString data);
-    void qt_setClusterMethod(QString data);
+    //void qt_setClusterMethod(QString data);
 
 public slots:
     void js_passSelectionSpecies1ToQt(QString data);
@@ -44,7 +44,7 @@ public slots:
     void js_crossspeciesclusterSelection(QString data);
     void js_addSelectionToScatterplot(QVariant data);
     void js_passScatterplotLeafPointSelectionToQt(QVariant data);
-    void js_addLeftRightSelectionToScatterplot(QVariant data);
+    //void js_addLeftRightSelectionToScatterplot(QVariant data);
     void js_removeSelectionFromScatterplot(QVariant data);
 private:
     ChartWidget* _parent;
@@ -66,14 +66,14 @@ public:
     void updateSelectionColor(QString visColorContent);
     //void setBarhighlight(QString clusterName);
     void setTreeColorMap(QString visColorContent);
-    void setShowReferenceTree(QString visColorContent);
+    //void setShowReferenceTree(QString visColorContent);
     void setLeafSelectionFromQT(QString visColorContent);
     void setDisableTraitOptions(QString visColorContent);
-    void setExpandAll(QString visColorContent);
+    //void setExpandAll(QString visColorContent);
     void setTraitColor(QString visColorContent);
     void setTraitString(QString visColorContent);
     void setTraitNumeric(QString visColorContent);
-    void setClusterMethod(QString visColorContent);
+    //void setClusterMethod(QString visColorContent);
 protected:
 
 
@@ -94,7 +94,7 @@ public:
     void js_crossspeciesclusterSelection(std::string selectedIDs);
     void js_addSelectionToScatterplot(std::string clusterName);
     void js_passScatterplotLeafPointSelectionToQt(std::string selectedSpecies);
-    void js_addLeftRightSelectionToScatterplot(std::string clusterName);
+    //void js_addLeftRightSelectionToScatterplot(std::string clusterName);
     void js_removeSelectionFromScatterplot(std::string clusterName);
 
 private slots:

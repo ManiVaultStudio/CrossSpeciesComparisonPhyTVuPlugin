@@ -59,7 +59,7 @@ set(WEB_MAIN
     res/CrossSpeciesComparisonPhyTVu_chart/ChartFile.js
     res/CrossSpeciesComparisonPhyTVu_chart/DataFile.js
     res/CrossSpeciesComparisonPhyTVu_chart/FunctionFile.js
-	res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js
+	res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.css
 )
 
 set(WEB_LIBS

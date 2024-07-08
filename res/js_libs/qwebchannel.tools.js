@@ -15,18 +15,18 @@ try {
         QtBridge.qt_setTreeColorMap.connect(function () {
             setTreeColorMap(arguments[0]);
         });
-        QtBridge.qt_setShowReferenceTree.connect(function () {
-            setShowReferenceTree(arguments[0]);
-        });
+
         QtBridge.qt_setLeafSelectionFromQT.connect(function () {
             setLeafSelectionFromQT(arguments[0]);
         });
         QtBridge.qt_setDisableTraitOptions.connect(function () {
             setDisableTraitOptions(arguments[0]);
         });
-        QtBridge.qt_setExpandAll.connect(function () {
-            setExpandAll(arguments[0]);
+        /*
+          QtBridge.qt_setExpandAll.connect(function () {
+          setExpandAll(arguments[0]);
         });
+         */
         QtBridge.qt_setTraitColor.connect(function () {
             setTraitColor(arguments[0]);
         });
@@ -37,11 +37,6 @@ try {
             setTraitNumeric(arguments[0]);
         });
 
-        QtBridge.qt_setClusterMethod.connect(function () {
-            setClusterMethod(arguments[0]);
-        });
-
-        // confirm successful connection
         isQtAvailable = true;
         notifyBridgeAvailable();
     });
@@ -61,13 +56,6 @@ function notifyBridgeAvailable() {
     }
 }
 
-// The QtBridge is connected to our WebCommunicationObject (ChartCommObject)
-// and we can call all slots defined therein
-function passSelectionToQt(dat) {
-    if (isQtAvailable) {
-        QtBridge.js_qt_passSelectionToQt(dat);
-    }
-}
 function passScatterplotLeafPointSelectionToQt(dat) {
     if (isQtAvailable) {
         QtBridge.js_passScatterplotLeafPointSelectionToQt(dat);
@@ -76,12 +64,6 @@ function passScatterplotLeafPointSelectionToQt(dat) {
 function passAddSelectionToQt(speciesString) {
     if (isQtAvailable) {
         QtBridge.js_addSelectionToScatterplot(speciesString);
-    }
-}
-
-function passLeftRightSelectionToQT(speciesString) {
-    if (isQtAvailable) {
-        QtBridge.js_addLeftRightSelectionToScatterplot(speciesString);
     }
 }
 

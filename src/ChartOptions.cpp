@@ -180,6 +180,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     const auto revertButtomUpdate = [this]() -> void
         {
             _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            QString selectionString = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
+            _viewerPlugin.getChartWidget().setLeafSelectionFromQT(selectionString);
         };
     connect(&_updateSettingsHolder.getRevertButtonAction(), &TriggerAction::triggered, this, revertButtomUpdate);
 
@@ -327,9 +329,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
         };
 
     connect(&_extraSettingsHolder.getColorMapAction(), &ColorMap1DAction::imageChanged, this, colormapFilter);
-
+/*
     const auto showExpandAllSelection = [this]() -> void
         {
+            
             if (_extraSettingsHolder.getExpandAllAction().isChecked())
             {
                 _viewerPlugin.getChartWidget().setExpandAll("T");
@@ -338,9 +341,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
             {
                 _viewerPlugin.getChartWidget().setExpandAll("F");
             }
-        };
-    connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
-
+            
+        };*/
+    //connect(&_extraSettingsHolder.getExpandAllAction(), &ToggleAction::toggled, this, showExpandAllSelection);
+    
 
 }
 
@@ -622,7 +626,7 @@ void ChartOptions::initLoader()
     if (!_viewerPlugin.getInitialLoadCompleteflag())
     {
         _viewerPlugin.getChartWidget().setTreeColorMap(QString::fromStdString("Magma*%*F"));
-
+        /*
         if (_extraSettingsHolder.getExpandAllAction().isChecked())
         {
             _viewerPlugin.getChartWidget().setExpandAll("T");
@@ -631,6 +635,7 @@ void ChartOptions::initLoader()
         {
             _viewerPlugin.getChartWidget().setExpandAll("F");
         }
+        */
         if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "" && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
         {
             if (_metaDataSettingsHolder.getColorTraitAction().getCurrentText() != "")
@@ -710,7 +715,8 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     setIcon(Application::getIconFont("FontAwesome").getIcon("toolbox"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
-    addAction(&_expandAllAction);
+    //addAction(&_expandAllAction);
+    _expandAllAction.setChecked(true);
     addAction(&_treeColorMapAction);
     addAction(&_disableAcceptDatasetDrops);
 }

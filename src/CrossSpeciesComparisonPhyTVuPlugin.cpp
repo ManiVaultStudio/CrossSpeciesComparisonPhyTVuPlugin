@@ -547,12 +547,27 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
 
 void CrossSpeciesComparisonPhyTVuPlugin::removeSelectionFromScatterplot(std::string clusterName)
 {
+    QStringList listofLeaves = {};
+
+    if (_chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().getNumberOfOptions() > 0)
+    {
+        _chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().setSelectedOptions(listofLeaves);
+    }
 
 }
 
 void CrossSpeciesComparisonPhyTVuPlugin::addSelectionToScatterplot(std::string clusterName)
 {
-
+    QStringList listofLeaves = {};
+    if (!clusterName.empty())
+    {
+        QString qClusterName = QString::fromStdString(clusterName);
+        listofLeaves = qClusterName.split(" @%$,$%@ ");
+    }
+    if (_chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().getNumberOfOptions() > 0)
+    {
+        _chartOptions.getLinkerSettingsHolder().getSelectedLeafValues().setSelectedOptions(listofLeaves);
+    }
     
 }
 void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std::string clusterName)
