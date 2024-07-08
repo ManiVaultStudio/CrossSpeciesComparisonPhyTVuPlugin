@@ -766,6 +766,8 @@ inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartO
     setText("Chart Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("atom"));
     setPopupSizeHint(QSize(350, 0));
+    setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
+    setPopupSizeHint(QSize(350, 0));
     addAction(&_mainReferenceTreeSelectionAction);
 
 
@@ -788,7 +790,6 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
     setText("Update Options");
     setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
     setPopupSizeHint(QSize(350, 0));
-    //_updateViewsButton.setIcon(Application::getIconFont("FontAwesome").getIcon("search"));
     addAction(&_updateViewsButton);
     addAction(&_revertButton);
 
