@@ -171,6 +171,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                     shouldDisableRevertButton = (temp == species);
                 }
             }
+            else
+            {
+                shouldDisableRevertButton = false;
+            }
 
             _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
 
@@ -201,7 +205,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                     shouldDisableRevertButton = (temp == species);
                 }
             }
-
+            else
+            {
+                shouldDisableRevertButton = false;
+            }
             _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
 
 
@@ -224,6 +231,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
                     shouldDisableRevertButton = (temp == species);
                 }
+            }
+            else
+            {
+                shouldDisableRevertButton = false;
             }
 
             _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
