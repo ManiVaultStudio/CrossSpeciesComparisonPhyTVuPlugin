@@ -51,6 +51,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _extraSettingsHolder.getExpandAllAction().setSerializationName("CSCPTV:Expand all selection");
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setSerializationName("CSCPTV:Disable Accept Dataset Drops");
     _updateSettingsHolder.getUpdateViewsButtonAction().setSerializationName("CSCPTV:Explore Species Button");
+    _updateSettingsHolder.getRevertButtonAction().setSerializationName("CSCPTV:Revert Button");
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().setSerializationName("CSCPTV:Tree Leaf Selection Value");
     _linkerSettingsHolder.getSelectedLeafValues().setSerializationName("CSCPTV:Selected Leaf Values");
     _linkerSettingsHolder.getLeafDatasetPicker().setSerializationName("CSCPTV:Leaf Dataset Picker");
@@ -811,6 +812,7 @@ void ChartOptions::fromVariantMap(const QVariantMap& variantMap)
     _extraSettingsHolder.getExpandAllAction().fromParentVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().fromParentVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().fromParentVariantMap(variantMap);
+    _updateSettingsHolder.getRevertButtonAction().fromParentVariantMap(variantMap);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().fromParentVariantMap(variantMap);
 
 }
@@ -830,6 +832,7 @@ QVariantMap ChartOptions::toVariantMap() const
     _extraSettingsHolder.getExpandAllAction().insertIntoVariantMap(variantMap);
     _extraSettingsHolder.getDisableAcceptDatasetDrops().insertIntoVariantMap(variantMap);
     _updateSettingsHolder.getUpdateViewsButtonAction().insertIntoVariantMap(variantMap);
+    _updateSettingsHolder.getRevertButtonAction().insertIntoVariantMap(variantMap);
     _linkerSettingsHolder.getTreeLeafSelectionValueQT().insertIntoVariantMap(variantMap);
     return variantMap;
 }
