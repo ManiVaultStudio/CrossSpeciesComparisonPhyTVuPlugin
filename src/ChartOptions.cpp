@@ -155,28 +155,49 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto updatespeciesExplorerInMap = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(!hasSelectedOptions);
 
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions&& stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
-                }
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
             }
             else
             {
-                shouldDisableRevertButton = false;
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
+                }
             }
 
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
+
 
 
         };
@@ -191,25 +212,47 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto leafStringUpdate = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions && stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
-                }
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
             }
             else
             {
-                shouldDisableRevertButton = false;
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
+                }
             }
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
+
 
 
         };
@@ -218,26 +261,47 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto viewsButtomUpdate = [this]() -> void
         {
-            bool hasSelectedOptions = !_linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().isEmpty() && !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
-            bool shouldDisableRevertButton = true;
-            if (hasSelectedOptions) {
-                QString currentSelection = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
-                if (!currentSelection.isEmpty()) {
-                    QStringList temp = currentSelection.split(" @%$,$%@ ");
-                    QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
+            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+            bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
-                    std::sort(temp.begin(), temp.end());
-                    std::sort(species.begin(), species.end());
+            bool bothListsEqual = false;
+            if (optionsActionHasOptions && stringActionHasOptions) {
+                QStringList temp = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().split(" @%$,$%@ ");
+                QStringList species = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions();
 
-                    shouldDisableRevertButton = (temp == species);
-                }
+                std::sort(temp.begin(), temp.end());
+                std::sort(species.begin(), species.end());
+                bothListsEqual = (temp == species);
+            }
+
+            if (!stringActionHasOptions)
+            {
+                _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
             }
             else
             {
-                shouldDisableRevertButton = false;
+                if (!optionsActionHasOptions)
+                {
+                    _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(true);
+                    _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                }
+                else
+                {
+                    if (bothListsEqual)
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+                    }
+                    else
+                    {
+                        _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+                        _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
+                    }
+                }
             }
 
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(shouldDisableRevertButton);
+
 
 
         };
