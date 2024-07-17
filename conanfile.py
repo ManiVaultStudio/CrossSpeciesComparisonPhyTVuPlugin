@@ -40,10 +40,8 @@ class CrossSpeciesComparisonPhyTVuPluginConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": True, "fPIC": True}
 
-    requires = ("CrossSpeciesComparisonTreeData/hierarchy_viewer_1.0@lkeb/stable")
-    requires = ("CrossSpeciesComparisonTreeMetaData/hierarchy_viewer_1.0@lkeb/stable")
+    reruires = ("CrossSpeciesComparisonTreeData/hierarchy_viewer_1.0@lkeb/stable", "CrossSpeciesComparisonTreeMetaData/hierarchy_viewer_1.0@lkeb/stable")
         
-
     # Qt requirement is inherited from hdps-core
 
     scm = {"type": "git", "subfolder": "hdps/CrossSpeciesComparisonPhyTVuPlugin", "url": "auto", "revision": "auto"}
