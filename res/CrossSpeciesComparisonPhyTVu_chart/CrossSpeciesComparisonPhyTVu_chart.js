@@ -140,6 +140,32 @@ function sumMeanValues(node) {
 
     return node.score;
 }
+function averageMeanValuesAllLeafChildren(node) {
+    // Base case: If the node has no children, return its mean
+    if (!node.children || node.children.length === 0) {
+        node.score = parseFloat((node.mean || 0).toFixed(2)); // Ensure leaf nodes without mean are handled and rounded to 2 decimal places
+        return node.score;
+    }
+
+    // Recursive case: Calculate average mean values of all children
+    let sum = 0;
+    let count = 0;
+    node.children.forEach((child) => {
+        sum += averageMeanValuesAllLeafChildren(child); // Recursively sum up the mean values
+        count++; // Increment count for each child
+    });
+
+    // If the current node has its own mean, include it in the average calculation
+    if (node.mean) {
+        sum += parseFloat(node.mean.toFixed(2));
+        count++; // Include the current node in the count if it has a mean
+    }
+
+    // Calculate the average, update the current node's score, and round to 2 decimal places
+    node.score = count > 0 ? parseFloat((sum / count).toFixed(2)) : 0;
+
+    return node.score;
+}
 function averageMeanValues(node) {
     // Base case: If the node has no children, return its mean
     if (!node.children || node.children.length === 0) {
@@ -284,7 +310,7 @@ function drawChart(jsonValue) {
         minBranchLength = findMinBranchLength(dataVariableReference);
         maxTotalDepthWidth = findMaxPathTotalDepthLength(dataVariableReference);
         dataReference = copyDataWithCollapsedFlag(dataVariableReference);
-        averageMeanValues(dataReference);
+        averageMeanValuesAllLeafChildren(dataReference);
 
         const allScores = collectScores(dataReference);
         // Step 3: Calculate min and max scores
