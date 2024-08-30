@@ -140,6 +140,24 @@ function sumMeanValues(node) {
 
     return node.score;
 }
+function averageMeanValuesAllLeafChildren(node) {
+    if (!node.children || node.children.length === 0) {
+        // Leaf node
+        node.score = parseFloat(node.mean.toFixed(2));
+        return { totalMean: node.mean, count: 1 };
+    } else {
+        // Non-leaf node
+        let totalMean = 0;
+        let count = 0;
+        for (let child of node.children) {
+            let result = averageMeanValuesAllLeafChildren(child);
+            totalMean += result.totalMean;
+            count += result.count;
+        }
+        node.score = parseFloat((totalMean / count).toFixed(2));
+        return { totalMean: totalMean, count: count };
+    }
+}
 function averageMeanValues(node) {
     // Base case: If the node has no children, return its mean
     if (!node.children || node.children.length === 0) {
@@ -284,7 +302,7 @@ function drawChart(jsonValue) {
         minBranchLength = findMinBranchLength(dataVariableReference);
         maxTotalDepthWidth = findMaxPathTotalDepthLength(dataVariableReference);
         dataReference = copyDataWithCollapsedFlag(dataVariableReference);
-        averageMeanValues(dataReference);
+        averageMeanValuesAllLeafChildren(dataReference);
 
         const allScores = collectScores(dataReference);
         // Step 3: Calculate min and max scores

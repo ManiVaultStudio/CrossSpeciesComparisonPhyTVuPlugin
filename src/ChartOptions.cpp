@@ -155,7 +155,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto updatespeciesExplorerInMap = [this]() -> void
         {
-
+/*
             bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
             bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
@@ -194,8 +194,9 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                         _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
                     }
                 }
-            }
-
+            }*/
+            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
 
 
 
@@ -204,7 +205,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     connect(&_linkerSettingsHolder.getSelectedLeafValues(), &OptionsAction::selectedOptionsChanged, this, updatespeciesExplorerInMap);
     const auto revertButtomUpdate = [this]() -> void
         {
-            _updateSettingsHolder.getRevertButtonAction().setDisabled(true);
+            //_updateSettingsHolder.getRevertButtonAction().setDisabled(true);
             QString selectionString = _linkerSettingsHolder.getTreeLeafSelectionValueQT().getString();
             _viewerPlugin.getChartWidget().setLeafSelectionFromQT(selectionString);
         };
@@ -212,7 +213,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto leafStringUpdate = [this]() -> void
         {
-            bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
+           /* bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
             bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
             bool bothListsEqual = false;
@@ -251,9 +252,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                     }
                 }
             }
+            */
 
-
-
+            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
 
         };
     connect(&_linkerSettingsHolder.getTreeLeafSelectionValueQT(), &StringAction::changed, this, leafStringUpdate);
@@ -261,6 +263,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
     const auto viewsButtomUpdate = [this]() -> void
         {
+            /*
             bool optionsActionHasOptions = !_linkerSettingsHolder.getSelectedLeafValues().getOptions().isEmpty();
             bool stringActionHasOptions = !_linkerSettingsHolder.getTreeLeafSelectionValueQT().getString().isEmpty();
 
@@ -300,9 +303,10 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                     }
                 }
             }
+            */
 
-
-
+            _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
+            _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
 
         };
     connect(&_updateSettingsHolder.getUpdateViewsButtonAction(), &TriggerAction::triggered, this, viewsButtomUpdate);

@@ -109,7 +109,7 @@ function generateVis() {
     // Set the dimensions and margins of the diagram
     var margin = {
         top: 0,
-        right: 0,
+        right: 3,
         bottom: 20,
         left: 35,
     };
@@ -176,9 +176,9 @@ function generateVis() {
 
     // Toggle nodes based on the showExpandAll flag
     /*
-    toggleNode(root, showExpandAll ? "expand" : "collapse");
-    
-    */
+      toggleNode(root, showExpandAll ? "expand" : "collapse");
+      
+      */
     update(root);
     // Collapse the node and all it's children
     function collapse(d) {
@@ -198,30 +198,30 @@ function generateVis() {
             links = treeData.descendants().slice(1);
 
         /*     // Normalize for fixed-depth.
-        nodes.forEach((d) => {
-          const screenWidth = width - maxNameLength;
-          let valTemp = screenWidth;
-          //console.log("******");
-          //console.log("d.y width: ", d.y);
-          //console.log("width: ", width);
-          //console.log("maxNameLength width: ", maxNameLength);
-          //console.log("maxBranchLength width: ", maxBranchLength);
-          //console.log("Current branch length width: ", d.data.branchLength);
-          //console.log("desirable width: ", maxNameLength * 7);
-          //console.log("branchLength: ", d.data.branchLength);
-          //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
-          //console.log("depth: ", d.depth);
-          //console.log("name: ", d.data.name);
-          //console.log("maxDepth: ", maxDepth);
-          //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
-          //console.log("eachDepthWidth: ", eachDepthWidth);
-          //console.log("******");
-          if (d.children || (d._children && !d.data.iscollapsed)) {
-            valTemp = (d.depth * screenWidth) / 22;
-          }
-          //console.log("valTemp: ", valTemp);
-          d.y = valTemp;
-        }); */
+            nodes.forEach((d) => {
+              const screenWidth = width - maxNameLength;
+              let valTemp = screenWidth;
+              //console.log("******");
+              //console.log("d.y width: ", d.y);
+              //console.log("width: ", width);
+              //console.log("maxNameLength width: ", maxNameLength);
+              //console.log("maxBranchLength width: ", maxBranchLength);
+              //console.log("Current branch length width: ", d.data.branchLength);
+              //console.log("desirable width: ", maxNameLength * 7);
+              //console.log("branchLength: ", d.data.branchLength);
+              //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
+              //console.log("depth: ", d.depth);
+              //console.log("name: ", d.data.name);
+              //console.log("maxDepth: ", maxDepth);
+              //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
+              //console.log("eachDepthWidth: ", eachDepthWidth);
+              //console.log("******");
+              if (d.children || (d._children && !d.data.iscollapsed)) {
+                valTemp = (d.depth * screenWidth) / 22;
+              }
+              //console.log("valTemp: ", valTemp);
+              d.y = valTemp;
+            }); */
 
         // ****************** Nodes section ***************************
 
@@ -354,10 +354,21 @@ function generateVis() {
             .attr("y", function (d) {
                 return isRightChild(d) ? 10 : -5;
             })
-            .attr("x", -24)
+            .attr("x", function (d) {
+                if (d.data.score == 0) {
+                    return -7;
+                }
+                //else if d.data.score is a whole number
+                else if (d.data.score % 1 == 0) {
+                    return -8;
+                } else {
+                    return -25;
+                }
+            })
+            //.attr("x", -24)
             .attr("dy", ".10em")
             .attr("dx", "-.55em")
-            .style("font-size", "10px")
+            .style("font-size", "12px")
 
             .text(function (d) {
                 {
@@ -742,40 +753,40 @@ L ${d.y} ${d.x}`;
     }
     // Toggle children on click.
     /*
-    function contextmenuNodes(d) {
-      //check if leaf node clicked else do something
-      if (!d.children && !d._children) {
-        //(d.data.name); //TODO: change here
-        if (expandedLeafNameID !== "") {
-          d3.select(expandedLeafNameID).style("font-size", "12px");
-          if (!isDebug) {
-            passScatterplotLeafPointSelectionToQt("");
+      function contextmenuNodes(d) {
+        //check if leaf node clicked else do something
+        if (!d.children && !d._children) {
+          //(d.data.name); //TODO: change here
+          if (expandedLeafNameID !== "") {
+            d3.select(expandedLeafNameID).style("font-size", "12px");
+            if (!isDebug) {
+              passScatterplotLeafPointSelectionToQt("");
+            }
           }
-        }
-        if (expandedLeafNameID !== "#leafName_" + d.data.name) {
-          expandedLeafNameID = "#leafName_" + d.data.name;
-          d3.select(expandedLeafNameID).style("font-size", "14px");
-          if (!isDebug) {
-            passScatterplotLeafPointSelectionToQt(d.data.name);
+          if (expandedLeafNameID !== "#leafName_" + d.data.name) {
+            expandedLeafNameID = "#leafName_" + d.data.name;
+            d3.select(expandedLeafNameID).style("font-size", "14px");
+            if (!isDebug) {
+              passScatterplotLeafPointSelectionToQt(d.data.name);
+            }
           }
-        }
-      } else {
-        if (d.children) {
-          d._children = d.children;
-          d.children = null;
-          d.data.iscollapsed = true;
         } else {
-          d.children = d._children;
-          d._children = null;
-          d.data.iscollapsed = false;
+          if (d.children) {
+            d._children = d.children;
+            d.children = null;
+            d.data.iscollapsed = true;
+          } else {
+            d.children = d._children;
+            d._children = null;
+            d.data.iscollapsed = false;
+          }
+          update(d);
+          updateNamesBelowNodes();
+          updateNodeStyles();
+          legendUpdate();
         }
-        update(d);
-        updateNamesBelowNodes();
-        updateNodeStyles();
-        legendUpdate();
       }
-    }
-    */
+      */
     function findNodeByName(name, data, parent) {
         if (data.name === name) {
             return {
@@ -1125,7 +1136,7 @@ L ${d.y} ${d.x}`;
                 d.data.name !== undefined &&
                 d.data.name !== ""
             ) {
-                return speciesSelected.includes(d.data.name) ? 14 : 12;
+                return speciesSelected.includes(d.data.name) ? 11 : 12;
             }
         }
         // Update styles for .node text and .species-names text/path
