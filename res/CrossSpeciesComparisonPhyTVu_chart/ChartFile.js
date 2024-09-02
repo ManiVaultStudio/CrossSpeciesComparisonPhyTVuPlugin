@@ -11,6 +11,105 @@
         node.hastrait = traitjson[traitValue][node.name].isPresent;
     }
 }
+function getColorScalePermanent(
+    colorname,
+    minScore,
+    maxScore,
+    colorMirror = false
+) {
+    const colorScales = {
+        Blues: d3.interpolateBlues,
+        Greens: d3.interpolateGreens,
+        Greys: d3.interpolateGreys,
+        Oranges: d3.interpolateOranges,
+        Purples: d3.interpolatePurples,
+        Reds: d3.interpolateReds,
+        BuGn: d3.interpolateBuGn,
+        BuPu: d3.interpolateBuPu,
+        GnBu: d3.interpolateGnBu,
+        OrRd: d3.interpolateOrRd,
+        PuBuGn: d3.interpolatePuBuGn,
+        PuBu: d3.interpolatePuBu,
+        PuRd: d3.interpolatePuRd,
+        RdPu: d3.interpolateRdPu,
+        YlGnBu: d3.interpolateYlGnBu,
+        YlGn: d3.interpolateYlGn,
+        YlOrBr: d3.interpolateYlOrBr,
+        YlOrRd: d3.interpolateYlOrRd,
+        Cividis: d3.interpolateCividis,
+        Viridis: d3.interpolateViridis,
+        Inferno: d3.interpolateInferno,
+        Magma: d3.interpolateMagma,
+        Plasma: d3.interpolatePlasma,
+        Warm: d3.interpolateWarm,
+        Cool: d3.interpolateCool,
+        CubehelixDefault: d3.interpolateCubehelixDefault,
+        Turbo: d3.interpolateTurbo,
+        BrBG: d3.interpolateBrBG,
+        PRGn: d3.interpolatePRGn,
+        PiYG: d3.interpolatePiYG,
+        PuOr: d3.interpolatePuOr,
+        RdBu: d3.interpolateRdBu,
+        RdGy: d3.interpolateRdGy,
+        RdYlBu: d3.interpolateRdYlBu,
+        RdYlGn: d3.interpolateRdYlGn,
+        Spectral: d3.interpolateSpectral,
+        Rainbow: d3.interpolateRainbow,
+        Sinebow: d3.interpolateSinebow,
+        Observable10: d3.schemeObservable10,
+        Category10: d3.schemeCategory10,
+        Accent: d3.schemeAccent,
+        Dark2: d3.schemeDark2,
+        Paired: d3.schemePaired,
+        Pastel1: d3.schemePastel1,
+        Pastel2: d3.schemePastel2,
+        Set1: d3.schemeSet1,
+        Set2: d3.schemeSet2,
+        Set3: d3.schemeSet3,
+        Tableau10: d3.schemeTableau10,
+    };
+
+    let scaleType = colorScales[colorname]
+        ? colorScales[colorname]
+        : colorScales["Category10"];
+    let domain = colorMirror ? [minScore, maxScore] : [maxScore, minScore];
+
+    if (
+        [
+            "Observable10",
+            "Category10",
+            "Accent",
+            "Dark2",
+            "Paired",
+            "Pastel1",
+            "Pastel2",
+            "Set1",
+            "Set2",
+            "Set3",
+            "Tableau10",
+        ].includes(colorname)
+    ) {
+        return d3.scaleOrdinal(scaleType).domain(domain);
+    } else if (
+        [
+            "BrBG",
+            "PRGn",
+            "PiYG",
+            "PuOr",
+            "RdBu",
+            "RdGy",
+            "RdYlBu",
+            "RdYlGn",
+            "Spectral",
+        ].includes(colorname)
+    ) {
+        return d3
+            .scaleDiverging(scaleType)
+            .domain([minScore, (minScore + maxScore) / 2, maxScore]);
+    } else {
+        return d3.scaleSequential(scaleType).domain(domain);
+    }
+}
 function getNumberOfChildren(node) {
     let count = 0;
     let children = node.children || node._children; // consider both children and _children
@@ -52,6 +151,8 @@ function generateVis() {
     //passScatterplotLeafPointSelectionToQt("");
     //}
     //}
+    legendXValue = 15;
+    legendYValue = 20;
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
     svg.selectAll("*").remove();
@@ -105,7 +206,12 @@ function generateVis() {
 
         shapeScale = d3.scaleOrdinal().domain(uniqueValuesString).range(d3.symbols);
     }
-
+    // Define the color scale using d3.scaleDiverging and d3.interpolateRdBu
+    var colorScoresPermanent = getColorScalePermanent(
+        qtColor,
+        mindistanceColor,
+        maxdistanceColor
+    );
     // Set the dimensions and margins of the diagram
     var margin = {
         top: 0,
@@ -278,15 +384,8 @@ function generateVis() {
             .style("stroke-width", "1px")
             .on("click", clickNodes)
             .style("fill", function (d) {
-                if (
-                    d.data.name !== undefined &&
-                    d.data.name !== "" &&
-                    traitValueColorFlag &&
-                    showTraitValues
-                ) {
-                    return traitValueColorContainer[d.data.name];
-                } else {
-                    return colorScale(d.data.score);
+                {
+                    return colorScoresPermanent(d.data.score);
                 }
             })
             .append("title")
@@ -644,7 +743,7 @@ function generateVis() {
             .style("fill", function (d) {
                 // If the node is a parent, set the color to something other than pink
                 if (d.parent) {
-                    return colorScale(d.data.score); // replace with the color you want
+                    return colorScoresPermanent(d.data.score); // replace with the color you want
                 }
                 // Otherwise, return the original color
                 return d.data.color;
@@ -686,8 +785,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                //var color = colorScale(parentScore);
-                var color = "black"; //colorScale(d.data.score);
+                //var color = colorScoresPermanent(parentScore);
+                var color = "black"; //colorScoresPermanent(d.data.score);
                 return color;
             });
 
@@ -705,8 +804,8 @@ function generateVis() {
             .attr("stroke", function (d) {
                 // Color based on the score of the parent node
                 var parentScore = d.parent ? d.parent.data.score : 0;
-                //var color = colorScale(parentScore);
-                var color = "black"; //colorScale(d.data.score);
+                //var color = colorScoresPermanent(parentScore);
+                var color = "black"; //colorScoresPermanent(d.data.score);
                 return color;
             });
 
@@ -856,13 +955,11 @@ L ${d.y} ${d.x}`;
                 return "black";
             })
             .style("stroke-width", "1px")
-            .style("fill", (d) =>
-                traitValueColorFlag &&
-                    showTraitValues &&
-                    traitValueColorContainer[d.name]
-                    ? traitValueColorContainer[d.name]
-                    : colorScale(d.score) || "black"
-            )
+            .style("fill", (d) => {
+                {
+                    return colorScoresPermanent(d.score) || "black";
+                }
+            })
             .style("cursor", "pointer")
             .on("click", clickNames)
             .append("title")
@@ -1088,9 +1185,6 @@ L ${d.y} ${d.x}`;
                     // Default color for selected species
                     return "#1D8ECE";
                 }
-            } else if (d?.name && traitValueColorFlag && showTraitValues) {
-                // Node has a name and traitValueColorFlag is true
-                return traitValueColorContainer[d.data.name];
             }
             // Default color if none of the above conditions are met
             return "black";
@@ -1175,7 +1269,7 @@ L ${d.y} ${d.x}`;
     }
     updateNamesBelowNodes();
     var removeAnimation = false;
-
+    permanentLegendUpdate();
     if (
         (traitValueStringFlag && showTraitValues) ||
         (traitValueNumericFlag && showTraitValues)
@@ -1183,18 +1277,99 @@ L ${d.y} ${d.x}`;
         legendUpdate();
     }
 
+    function permanentLegendUpdate() {
+        // Ensure the SVG element is selected correctly
+        var svg = d3.select("svg");
+        if (svg.empty()) {
+            return;
+        }
+
+        // Define minScore and maxScore
+        var minScore = mindistanceColor; // Replace with actual logic to determine minScore
+        var maxScore = maxdistanceColor; // Replace with actual logic to determine maxScore
+
+        // Remove any existing color legend
+        svg.selectAll(".permanentcolorscale-legend").remove();
+
+        var colorLegend = svg
+            .append("g")
+            .attr("class", "permanentcolorscale-legend")
+            .attr(
+                "transform",
+                "translate(" + legendXValue + "," + legendYValue + ")"
+            );
+
+        // Add title for color legend
+        colorLegend
+            .append("text")
+            .style("font-size", "12px")
+            .attr("class", "legend-title")
+            .attr("y", -10)
+            .attr("x", -15)
+            .style("font-weight", "bold")
+            .text("mean scores");
+
+        // Add rectangles for color legend
+        var gradient = colorLegend
+            .append("defs")
+            .append("linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%");
+
+        gradient
+            .append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", colorScoresPermanent(minScore))
+            .attr("stop-opacity", 1);
+
+        gradient
+            .append("stop")
+            .attr("offset", "50%")
+            .attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            .attr("stop-opacity", 1);
+
+        gradient
+            .append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", colorScoresPermanent(maxScore))
+            .attr("stop-opacity", 1);
+
+        colorLegend
+            .append("rect")
+            .attr("width", 100)
+            .attr("height", 10)
+            .attr("x", -12)
+            .attr("y", 0)
+            .style("fill", "url(#gradient)");
+
+        // Add labels for color legend
+        colorLegend
+            .append("text")
+            .attr("x", -12)
+            .attr("y", 25)
+            .style("font-size", "12px")
+            .text(minScore);
+
+        colorLegend
+            .append("text")
+            .attr("x", 82)
+            .attr("y", 25)
+            .style("font-size", "12px")
+            .text(maxScore);
+
+        // Bring the permanent legend to the front
+        colorLegend.raise();
+    }
+
     function legendUpdate() {
         svg.selectAll(".size-legend").remove();
         svg.selectAll(".shape-legend").remove();
-        if (root.x > window.innerHeight / 2) {
-            legendYValue = 25;
-        } else {
-            legendYValue =
-                window.innerHeight -
-                window.innerHeight / (uniqueValuesString.length + 2);
-        }
-        var legendX = legendXValue;
-        var legendY = 0 + legendYValue;
+
+        var legendX = legendXValue - 35; // Move the legend more to the left
+        var legendY = legendYValue + 55;
         var sizeLegend;
         if (traitValueNumericFlag && showTraitValues) {
             // Create a group for the size legend
@@ -1202,7 +1377,6 @@ L ${d.y} ${d.x}`;
                 .append("g")
                 .attr("class", "size-legend")
                 .attr("transform", "translate(" + legendX + "," + legendY + ")"); // Adjust these values to move the legend
-
             // Add title for size legend
             sizeLegend
                 .append("text")
@@ -1299,12 +1473,10 @@ L ${d.y} ${d.x}`;
                 .attr("cursor", "pointer")
                 .attr("fill", function (d, i) {
                     if (legendTextContainerActivateFlag) {
-                        {
-                            if (legendTextContainer.includes(d)) {
-                                return "#1D8ECE";
-                            } else {
-                                return "black";
-                            }
+                        if (legendTextContainer.includes(d)) {
+                            return "#1D8ECE";
+                        } else {
+                            return "black";
                         }
                     } else {
                         return "black";
