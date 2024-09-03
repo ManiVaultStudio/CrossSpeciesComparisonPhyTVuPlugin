@@ -15,7 +15,7 @@ function getColorScalePermanent(
     colorname,
     minScore,
     maxScore,
-    colorMirror = false
+    colorMirror
 ) {
     const colorScales = {
         Blues: d3.interpolateBlues,
@@ -210,7 +210,8 @@ function generateVis() {
     var colorScoresPermanent = getColorScalePermanent(
         qtColor,
         mindistanceColor,
-        maxdistanceColor
+        maxdistanceColor,
+        colorMirror
     );
     // Set the dimensions and margins of the diagram
     var margin = {
