@@ -15,7 +15,7 @@ function getColorScalePermanent(
     colorname,
     minScore,
     maxScore,
-    colorMirror
+    colorMirror = false
 ) {
     const colorScales = {
         Blues: d3.interpolateBlues,
@@ -210,15 +210,14 @@ function generateVis() {
     var colorScoresPermanent = getColorScalePermanent(
         qtColor,
         mindistanceColor,
-        maxdistanceColor,
-        colorMirror
+        maxdistanceColor
     );
     // Set the dimensions and margins of the diagram
     var margin = {
         top: 0,
-        right: 3,
+        right: 1,
         bottom: 20,
-        left: 35,
+        left: 32,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -456,13 +455,49 @@ function generateVis() {
             })
             .attr("x", function (d) {
                 if (d.data.score == 0) {
-                    return -7;
-                }
-                //else if d.data.score is a whole number
-                else if (d.data.score % 1 == 0) {
-                    return -8;
-                } else {
-                    return -25;
+                    return -10;
+                } else if (d.data.score > 100) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -40;
+                    } else {
+                        return -30;
+                    }
+                } else if (d.data.score > 10) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -30;
+                    } else {
+                        return -20;
+                    }
+                } else if (d.data.score > 0) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -25;
+                    } else {
+                        return -10;
+                    }
+                } else if (d.data.score < -100) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -50;
+                    } else {
+                        return -40;
+                    }
+                } else if (d.data.score < -10) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -40;
+                    } else {
+                        return -30;
+                    }
+                } else if (d.data.score < 0) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -30;
+                    } else {
+                        return -20;
+                    }
                 }
             })
             //.attr("x", -24)
@@ -1308,7 +1343,7 @@ L ${d.y} ${d.x}`;
             .attr("y", -10)
             .attr("x", -15)
             .style("font-weight", "bold")
-            .text("mean scores");
+            .text(typeOfColoringScore + " scores for " + geneName + " gene");
 
         // Add rectangles for color legend
         var gradient = colorLegend
