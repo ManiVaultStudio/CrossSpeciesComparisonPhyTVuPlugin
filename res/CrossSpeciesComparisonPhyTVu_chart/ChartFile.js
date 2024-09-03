@@ -15,7 +15,7 @@ function getColorScalePermanent(
     colorname,
     minScore,
     maxScore,
-    colorMirror
+    colorMirrorVal
 ) {
     const colorScales = {
         Blues: d3.interpolateBlues,
@@ -72,7 +72,7 @@ function getColorScalePermanent(
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
         : colorScales["Category10"];
-    let domain = colorMirror ? [minScore, maxScore] : [maxScore, minScore];
+    let domain = colorMirrorVal ? [minScore, maxScore] : [maxScore, minScore];
 
     if (
         [
@@ -216,7 +216,7 @@ function generateVis() {
     // Set the dimensions and margins of the diagram
     var margin = {
         top: 0,
-        right: 3,
+        right: 10,
         bottom: 20,
         left: 35,
     };
@@ -456,13 +456,49 @@ function generateVis() {
             })
             .attr("x", function (d) {
                 if (d.data.score == 0) {
-                    return -7;
-                }
-                //else if d.data.score is a whole number
-                else if (d.data.score % 1 == 0) {
-                    return -8;
-                } else {
-                    return -25;
+                    return -10;
+                } else if (d.data.score > 100) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -40;
+                    } else {
+                        return -20;
+                    }
+                } else if (d.data.score > 10) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -30;
+                    } else {
+                        return -20;
+                    }
+                } else if (d.data.score > 0) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -25;
+                    } else {
+                        return -10;
+                    }
+                } else if (d.data.score < -100) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -50;
+                    } else {
+                        return -40;
+                    }
+                } else if (d.data.score < -10) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -40;
+                    } else {
+                        return -30;
+                    }
+                } else if (d.data.score < 0) {
+                    // check if decimal number
+                    if (d.data.score % 1 !== 0) {
+                        return -30;
+                    } else {
+                        return -20;
+                    }
                 }
             })
             //.attr("x", -24)
@@ -1298,7 +1334,8 @@ L ${d.y} ${d.x}`;
             .attr(
                 "transform",
                 "translate(" + legendXValue + "," + legendYValue + ")"
-            );
+            )
+            .style("cursor", "pointer"); // Change cursor to pointer
 
         // Add title for color legend
         colorLegend
@@ -1308,7 +1345,7 @@ L ${d.y} ${d.x}`;
             .attr("y", -10)
             .attr("x", -15)
             .style("font-weight", "bold")
-            .text("mean scores");
+            .text(geneName + " gene " + typeOfColoringScore);
 
         // Add rectangles for color legend
         var gradient = colorLegend
@@ -1363,6 +1400,22 @@ L ${d.y} ${d.x}`;
 
         // Bring the permanent legend to the front
         colorLegend.raise();
+
+        // Add click event to the entire color legend
+        colorLegend.on("click", function () {
+            //console.log("Color legend clicked!");
+
+            const coloringScoreMap = {
+                "mean expression": "differential expression",
+                "differential expression": "rank",
+                "rank": "mean expression"
+            };
+
+            typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+
+            drawChart(jsonValueStore)
+
+        });
     }
 
     function legendUpdate() {
