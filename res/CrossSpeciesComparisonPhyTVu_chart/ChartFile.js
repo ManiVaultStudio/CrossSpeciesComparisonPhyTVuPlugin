@@ -15,7 +15,7 @@ function getColorScalePermanent(
     colorname,
     minScore,
     maxScore,
-    colorMirror = false
+    colorMirrorVal
 ) {
     const colorScales = {
         Blues: d3.interpolateBlues,
@@ -72,7 +72,7 @@ function getColorScalePermanent(
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
         : colorScales["Category10"];
-    let domain = colorMirror ? [minScore, maxScore] : [maxScore, minScore];
+    let domain = colorMirrorVal ? [minScore, maxScore] : [maxScore, minScore];
 
     if (
         [
@@ -210,7 +210,8 @@ function generateVis() {
     var colorScoresPermanent = getColorScalePermanent(
         qtColor,
         mindistanceColor,
-        maxdistanceColor
+        maxdistanceColor,
+        colorMirror
     );
     // Set the dimensions and margins of the diagram
     var margin = {
@@ -461,7 +462,7 @@ function generateVis() {
                     if (d.data.score % 1 !== 0) {
                         return -40;
                     } else {
-                        return -30;
+                        return -20;
                     }
                 } else if (d.data.score > 10) {
                     // check if decimal number
@@ -1344,7 +1345,7 @@ L ${d.y} ${d.x}`;
             .attr("y", -10)
             .attr("x", -15)
             .style("font-weight", "bold")
-            .text(typeOfColoringScore + " " + geneName + " gene");
+            .text(geneName + " gene " + typeOfColoringScore);
 
         // Add rectangles for color legend
         var gradient = colorLegend
