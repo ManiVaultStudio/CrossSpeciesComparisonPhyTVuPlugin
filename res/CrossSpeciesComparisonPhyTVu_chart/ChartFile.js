@@ -215,9 +215,9 @@ function generateVis() {
     // Set the dimensions and margins of the diagram
     var margin = {
         top: 0,
-        right: 1,
+        right: 10,
         bottom: 20,
-        left: 32,
+        left: 35,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -1333,7 +1333,8 @@ L ${d.y} ${d.x}`;
             .attr(
                 "transform",
                 "translate(" + legendXValue + "," + legendYValue + ")"
-            );
+            )
+            .style("cursor", "pointer"); // Change cursor to pointer
 
         // Add title for color legend
         colorLegend
@@ -1343,7 +1344,7 @@ L ${d.y} ${d.x}`;
             .attr("y", -10)
             .attr("x", -15)
             .style("font-weight", "bold")
-            .text(typeOfColoringScore + " scores for " + geneName + " gene");
+            .text(typeOfColoringScore + " " + geneName + " gene");
 
         // Add rectangles for color legend
         var gradient = colorLegend
@@ -1398,6 +1399,22 @@ L ${d.y} ${d.x}`;
 
         // Bring the permanent legend to the front
         colorLegend.raise();
+
+        // Add click event to the entire color legend
+        colorLegend.on("click", function () {
+            //console.log("Color legend clicked!");
+
+            const coloringScoreMap = {
+                "mean expression": "differential expression",
+                "differential expression": "rank",
+                "rank": "mean expression"
+            };
+
+            typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+
+            drawChart(jsonValueStore)
+
+        });
     }
 
     function legendUpdate() {
