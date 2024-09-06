@@ -53,6 +53,11 @@ void ChartCommunicationObject::js_passScatterplotLeafPointSelectionToQt(QVariant
 
     _parent->js_passScatterplotLeafPointSelectionToQt(data.toString().toStdString());
 }
+void ChartCommunicationObject::js_alterColorMirrorForRankToQt(QVariant data)
+{
+
+    _parent->js_alterColorMirrorForRankToQt(data.toString().toStdString());
+}
 /*
 void ChartCommunicationObject::js_addLeftRightSelectionToScatterplot(QVariant data)
 {
@@ -168,6 +173,10 @@ void ChartWidget::js_addSelectionToScatterplot(std::string selectedIDs)
 void ChartWidget::js_passScatterplotLeafPointSelectionToQt(std::string selectedIDs)
 {
     emit passScatterplotLeafPointSelectionToQt(selectedIDs);
+}
+void ChartWidget::js_alterColorMirrorForRankToQt(std::string selectedIDs)
+{
+    emit alterColorMirrorForRankToQt(selectedIDs);
 }
 /*
 void ChartWidget::js_addLeftRightSelectionToScatterplot(std::string selectedIDs)
