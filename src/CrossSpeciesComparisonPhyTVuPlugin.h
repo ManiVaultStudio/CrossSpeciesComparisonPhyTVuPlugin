@@ -78,6 +78,7 @@ private:
     void addSelectionToScatterplot(std::string clusterName);
     void addLeftRightSelectionToScatterplot(std::string clusterName);
     void passScatterplotLeafPointSelection(std::string selectedSpecies);
+    void alterColorMirrorForRank(std::string selectedSpecies);
 
 private:
     ChartWidget            _chartWidget;       // WebWidget that sets up the HTML page

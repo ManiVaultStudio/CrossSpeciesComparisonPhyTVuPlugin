@@ -61,6 +61,13 @@ function passScatterplotLeafPointSelectionToQt(dat) {
         QtBridge.js_passScatterplotLeafPointSelectionToQt(dat);
     }
 }
+
+function alterColorMirrorForRankToQt(dat) {
+    if (isQtAvailable) {
+        QtBridge.js_alterColorMirrorForRankToQt(dat);
+    }
+}
+
 function passAddSelectionToQt(speciesString) {
     if (isQtAvailable) {
         QtBridge.js_addSelectionToScatterplot(speciesString);
