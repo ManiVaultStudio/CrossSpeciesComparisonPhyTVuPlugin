@@ -1412,7 +1412,28 @@ L ${d.y} ${d.x}`;
             };
 
             typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            if (typeOfColoringScore === "rank") {
+                if (colorMirror) {
+                    colorMirror = false;
+                    if (!isDebug) {
+                        alterColorMirrorForRankToQt("F");
+                    } else {
+                        //console.log("passRemoveSelectionToQt('')");
+                    }
+                }
 
+            }
+            else
+            {
+                if (!colorMirror) {
+                    colorMirror = true;
+                    if (!isDebug) {
+                        alterColorMirrorForRankToQt("T");
+                    } else {
+                        //console.log("passRemoveSelectionToQt('')");
+                    }
+                }
+            }
             drawChart(jsonValueStore)
 
         });

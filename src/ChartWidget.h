@@ -44,6 +44,7 @@ public slots:
     void js_crossspeciesclusterSelection(QString data);
     void js_addSelectionToScatterplot(QVariant data);
     void js_passScatterplotLeafPointSelectionToQt(QVariant data);
+    void js_alterColorMirrorForRankToQt(QVariant data);
     //void js_addLeftRightSelectionToScatterplot(QVariant data);
     void js_removeSelectionFromScatterplot(QVariant data);
 private:
@@ -85,6 +86,7 @@ signals:
     void removeSelectionFromScatterplot(std::string clusterName);
     void addSelectionToScatterplot(std::string clusterName);
     void passScatterplotLeafPointSelectionToQt(std::string selectedSpecies);
+    void alterColorMirrorForRankToQt(std::string selectedSpecies);
     void addLeftRightSelectionToScatterplot(std::string clusterName);
 
 public:
@@ -94,6 +96,7 @@ public:
     void js_crossspeciesclusterSelection(std::string selectedIDs);
     void js_addSelectionToScatterplot(std::string clusterName);
     void js_passScatterplotLeafPointSelectionToQt(std::string selectedSpecies);
+    void js_alterColorMirrorForRankToQt(std::string selectedSpecies);
     //void js_addLeftRightSelectionToScatterplot(std::string clusterName);
     void js_removeSelectionFromScatterplot(std::string clusterName);
 

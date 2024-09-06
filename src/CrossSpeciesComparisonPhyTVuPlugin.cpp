@@ -73,6 +73,8 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
     connect(&_chartWidget, &ChartWidget::addLeftRightSelectionToScatterplot, this, &CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot);
 
     connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection);
+
+    connect(&_chartWidget, &ChartWidget::alterColorMirrorForRankToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::alterColorMirrorForRank);
     
     const auto updateTreeLeafSelectionFromQT = [this]() -> void
         {
@@ -577,6 +579,20 @@ void CrossSpeciesComparisonPhyTVuPlugin::addLeftRightSelectionToScatterplot(std:
 
 void CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection(std::string selectedSpecies)
 {
+}
+
+void CrossSpeciesComparisonPhyTVuPlugin::alterColorMirrorForRank(std::string selectedSpecies)
+{
+    auto& mirrorAction = _chartOptions.getExtraSettingsHolder().getColorMapAction().getMirrorAction(ColorMapAction::Axis::X);
+    if (selectedSpecies=="T")
+    {
+        mirrorAction.setChecked(true);
+    }
+    else
+    {
+        mirrorAction.setChecked(false);
+    }
+    
 }
 
 
