@@ -183,7 +183,7 @@ function averageDifferentialValuesAllLeafChildren(node) {
 function averageAbundanceValuesAllLeafChildren(node) {
     if (!node.children || node.children.length === 0) {
         // Leaf node
-        node.score = parseFloat(node.averageAbundanceValuesAllLeafChildren.toFixed(2));
+        node.score = parseFloat(node.abundance.toFixed(2));
         return { totalMean: node.abundance, count: 1 };
     } else {
         // Non-leaf node
@@ -198,6 +198,7 @@ function averageAbundanceValuesAllLeafChildren(node) {
         return { totalMean: totalMean, count: count };
     }
 }
+
 
 function averageRankValuesAllLeafChildren(node) {
     if (!node.children || node.children.length === 0) {
