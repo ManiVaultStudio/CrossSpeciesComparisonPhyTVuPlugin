@@ -47,7 +47,7 @@ var maxDepth = 0;
 var eachDepthWidth = 0;
 var maxTotalDepthWidth = 0;
 var dataReference = "";
-var typeOfColoringScore = "mean expression"; //mean or differential expression or rank or abundance
+var typeOfColoringScore = "mean expression"; //mean or differential expression or rank or abundanceTop or abundanceMiddle
 var geneName = "";
 var jsonValueStore;
 //true for Debugging
@@ -180,17 +180,17 @@ function averageDifferentialValuesAllLeafChildren(node) {
     }
 }
 
-function averageAbundanceValuesAllLeafChildren(node) {
+function averageAbundanceTopValuesAllLeafChildren(node) {
     if (!node.children || node.children.length === 0) {
         // Leaf node
-        node.score = parseFloat(node.abundance.toFixed(2));
-        return { totalMean: node.abundance, count: 1 };
+        node.score = parseFloat(node.abundanceTop.toFixed(2));
+        return { totalMean: node.abundanceTop, count: 1 };
     } else {
         // Non-leaf node
         let totalMean = 0;
         let count = 0;
         for (let child of node.children) {
-            let result = averageAbundanceValuesAllLeafChildren(child);
+            let result = averageAbundanceTopValuesAllLeafChildren(child);
             totalMean += result.totalMean;
             count += result.count;
         }
@@ -198,6 +198,26 @@ function averageAbundanceValuesAllLeafChildren(node) {
         return { totalMean: totalMean, count: count };
     }
 }
+
+function averageAbundanceMiddleValuesAllLeafChildren(node) {
+    if (!node.children || node.children.length === 0) {
+        // Leaf node
+        node.score = parseFloat(node.abundanceMiddle.toFixed(2));
+        return { totalMean: node.abundanceMiddle, count: 1 };
+    } else {
+        // Non-leaf node
+        let totalMean = 0;
+        let count = 0;
+        for (let child of node.children) {
+            let result = averageAbundanceMiddleValuesAllLeafChildren(child);
+            totalMean += result.totalMean;
+            count += result.count;
+        }
+        node.score = parseFloat((totalMean / count).toFixed(2));
+        return { totalMean: totalMean, count: count };
+    }
+}
+
 
 
 function averageRankValuesAllLeafChildren(node) {
@@ -373,9 +393,12 @@ function drawChart(jsonValue) {
         else if (typeOfColoringScore == "differential expression") {
             averageDifferentialValuesAllLeafChildren(dataReference);
         }
-        else if (typeOfColoringScore == "abundance")
+        else if (typeOfColoringScore == "abundanceTop")
         {
-            averageAbundanceValuesAllLeafChildren(dataReference);
+            averageAbundanceTopValuesAllLeafChildren(dataReference);
+        }
+        else if (typeOfColoringScore == "abundanceMiddle") {
+            averageAbundanceMiddleValuesAllLeafChildren(dataReference);
         }
         else {
             averageMeanValuesAllLeafChildren(dataReference);
