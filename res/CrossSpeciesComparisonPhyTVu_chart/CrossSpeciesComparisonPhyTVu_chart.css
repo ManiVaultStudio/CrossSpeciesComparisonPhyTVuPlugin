@@ -3,6 +3,10 @@ text {
     font-size: 14px;
 }
 
+#nodeScore {
+    font-size: 11px !important;
+}
+
 .highlight-text {
     fill: #00a2ed;
 }

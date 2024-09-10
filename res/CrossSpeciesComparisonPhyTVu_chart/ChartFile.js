@@ -11,6 +11,38 @@
         node.hastrait = traitjson[traitValue][node.name].isPresent;
     }
 }
+
+function getXAttribute(d) {
+    const score = d.data.score;
+
+    if (score === 0) {
+        return -10;
+    }
+
+    if (score > 100) {
+        return score % 1 !== 0 ? -40 : -20;
+    }
+
+    if (score > 10) {
+        return score % 1 !== 0 ? -30 : -20;
+    }
+
+    if (score > 0) {
+        return score % 1 !== 0 ? -25 : -10;
+    }
+
+    if (score < -100) {
+        return score % 1 !== 0 ? -50 : -40;
+    }
+
+    if (score < -10) {
+        return score % 1 !== 0 ? -40 : -30;
+    }
+
+    if (score < 0) {
+        return score % 1 !== 0 ? -30 : -20;
+    }
+}
 function getColorScalePermanent(
     colorname,
     minScore,
@@ -213,12 +245,19 @@ function generateVis() {
         maxdistanceColor,
         colorMirror
     );
+    var valueTop = 20;
+    if (window.innerWidth < 450) {
+        valueTop = 40;
+    }
+    if (window.innerWidth < 380) {
+        valueTop = 50;
+    }
     // Set the dimensions and margins of the diagram
     var margin = {
-        top: 0,
-        right: 10,
+        top: valueTop,
+        right: 0,
         bottom: 20,
-        left: 35,
+        left: 50,
     };
     var width = window.innerWidth - margin.left - margin.right;
     var height = window.innerHeight - margin.top - margin.bottom;
@@ -227,8 +266,8 @@ function generateVis() {
     svg = d3
         .select("#my_dataviz")
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", width + margin.left + margin.right) // Adjusted width
+        .attr("height", height + margin.top + margin.bottom) // Adjusted height
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -455,51 +494,7 @@ function generateVis() {
                 return isRightChild(d) ? 10 : -5;
             })
             .attr("x", function (d) {
-                if (d.data.score == 0) {
-                    return -10;
-                } else if (d.data.score > 100) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -40;
-                    } else {
-                        return -20;
-                    }
-                } else if (d.data.score > 10) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -30;
-                    } else {
-                        return -20;
-                    }
-                } else if (d.data.score > 0) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -25;
-                    } else {
-                        return -10;
-                    }
-                } else if (d.data.score < -100) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -50;
-                    } else {
-                        return -40;
-                    }
-                } else if (d.data.score < -10) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -40;
-                    } else {
-                        return -30;
-                    }
-                } else if (d.data.score < 0) {
-                    // check if decimal number
-                    if (d.data.score % 1 !== 0) {
-                        return -30;
-                    } else {
-                        return -20;
-                    }
-                }
+                return getXAttribute(d);
             })
             //.attr("x", -24)
             .attr("dy", ".10em")
@@ -1337,6 +1332,17 @@ L ${d.y} ${d.x}`;
             )
             .style("cursor", "pointer"); // Change cursor to pointer
 
+        // Add background rectangle for color legend
+        colorLegend
+            .append("rect")
+            .attr("class", "legend-background")
+            .attr("width", 120) // Adjust width as needed
+            .attr("height", 40) // Adjust height as needed
+            .attr("x", -20) // Adjust x position as needed
+            .attr("y", -20) // Adjust y position as needed
+            .style("fill", "white") // Background color
+            .style("opacity", 0.8); // Background opacity
+
         // Add title for color legend
         colorLegend
             .append("text")
@@ -1345,7 +1351,7 @@ L ${d.y} ${d.x}`;
             .attr("y", -10)
             .attr("x", -15)
             .style("font-weight", "bold")
-            .text(geneName + " gene " + typeOfColoringScore);
+            .text(tooltipTextVal);
 
         // Add rectangles for color legend
         var gradient = colorLegend
@@ -1425,8 +1431,7 @@ L ${d.y} ${d.x}`;
                 }
 
             }
-            else
-            {
+            else {
                 if (!colorMirror) {
                     colorMirror = true;
                     if (!isDebug) {
