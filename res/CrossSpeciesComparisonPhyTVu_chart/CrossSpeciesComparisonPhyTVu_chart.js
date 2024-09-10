@@ -389,6 +389,12 @@ function drawChart(jsonValue) {
         minBranchLength = findMinBranchLength(dataVariableReference);
         maxTotalDepthWidth = findMaxPathTotalDepthLength(dataVariableReference);
         dataReference = copyDataWithCollapsedFlag(dataVariableReference);
+        geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
+        middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
+        clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
+
+        //make middleAbundanceClusterName all small letters
+        middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
 
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
@@ -411,10 +417,7 @@ function drawChart(jsonValue) {
             tooltipTextVal = "Mean selected cells for " + geneName+" in " + clusterName;
         }
 
-        geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
-        middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
-        clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
-        const allScores = collectScores(dataReference);
+ const allScores = collectScores(dataReference);
         // Step 3: Calculate min and max scores
         mindistanceColor = d3.min(allScores);
         maxdistanceColor = d3.max(allScores);
