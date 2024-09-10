@@ -392,7 +392,7 @@ function drawChart(jsonValue) {
 
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
-            tooltipTextVal = geneName + " appearance Rank";
+            tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
         }
         else if (typeOfColoringScore == "differential expression") {
             averageDifferentialValuesAllLeafChildren(dataReference);
@@ -408,7 +408,7 @@ function drawChart(jsonValue) {
         }
         else {
             averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = geneName + " mean selected cells in " + clusterName;
+            tooltipTextVal = "Mean selected cells for " + geneName+" in " + clusterName;
         }
 
         geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
