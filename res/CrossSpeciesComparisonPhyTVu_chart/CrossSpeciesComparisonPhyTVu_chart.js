@@ -412,6 +412,8 @@ function drawChart(jsonValue) {
         }
 
         geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
+        middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
+        clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
         const allScores = collectScores(dataReference);
         // Step 3: Calculate min and max scores
         mindistanceColor = d3.min(allScores);
