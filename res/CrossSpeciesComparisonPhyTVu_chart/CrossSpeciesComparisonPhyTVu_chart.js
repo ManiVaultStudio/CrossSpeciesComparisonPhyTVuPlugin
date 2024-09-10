@@ -393,8 +393,9 @@ function drawChart(jsonValue) {
         middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
         clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
 
-        //make middleAbundanceClusterName all small letters
-        middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
+        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
+        //clusterName = clusterName.toLowerCase();
+        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
 
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
@@ -406,15 +407,15 @@ function drawChart(jsonValue) {
         }
         else if (typeOfColoringScore == "abundanceTop") {
             averageAbundanceTopValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of neuronal cells in " + clusterName;
+            tooltipTextVal = "Fraction of " + clusterName +" in Neuronal";
         }
         else if (typeOfColoringScore == "abundanceMiddle") {
             averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + middleAbundanceClusterName + " cells in " + clusterName;
+            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName; 
         }
         else {
             averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Mean selected cells for " + geneName+" in " + clusterName;
+            tooltipTextVal = "Mean expression for " + geneName+" in " + clusterName;
         }
 
  const allScores = collectScores(dataReference);
