@@ -1407,7 +1407,9 @@ L ${d.y} ${d.x}`;
 
             const coloringScoreMap = {
                 "mean expression": "differential expression",
-                "differential expression": "abundance", "abundance": "rank",
+                "differential expression": "abundanceTop",
+                "abundanceTop": "abundanceMiddle",
+                "abundanceMiddle": "rank",
                 "rank": "mean expression"
             };
 
