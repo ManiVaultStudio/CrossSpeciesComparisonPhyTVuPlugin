@@ -392,23 +392,23 @@ function drawChart(jsonValue) {
 
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
-            tooltipTextVal = geneName + " Appearance Rank";
+            tooltipTextVal = geneName + " appearance Rank";
         }
         else if (typeOfColoringScore == "differential expression") {
             averageDifferentialValuesAllLeafChildren(dataReference);
-            tooltipTextVal = " Mean differential expression for " + geneName + " in " + clusterName;
+            tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
         }
         else if (typeOfColoringScore == "abundanceTop") {
             averageAbundanceTopValuesAllLeafChildren(dataReference);
-            tooltipTextVal = " Fraction of neuronal cells in " + clusterName;
+            tooltipTextVal = "Fraction of neuronal cells in " + clusterName;
         }
         else if (typeOfColoringScore == "abundanceMiddle") {
             averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-            tooltipTextVal = " Fraction of " + middleAbundanceClusterName + " cells in " + clusterName;
+            tooltipTextVal = "Fraction of " + middleAbundanceClusterName + " cells in " + clusterName;
         }
         else {
             averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = geneName + " Mean selected cells in " + clusterName;
+            tooltipTextVal = geneName + " mean selected cells in " + clusterName;
         }
 
         geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
