@@ -400,22 +400,31 @@ function drawChart(jsonValue) {
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
             tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+            qtColor = "Greys";
         }
         else if (typeOfColoringScore == "differential expression") {
             averageDifferentialValuesAllLeafChildren(dataReference);
             tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+            qtColor = "Plasma"; //Magma
         }
         else if (typeOfColoringScore == "abundanceTop") {
             averageAbundanceTopValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName +" in Neuronal";
+            tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+            qtColor = "BuPu";
         }
         else if (typeOfColoringScore == "abundanceMiddle") {
             averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName; 
+            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+            qtColor = "GnBu";
+        }
+        else if (typeOfColoringScore == "mean expression") {
+            averageMeanValuesAllLeafChildren(dataReference);
+            tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+            qtColor = "Viridis";
         }
         else {
-            averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Mean expression for " + geneName+" in " + clusterName;
+            tooltipTextVal = "";
+            qtColor = "Reds";
         }
 
  const allScores = collectScores(dataReference);

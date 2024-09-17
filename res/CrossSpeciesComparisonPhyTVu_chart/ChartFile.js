@@ -461,10 +461,18 @@ function generateVis() {
                         return (
                             "leaf : " +
                             d.data.name +
-                            "\nCell counts : " +
+                            "\nAbsolute abundance of selected cells : " +
                             d.data.cellCounts +
-                            "\nMean: " +
+                            "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
                             d.data.mean +
+                            "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                            d.data.differential +
+                            "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                            d.data.abundanceTop +
+                            "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                            d.data.abundanceMiddle +
+                            "\n" + "Appearance rank for " + geneName + " in " + clusterName+ " : " +
+                            d.data.rank +
                             returnStringADd
                         );
                     }
@@ -573,12 +581,20 @@ function generateVis() {
                 //)
                 {
                     return (
-                        "Leaf : " +
+                        "leaf : " +
                         d.data.name +
-                        "\nCell counts : " +
+                        "\nAbsolute abundance of selected cells : " +
                         d.data.cellCounts +
-                        "\nMean: " +
+                        "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
                         d.data.mean +
+                        "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                        d.data.differential +
+                        "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                        d.data.abundanceTop +
+                        "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                        d.data.abundanceMiddle +
+                        "\n" + "Appearance rank for " + geneName + " in " + clusterName + " : " +
+                        d.data.rank +
                         returnStringADd
                     );
                 }
@@ -1420,6 +1436,7 @@ L ${d.y} ${d.x}`;
             };
 
             typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
                     colorMirror = false;
@@ -1441,6 +1458,39 @@ L ${d.y} ${d.x}`;
                     }
                 }
             }
+            /*
+
+            if (typeOfColoringScore == "rank") {
+                averageRankValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+                qtColor = "Greys";
+            }
+            else if (typeOfColoringScore == "differential expression") {
+                averageDifferentialValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+                qtColor = "Plasma"; //Magma
+            }
+            else if (typeOfColoringScore == "abundanceTop") {
+                averageAbundanceTopValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+                qtColor = "BuPu";
+            }
+            else if (typeOfColoringScore == "abundanceMiddle") {
+                averageAbundanceMiddleValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+                qtColor = "GnBu";
+            }
+            else if (typeOfColoringScore == "mean"){
+                averageMeanValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+                qtColor = "Viridis";
+            }
+            else {
+                tooltipTextVal = "";
+                qtColor = "Reds";
+            }
+            */
+
             drawChart(jsonValueStore)
 
         });

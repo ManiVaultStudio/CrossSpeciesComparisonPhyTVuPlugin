@@ -21,8 +21,8 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     setSerializationName("CSCPTV:CrossSpeciesComparisonPhyTVu");
     _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 5, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 2, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
-    _toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
+    //_toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
+    //_toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
     //_toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
 
 
@@ -31,7 +31,14 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
 
 void CrossSpeciesComparisonPhyTVuPlugin::init()
 {
+    auto& shortcuts = getShortcuts();
 
+    shortcuts.add({ QKeySequence(Qt::SHIFT), "Leaf Multi-Selection", "Mouse left click on tree nodes" });
+    shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Leaf Single-Selection", "Mouse left click on tree nodes"});
+    shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Toggle Attribute", "Mouse left click on colormap to toggle attributes" });
+    shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Node Info", "Hover node to see children names" });
+    shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Leaf Info", "Hover leaf to see leaf details" });
+    getLearningCenterAction().setPluginTitle("Phylogenetic Tree View");
 
     connect(&_chartWidget, &ChartWidget::widgetInitialized, this, &CrossSpeciesComparisonPhyTVuPlugin::triggerInitialChart);
 
