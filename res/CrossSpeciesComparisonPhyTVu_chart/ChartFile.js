@@ -45,66 +45,24 @@ function getXAttribute(d) {
 }
 function getColorScalePermanent(
     colorname,
-    minScore,
-    maxScore,
+    min,
+    max,
     colorMirrorVal
 ) {
-    const colorScales = {
-        Blues: d3.interpolateBlues,
-        Greens: d3.interpolateGreens,
-        Greys: d3.interpolateGreys,
-        Oranges: d3.interpolateOranges,
-        Purples: d3.interpolatePurples,
-        Reds: d3.interpolateReds,
-        BuGn: d3.interpolateBuGn,
-        BuPu: d3.interpolateBuPu,
-        GnBu: d3.interpolateGnBu,
-        OrRd: d3.interpolateOrRd,
-        PuBuGn: d3.interpolatePuBuGn,
-        PuBu: d3.interpolatePuBu,
-        PuRd: d3.interpolatePuRd,
-        RdPu: d3.interpolateRdPu,
-        YlGnBu: d3.interpolateYlGnBu,
-        YlGn: d3.interpolateYlGn,
-        YlOrBr: d3.interpolateYlOrBr,
-        YlOrRd: d3.interpolateYlOrRd,
-        Cividis: d3.interpolateCividis,
-        Viridis: d3.interpolateViridis,
-        Inferno: d3.interpolateInferno,
-        Magma: d3.interpolateMagma,
-        Plasma: d3.interpolatePlasma,
-        Warm: d3.interpolateWarm,
-        Cool: d3.interpolateCool,
-        CubehelixDefault: d3.interpolateCubehelixDefault,
-        Turbo: d3.interpolateTurbo,
-        BrBG: d3.interpolateBrBG,
-        PRGn: d3.interpolatePRGn,
-        PiYG: d3.interpolatePiYG,
-        PuOr: d3.interpolatePuOr,
-        RdBu: d3.interpolateRdBu,
-        RdGy: d3.interpolateRdGy,
-        RdYlBu: d3.interpolateRdYlBu,
-        RdYlGn: d3.interpolateRdYlGn,
-        Spectral: d3.interpolateSpectral,
-        Rainbow: d3.interpolateRainbow,
-        Sinebow: d3.interpolateSinebow,
-        Observable10: d3.schemeObservable10,
-        Category10: d3.schemeCategory10,
-        Accent: d3.schemeAccent,
-        Dark2: d3.schemeDark2,
-        Paired: d3.schemePaired,
-        Pastel1: d3.schemePastel1,
-        Pastel2: d3.schemePastel2,
-        Set1: d3.schemeSet1,
-        Set2: d3.schemeSet2,
-        Set3: d3.schemeSet3,
-        Tableau10: d3.schemeTableau10,
-    };
 
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
         : colorScales["Category10"];
-    let domain = colorMirrorVal ? [minScore, maxScore] : [maxScore, minScore];
+
+    var minSc = min;
+    var maxSc = max;
+    if (typeOfColoringScore === "rank") {
+        minSc = Math.log(min);
+        maxSc = Math.log(max);
+    }
+
+
+    let domain = colorMirrorVal ? [minSc, maxSc] : [maxSc, minSc];
 
     if (
         [
@@ -137,7 +95,7 @@ function getColorScalePermanent(
     ) {
         return d3
             .scaleDiverging(scaleType)
-            .domain([minScore, (minScore + maxScore) / 2, maxScore]);
+            .domain([minSc, (minSc + maxSc) / 2, maxSc]);
     } else {
         return d3.scaleSequential(scaleType).domain(domain);
     }
@@ -425,7 +383,13 @@ function generateVis() {
             .on("click", clickNodes)
             .style("fill", function (d) {
                 {
-                    return colorScoresPermanent(d.data.score);
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score));
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score);
+                    }
+                    
                 }
             })
             .append("title")
@@ -461,10 +425,18 @@ function generateVis() {
                         return (
                             "leaf : " +
                             d.data.name +
-                            "\nCell counts : " +
+                            "\nAbsolute abundance of selected cells : " +
                             d.data.cellCounts +
-                            "\nMean: " +
+                            "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
                             d.data.mean +
+                            "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                            d.data.differential +
+                            "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                            d.data.abundanceTop +
+                            "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                            d.data.abundanceMiddle +
+                            "\n" + "Appearance rank for " + geneName + " in " + clusterName+ " : " +
+                            d.data.rank +
                             returnStringADd
                         );
                     }
@@ -573,12 +545,20 @@ function generateVis() {
                 //)
                 {
                     return (
-                        "Leaf : " +
+                        "leaf : " +
                         d.data.name +
-                        "\nCell counts : " +
+                        "\nAbsolute abundance of selected cells : " +
                         d.data.cellCounts +
-                        "\nMean: " +
+                        "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
                         d.data.mean +
+                        "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                        d.data.differential +
+                        "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                        d.data.abundanceTop +
+                        "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                        d.data.abundanceMiddle +
+                        "\n" + "Appearance rank for " + geneName + " in " + clusterName + " : " +
+                        d.data.rank +
                         returnStringADd
                     );
                 }
@@ -775,7 +755,13 @@ function generateVis() {
             .style("fill", function (d) {
                 // If the node is a parent, set the color to something other than pink
                 if (d.parent) {
-                    return colorScoresPermanent(d.data.score); // replace with the color you want
+                    //return colorScoresPermanent(d.data.score); // replace with the color you want
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score));
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score);
+                    }
                 }
                 // Otherwise, return the original color
                 return d.data.color;
@@ -989,7 +975,13 @@ L ${d.y} ${d.x}`;
             .style("stroke-width", "1px")
             .style("fill", (d) => {
                 {
-                    return colorScoresPermanent(d.score) || "black";
+                    //return colorScoresPermanent(d.score) || "black";
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score)) || "black";
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score) || "black";
+                    }
                 }
             })
             .style("cursor", "pointer")
@@ -1366,19 +1358,40 @@ L ${d.y} ${d.x}`;
         gradient
             .append("stop")
             .attr("offset", "0%")
-            .attr("stop-color", colorScoresPermanent(minScore))
+            //.attr("stop-color", colorScoresPermanent(minScore))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(minScore));
+                } else {
+                    return colorScoresPermanent(minScore);
+                }
+            })
             .attr("stop-opacity", 1);
 
         gradient
             .append("stop")
             .attr("offset", "50%")
-            .attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            //.attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log((minScore + maxScore) / 2));
+                } else {
+                    return colorScoresPermanent((minScore + maxScore) / 2);
+                }
+            })
             .attr("stop-opacity", 1);
 
         gradient
             .append("stop")
             .attr("offset", "100%")
-            .attr("stop-color", colorScoresPermanent(maxScore))
+            //.attr("stop-color", colorScoresPermanent(maxScore))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(maxScore));
+                } else {
+                    return colorScoresPermanent(maxScore);
+                }
+            })
             .attr("stop-opacity", 1);
 
         colorLegend
@@ -1413,13 +1426,15 @@ L ${d.y} ${d.x}`;
 
             const coloringScoreMap = {
                 "mean expression": "differential expression",
-                "differential expression": "abundanceTop",
+                "differential expression": "rank",
+                "rank": "abundanceTop",
                 "abundanceTop": "abundanceMiddle",
-                "abundanceMiddle": "rank",
-                "rank": "mean expression"
+                "abundanceMiddle": "mean expression"
+                
             };
 
             typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            //log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
                     colorMirror = false;
@@ -1441,6 +1456,39 @@ L ${d.y} ${d.x}`;
                     }
                 }
             }
+            /*
+
+            if (typeOfColoringScore == "rank") {
+                averageRankValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+                qtColor = "Greys";
+            }
+            else if (typeOfColoringScore == "differential expression") {
+                averageDifferentialValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+                qtColor = "Plasma"; //Magma
+            }
+            else if (typeOfColoringScore == "abundanceTop") {
+                averageAbundanceTopValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+                qtColor = "BuPu";
+            }
+            else if (typeOfColoringScore == "abundanceMiddle") {
+                averageAbundanceMiddleValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+                qtColor = "GnBu";
+            }
+            else if (typeOfColoringScore == "mean"){
+                averageMeanValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+                qtColor = "Viridis";
+            }
+            else {
+                tooltipTextVal = "";
+                qtColor = "Reds";
+            }
+            */
+
             drawChart(jsonValueStore)
 
         });
