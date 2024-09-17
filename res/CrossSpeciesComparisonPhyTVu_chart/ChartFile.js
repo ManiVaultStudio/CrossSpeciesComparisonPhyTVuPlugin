@@ -49,57 +49,6 @@ function getColorScalePermanent(
     maxScore,
     colorMirrorVal
 ) {
-    const colorScales = {
-        Blues: d3.interpolateBlues,
-        Greens: d3.interpolateGreens,
-        Greys: d3.interpolateGreys,
-        Oranges: d3.interpolateOranges,
-        Purples: d3.interpolatePurples,
-        Reds: d3.interpolateReds,
-        BuGn: d3.interpolateBuGn,
-        BuPu: d3.interpolateBuPu,
-        GnBu: d3.interpolateGnBu,
-        OrRd: d3.interpolateOrRd,
-        PuBuGn: d3.interpolatePuBuGn,
-        PuBu: d3.interpolatePuBu,
-        PuRd: d3.interpolatePuRd,
-        RdPu: d3.interpolateRdPu,
-        YlGnBu: d3.interpolateYlGnBu,
-        YlGn: d3.interpolateYlGn,
-        YlOrBr: d3.interpolateYlOrBr,
-        YlOrRd: d3.interpolateYlOrRd,
-        Cividis: d3.interpolateCividis,
-        Viridis: d3.interpolateViridis,
-        Inferno: d3.interpolateInferno,
-        Magma: d3.interpolateMagma,
-        Plasma: d3.interpolatePlasma,
-        Warm: d3.interpolateWarm,
-        Cool: d3.interpolateCool,
-        CubehelixDefault: d3.interpolateCubehelixDefault,
-        Turbo: d3.interpolateTurbo,
-        BrBG: d3.interpolateBrBG,
-        PRGn: d3.interpolatePRGn,
-        PiYG: d3.interpolatePiYG,
-        PuOr: d3.interpolatePuOr,
-        RdBu: d3.interpolateRdBu,
-        RdGy: d3.interpolateRdGy,
-        RdYlBu: d3.interpolateRdYlBu,
-        RdYlGn: d3.interpolateRdYlGn,
-        Spectral: d3.interpolateSpectral,
-        Rainbow: d3.interpolateRainbow,
-        Sinebow: d3.interpolateSinebow,
-        Observable10: d3.schemeObservable10,
-        Category10: d3.schemeCategory10,
-        Accent: d3.schemeAccent,
-        Dark2: d3.schemeDark2,
-        Paired: d3.schemePaired,
-        Pastel1: d3.schemePastel1,
-        Pastel2: d3.schemePastel2,
-        Set1: d3.schemeSet1,
-        Set2: d3.schemeSet2,
-        Set3: d3.schemeSet3,
-        Tableau10: d3.schemeTableau10,
-    };
 
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
@@ -1429,14 +1378,15 @@ L ${d.y} ${d.x}`;
 
             const coloringScoreMap = {
                 "mean expression": "differential expression",
-                "differential expression": "abundanceTop",
+                "differential expression": "rank",
+                "rank": "abundanceTop",
                 "abundanceTop": "abundanceMiddle",
-                "abundanceMiddle": "rank",
-                "rank": "mean expression"
+                "abundanceMiddle": "mean expression"
+                
             };
 
             typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
-            log(typeOfColoringScore);
+            //log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
                     colorMirror = false;

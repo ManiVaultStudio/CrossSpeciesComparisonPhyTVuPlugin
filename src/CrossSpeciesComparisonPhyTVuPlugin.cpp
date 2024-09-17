@@ -21,7 +21,7 @@ CrossSpeciesComparisonPhyTVuPlugin::CrossSpeciesComparisonPhyTVuPlugin(const Plu
     setSerializationName("CSCPTV:CrossSpeciesComparisonPhyTVu");
     _toolbarAction.addAction(&_chartOptions.getUpdateSettingsHolder(), 5, GroupAction::Horizontal);
     _toolbarAction.addAction(&_chartOptions.getMetaDataSettingsHolder(), 2, GroupAction::Horizontal);
-    //_toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
+    _toolbarAction.addAction(&_chartOptions.getExtraSettingsHolder(), 3, GroupAction::Horizontal);
     //_toolbarAction.addAction(&_chartOptions.getMainSettingsHolder(), 1, GroupAction::Horizontal);
     //_toolbarAction.addAction(&_chartOptions.getLinkerSettingsHolder(), 4, GroupAction::Horizontal);
 
@@ -85,6 +85,8 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
     connect(&_chartWidget, &ChartWidget::passScatterplotLeafPointSelectionToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::passScatterplotLeafPointSelection);
 
     connect(&_chartWidget, &ChartWidget::alterColorMirrorForRankToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::alterColorMirrorForRank);
+
+    connect(&_chartWidget, &ChartWidget::alterColorMapToQt, this, &CrossSpeciesComparisonPhyTVuPlugin::alterColorMap);
     
     const auto updateTreeLeafSelectionFromQT = [this]() -> void
         {
@@ -603,6 +605,17 @@ void CrossSpeciesComparisonPhyTVuPlugin::alterColorMirrorForRank(std::string sel
         mirrorAction.setChecked(false);
     }
     
+}
+
+void CrossSpeciesComparisonPhyTVuPlugin::alterColorMap(std::string selectedSpecies)
+{
+    if (selectedSpecies!="")
+    {
+        _chartOptions.getExtraSettingsHolder().getColorMapAction().setColorMap(QString::fromStdString(selectedSpecies));
+    }
+
+
+
 }
 
 
