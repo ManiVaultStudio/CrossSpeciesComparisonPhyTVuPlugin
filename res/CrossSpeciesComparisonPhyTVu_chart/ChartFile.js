@@ -45,15 +45,24 @@ function getXAttribute(d) {
 }
 function getColorScalePermanent(
     colorname,
-    minScore,
-    maxScore,
+    min,
+    max,
     colorMirrorVal
 ) {
 
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
         : colorScales["Category10"];
-    let domain = colorMirrorVal ? [minScore, maxScore] : [maxScore, minScore];
+
+    var minSc = min;
+    var maxSc = max;
+    if (typeOfColoringScore === "rank") {
+        minSc = Math.log(min);
+        maxSc = Math.log(max);
+    }
+
+
+    let domain = colorMirrorVal ? [minSc, maxSc] : [maxSc, minSc];
 
     if (
         [
@@ -86,7 +95,7 @@ function getColorScalePermanent(
     ) {
         return d3
             .scaleDiverging(scaleType)
-            .domain([minScore, (minScore + maxScore) / 2, maxScore]);
+            .domain([minSc, (minSc + maxSc) / 2, maxSc]);
     } else {
         return d3.scaleSequential(scaleType).domain(domain);
     }
@@ -374,7 +383,13 @@ function generateVis() {
             .on("click", clickNodes)
             .style("fill", function (d) {
                 {
-                    return colorScoresPermanent(d.data.score);
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score));
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score);
+                    }
+                    
                 }
             })
             .append("title")
@@ -740,7 +755,13 @@ function generateVis() {
             .style("fill", function (d) {
                 // If the node is a parent, set the color to something other than pink
                 if (d.parent) {
-                    return colorScoresPermanent(d.data.score); // replace with the color you want
+                    //return colorScoresPermanent(d.data.score); // replace with the color you want
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score));
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score);
+                    }
                 }
                 // Otherwise, return the original color
                 return d.data.color;
@@ -954,7 +975,13 @@ L ${d.y} ${d.x}`;
             .style("stroke-width", "1px")
             .style("fill", (d) => {
                 {
-                    return colorScoresPermanent(d.score) || "black";
+                    //return colorScoresPermanent(d.score) || "black";
+                    if (typeOfColoringScore === "rank") {
+                        return colorScoresPermanent(Math.log(d.data.score)) || "black";
+                    }
+                    else {
+                        return colorScoresPermanent(d.data.score) || "black";
+                    }
                 }
             })
             .style("cursor", "pointer")
@@ -1331,19 +1358,40 @@ L ${d.y} ${d.x}`;
         gradient
             .append("stop")
             .attr("offset", "0%")
-            .attr("stop-color", colorScoresPermanent(minScore))
+            //.attr("stop-color", colorScoresPermanent(minScore))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(minScore));
+                } else {
+                    return colorScoresPermanent(minScore);
+                }
+            })
             .attr("stop-opacity", 1);
 
         gradient
             .append("stop")
             .attr("offset", "50%")
-            .attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            //.attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log((minScore + maxScore) / 2));
+                } else {
+                    return colorScoresPermanent((minScore + maxScore) / 2);
+                }
+            })
             .attr("stop-opacity", 1);
 
         gradient
             .append("stop")
             .attr("offset", "100%")
-            .attr("stop-color", colorScoresPermanent(maxScore))
+            //.attr("stop-color", colorScoresPermanent(maxScore))
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(maxScore));
+                } else {
+                    return colorScoresPermanent(maxScore);
+                }
+            })
             .attr("stop-opacity", 1);
 
         colorLegend
