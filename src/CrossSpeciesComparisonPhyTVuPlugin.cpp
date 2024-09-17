@@ -34,6 +34,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
     auto& shortcuts = getShortcuts();
 
     shortcuts.add({ QKeySequence(Qt::SHIFT), "Leaf Multi-Selection", "Mouse left click on tree nodes" });
+    shortcuts.add({ QKeySequence(Qt::Key_Escape), "Deselect", "Remove all leaf selection" });
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Leaf Single-Selection", "Mouse left click on tree nodes"});
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Toggle Attribute", "Mouse left click on colormap to toggle attributes" });
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Node Info", "Hover node to see children names" });
