@@ -68,6 +68,12 @@ function alterColorMirrorForRankToQt(dat) {
     }
 }
 
+function alterColorMapToQt(dat) {
+    if (isQtAvailable) {
+        QtBridge.js_alterColorMapToQt(dat);
+    }
+}
+
 function passAddSelectionToQt(speciesString) {
     if (isQtAvailable) {
         QtBridge.js_addSelectionToScatterplot(speciesString);

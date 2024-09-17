@@ -56,6 +56,57 @@ var jsonValueStore;
 //true for Debugging
 var isDebug = false;
 const colorScales = {
+    Blues: d3.interpolateBlues,
+    Greens: d3.interpolateGreens,
+    Greys: d3.interpolateGreys,
+    Oranges: d3.interpolateOranges,
+    Purples: d3.interpolatePurples,
+    Reds: d3.interpolateReds,
+    BuGn: d3.interpolateBuGn,
+    BuPu: d3.interpolateBuPu,
+    GnBu: d3.interpolateGnBu,
+    OrRd: d3.interpolateOrRd,
+    PuBuGn: d3.interpolatePuBuGn,
+    PuBu: d3.interpolatePuBu,
+    PuRd: d3.interpolatePuRd,
+    RdPu: d3.interpolateRdPu,
+    YlGnBu: d3.interpolateYlGnBu,
+    YlGn: d3.interpolateYlGn,
+    YlOrBr: d3.interpolateYlOrBr,
+    YlOrRd: d3.interpolateYlOrRd,
+    Cividis: d3.interpolateCividis,
+    Viridis: d3.interpolateViridis,
+    Inferno: d3.interpolateInferno,
+    Magma: d3.interpolateMagma,
+    Plasma: d3.interpolatePlasma,
+    Warm: d3.interpolateWarm,
+    Cool: d3.interpolateCool,
+    CubehelixDefault: d3.interpolateCubehelixDefault,
+    Turbo: d3.interpolateTurbo,
+    BrBG: d3.interpolateBrBG,
+    PRGn: d3.interpolatePRGn,
+    PiYG: d3.interpolatePiYG,
+    PuOr: d3.interpolatePuOr,
+    RdBu: d3.interpolateRdBu,
+    RdGy: d3.interpolateRdGy,
+    RdYlBu: d3.interpolateRdYlBu,
+    RdYlGn: d3.interpolateRdYlGn,
+    Spectral: d3.interpolateSpectral,
+    Rainbow: d3.interpolateRainbow,
+    Sinebow: d3.interpolateSinebow,
+    Observable10: d3.schemeObservable10,
+    Category10: d3.schemeCategory10,
+    Accent: d3.schemeAccent,
+    Dark2: d3.schemeDark2,
+    Paired: d3.schemePaired,
+    Pastel1: d3.schemePastel1,
+    Pastel2: d3.schemePastel2,
+    Set1: d3.schemeSet1,
+    Set2: d3.schemeSet2,
+    Set3: d3.schemeSet3,
+    Tableau10: d3.schemeTableau10,
+};
+/*const colorScales = {
     qualitative: d3.schemeSet3,
     RdYlBu: d3.interpolateRdYlBu,
     YlGn: d3.interpolateYlGn,
@@ -76,7 +127,7 @@ const colorScales = {
     Magma: d3.interpolateMagma,
     PiYG: d3.interpolatePiYG,
     default: d3.interpolateGreys,
-};
+};*/
 //Resize on window dimension change
 function doALoadOfStuff() {
     if (dataReference != "") {
@@ -400,24 +451,37 @@ function drawChart(jsonValue) {
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
             tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+            qtColor = "Reds";
         }
         else if (typeOfColoringScore == "differential expression") {
             averageDifferentialValuesAllLeafChildren(dataReference);
             tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+            qtColor = "Plasma"; //Magma
         }
         else if (typeOfColoringScore == "abundanceTop") {
             averageAbundanceTopValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName +" in Neuronal";
+            tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+            qtColor = "BuPu";
         }
         else if (typeOfColoringScore == "abundanceMiddle") {
             averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName; 
+            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+            qtColor = "GnBu";
+        }
+        else if (typeOfColoringScore == "mean expression") {
+            averageMeanValuesAllLeafChildren(dataReference);
+            tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+            qtColor = "Viridis";
         }
         else {
-            averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Mean expression for " + geneName+" in " + clusterName;
+            tooltipTextVal = "";
+            qtColor = "Greys";
         }
 
+        if (!isDebug) {
+            alterColorMapToQt(qtColor);
+        } else {
+        }
  const allScores = collectScores(dataReference);
         // Step 3: Calculate min and max scores
         mindistanceColor = d3.min(allScores);
