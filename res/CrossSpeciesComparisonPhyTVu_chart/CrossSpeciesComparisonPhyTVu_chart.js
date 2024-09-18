@@ -450,7 +450,7 @@ function drawChart(jsonValue) {
 
         if (typeOfColoringScore == "rank") {
             averageRankValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+            tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName + " (log transformed)";
             qtColor = "Reds";
         }
         else if (typeOfColoringScore == "differential expression") {

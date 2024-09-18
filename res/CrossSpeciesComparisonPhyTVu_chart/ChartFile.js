@@ -28,7 +28,7 @@ function getXAttribute(d) {
     }
 
     if (score > 0) {
-        return score % 1 !== 0 ? -25 : -10;
+        return score % 1 !== 0 ? -25 : -20;
     }
 
     if (score < -100) {
@@ -134,7 +134,7 @@ function generateVis() {
     //passScatterplotLeafPointSelectionToQt("");
     //}
     //}
-    legendXValue = 20;
+    legendXValue = 28;
     legendYValue = 20;
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
@@ -490,7 +490,12 @@ function generateVis() {
 
             .text(function (d) {
                 {
-                    return d.data.score;
+                    if (typeOfColoringScore === "rank") {
+                        //return Math.log(d.data.score).toFixed(2); //change here
+                        return d.data.score;
+                    } else {
+                        return d.data.score;
+                    }
                 }
             });
         // Add labels for the nodes
@@ -1375,7 +1380,7 @@ L ${d.y} ${d.x}`;
             .style("font-size", "12px")
             .attr("class", "legend-title")
             .attr("y", -10)
-            .attr("x", -15)
+            .attr("x", -25)
             .style("font-weight", "bold")
             .text(tooltipTextVal);
 
@@ -1458,7 +1463,9 @@ L ${d.y} ${d.x}`;
             minScore + (2 * (maxScore - minScore)) / 3,
             maxScore,
         ];
-        var tickPositions = [0, 33, 66, 100]; // Positions in percentage
+        var tickPositions = [0, 100]; // Positions in percentage
+
+        tickValues = [tickValues[0], tickValues[tickValues.length - 1]]; // Adjust tickValues to match tickPositions
 
         tickValues.forEach((value, index) => {
             colorLegend
@@ -1479,20 +1486,13 @@ L ${d.y} ${d.x}`;
                     if (value === undefined || value === null) {
                         return ""; // Return an empty string if value is undefined or null
                     }
-
-                    var returnNumber = Number.isInteger(value) ? value : value.toFixed(2);
                     if (typeOfColoringScore === "rank") {
-                        returnNumber = "log(" + returnNumber + ")";
+                        //value = Math.log(value); //change here
+                        value = value;
                     }
-
+                    var returnNumber = Number.isInteger(value) ? value : value.toFixed(2);
                     return returnNumber;
                 });
-
-            if (typeOfColoringScore === "rank") {
-                textElement
-                    .attr("transform", `translate(0, 10) rotate(75)`) // Align y position at 15 to start at the bottom of the tick line
-                    .attr("transform-origin", `${tickPositions[index] - 12} 30`); // Set the rotation origin at the bottom of the tick line
-            }
         });
 
         // Add lines in the rect gradient for the tick lines
@@ -1505,7 +1505,6 @@ L ${d.y} ${d.x}`;
                 .attr("y2", 10)
                 .attr("stroke", "black");
         });
-
         // Bring the permanent legend to the front
         colorLegend.raise();
 
@@ -1585,7 +1584,7 @@ L ${d.y} ${d.x}`;
         svg.selectAll(".shape-legend").remove();
 
         var legendX = legendXValue - 35; // Move the legend more to the left
-        var legendY = legendYValue + 75;
+        var legendY = legendYValue + 50;
         var sizeLegend;
         if (traitValueNumericFlag && showTraitValues) {
             // Create a group for the size legend
