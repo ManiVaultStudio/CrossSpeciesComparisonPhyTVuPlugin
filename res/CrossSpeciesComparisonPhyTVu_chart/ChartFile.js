@@ -1318,10 +1318,7 @@ L ${d.y} ${d.x}`;
         var colorLegend = svg
             .append("g")
             .attr("class", "permanentcolorscale-legend")
-            .attr(
-                "transform",
-                "translate(" + legendXValue + "," + legendYValue + ")"
-            )
+            .attr("transform", "translate(" + legendXValue + "," + legendYValue + ")")
             .style("cursor", "pointer"); // Change cursor to pointer
 
         // Add background rectangle for color legend
@@ -1358,7 +1355,6 @@ L ${d.y} ${d.x}`;
         gradient
             .append("stop")
             .attr("offset", "0%")
-            //.attr("stop-color", colorScoresPermanent(minScore))
             .attr("stop-color", function (d) {
                 if (typeOfColoringScore === "rank") {
                     return colorScoresPermanent(Math.log(minScore));
@@ -1370,13 +1366,24 @@ L ${d.y} ${d.x}`;
 
         gradient
             .append("stop")
-            .attr("offset", "50%")
-            //.attr("stop-color", colorScoresPermanent((minScore + maxScore) / 2))
+            .attr("offset", "33%")
             .attr("stop-color", function (d) {
                 if (typeOfColoringScore === "rank") {
-                    return colorScoresPermanent(Math.log((minScore + maxScore) / 2));
+                    return colorScoresPermanent(Math.log(minScore + (maxScore - minScore) / 3));
                 } else {
-                    return colorScoresPermanent((minScore + maxScore) / 2);
+                    return colorScoresPermanent(minScore + (maxScore - minScore) / 3);
+                }
+            })
+            .attr("stop-opacity", 1);
+
+        gradient
+            .append("stop")
+            .attr("offset", "66%")
+            .attr("stop-color", function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(minScore + 2 * (maxScore - minScore) / 3));
+                } else {
+                    return colorScoresPermanent(minScore + 2 * (maxScore - minScore) / 3);
                 }
             })
             .attr("stop-opacity", 1);
@@ -1384,7 +1391,6 @@ L ${d.y} ${d.x}`;
         gradient
             .append("stop")
             .attr("offset", "100%")
-            //.attr("stop-color", colorScoresPermanent(maxScore))
             .attr("stop-color", function (d) {
                 if (typeOfColoringScore === "rank") {
                     return colorScoresPermanent(Math.log(maxScore));
@@ -1396,26 +1402,51 @@ L ${d.y} ${d.x}`;
 
         colorLegend
             .append("rect")
-            .attr("width", 100)
+            .attr("width", 100) // Adjust width to match tick positions
             .attr("height", 10)
             .attr("x", -12)
             .attr("y", 0)
             .style("fill", "url(#gradient)");
 
-        // Add labels for color legend
-        colorLegend
-            .append("text")
-            .attr("x", -12)
-            .attr("y", 25)
-            .style("font-size", "12px")
-            .text(minScore);
+        // Add ticks to the color legend
+        var tickValues = [minScore, minScore + (maxScore - minScore) / 3, minScore + 2 * (maxScore - minScore) / 3, maxScore];
+        var tickPositions = [0, 33, 66, 100]; // Positions in percentage
 
-        colorLegend
-            .append("text")
-            .attr("x", 82)
-            .attr("y", 25)
-            .style("font-size", "12px")
-            .text(maxScore);
+        tickValues.forEach((value, index) => {
+            colorLegend
+                .append("line")
+                .attr("x1", tickPositions[index] - 12)
+                .attr("y1", 10)
+                .attr("x2", tickPositions[index] - 12)
+                .attr("y2", 15)
+                .attr("stroke", "black");
+
+            const textElement = colorLegend
+                .append("text")
+                .attr("x", tickPositions[index] - 12)
+                .attr("y", 25)
+                .style("font-size", "10px")
+                .attr("text-anchor", "middle")
+                .text(function (d) {
+                    if (value === undefined || value === null) {
+                        return ""; // Return an empty string if value is undefined or null
+                    }
+
+                    var returnNumber = Number.isInteger(value) ? value : value.toFixed(2);
+                    if (typeOfColoringScore === "rank") {
+                        returnNumber = "log(" + returnNumber + ")";
+                    }
+
+                    return returnNumber;
+                });
+
+            if (typeOfColoringScore === "rank") {
+                textElement
+                    .attr("transform", `translate(${tickPositions[index] -1}, 15) rotate(75)`) // Align y position at 15 to start at the bottom of the tick line
+                    .attr("transform-origin", `${tickPositions[index] - 16} 15`); // Set the rotation origin at the bottom of the tick line
+            }
+        });
+
 
         // Bring the permanent legend to the front
         colorLegend.raise();
