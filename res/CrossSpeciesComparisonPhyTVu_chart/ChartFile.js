@@ -43,13 +43,7 @@ function getXAttribute(d) {
         return score % 1 !== 0 ? -30 : -20;
     }
 }
-function getColorScalePermanent(
-    colorname,
-    min,
-    max,
-    colorMirrorVal
-) {
-
+function getColorScalePermanent(colorname, min, max, colorMirrorVal) {
     let scaleType = colorScales[colorname]
         ? colorScales[colorname]
         : colorScales["Category10"];
@@ -60,7 +54,6 @@ function getColorScalePermanent(
         minSc = Math.log(min);
         maxSc = Math.log(max);
     }
-
 
     let domain = colorMirrorVal ? [minSc, maxSc] : [maxSc, minSc];
 
@@ -141,7 +134,7 @@ function generateVis() {
     //passScatterplotLeafPointSelectionToQt("");
     //}
     //}
-    legendXValue = 15;
+    legendXValue = 20;
     legendYValue = 20;
     d3.select("svg").remove();
     svg = d3.select("#my_dataviz");
@@ -280,9 +273,9 @@ function generateVis() {
 
     // Toggle nodes based on the showExpandAll flag
     /*
-      toggleNode(root, showExpandAll ? "expand" : "collapse");
-      
-      */
+        toggleNode(root, showExpandAll ? "expand" : "collapse");
+        
+        */
     update(root);
     // Collapse the node and all it's children
     function collapse(d) {
@@ -302,30 +295,30 @@ function generateVis() {
             links = treeData.descendants().slice(1);
 
         /*     // Normalize for fixed-depth.
-            nodes.forEach((d) => {
-              const screenWidth = width - maxNameLength;
-              let valTemp = screenWidth;
-              //console.log("******");
-              //console.log("d.y width: ", d.y);
-              //console.log("width: ", width);
-              //console.log("maxNameLength width: ", maxNameLength);
-              //console.log("maxBranchLength width: ", maxBranchLength);
-              //console.log("Current branch length width: ", d.data.branchLength);
-              //console.log("desirable width: ", maxNameLength * 7);
-              //console.log("branchLength: ", d.data.branchLength);
-              //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
-              //console.log("depth: ", d.depth);
-              //console.log("name: ", d.data.name);
-              //console.log("maxDepth: ", maxDepth);
-              //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
-              //console.log("eachDepthWidth: ", eachDepthWidth);
-              //console.log("******");
-              if (d.children || (d._children && !d.data.iscollapsed)) {
-                valTemp = (d.depth * screenWidth) / 22;
-              }
-              //console.log("valTemp: ", valTemp);
-              d.y = valTemp;
-            }); */
+                nodes.forEach((d) => {
+                  const screenWidth = width - maxNameLength;
+                  let valTemp = screenWidth;
+                  //console.log("******");
+                  //console.log("d.y width: ", d.y);
+                  //console.log("width: ", width);
+                  //console.log("maxNameLength width: ", maxNameLength);
+                  //console.log("maxBranchLength width: ", maxBranchLength);
+                  //console.log("Current branch length width: ", d.data.branchLength);
+                  //console.log("desirable width: ", maxNameLength * 7);
+                  //console.log("branchLength: ", d.data.branchLength);
+                  //console.log("normalized: ",(d.data.branchLength / maxBranchLength) * eachDepthWidth);
+                  //console.log("depth: ", d.depth);
+                  //console.log("name: ", d.data.name);
+                  //console.log("maxDepth: ", maxDepth);
+                  //console.log("maxTotalDepthWidth: ", maxTotalDepthWidth);
+                  //console.log("eachDepthWidth: ", eachDepthWidth);
+                  //console.log("******");
+                  if (d.children || (d._children && !d.data.iscollapsed)) {
+                    valTemp = (d.depth * screenWidth) / 22;
+                  }
+                  //console.log("valTemp: ", valTemp);
+                  d.y = valTemp;
+                }); */
 
         // ****************** Nodes section ***************************
 
@@ -385,11 +378,9 @@ function generateVis() {
                 {
                     if (typeOfColoringScore === "rank") {
                         return colorScoresPermanent(Math.log(d.data.score));
-                    }
-                    else {
+                    } else {
                         return colorScoresPermanent(d.data.score);
                     }
-                    
                 }
             })
             .append("title")
@@ -427,15 +418,39 @@ function generateVis() {
                             d.data.name +
                             "\nAbsolute abundance of selected cells : " +
                             d.data.cellCounts +
-                            "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
+                            "\n" +
+                            "Mean expression for " +
+                            geneName +
+                            " in " +
+                            clusterName +
+                            " : " +
                             d.data.mean +
-                            "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                            "\n" +
+                            "Mean differential expression for " +
+                            geneName +
+                            " in " +
+                            clusterName +
+                            " : " +
                             d.data.differential +
-                            "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                            "\n" +
+                            "Fraction of " +
+                            clusterName +
+                            " in Neuronal" +
+                            " : " +
                             d.data.abundanceTop +
-                            "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                            "\n" +
+                            "Fraction of " +
+                            clusterName +
+                            " in " +
+                            middleAbundanceClusterName +
+                            " : " +
                             d.data.abundanceMiddle +
-                            "\n" + "Appearance rank for " + geneName + " in " + clusterName+ " : " +
+                            "\n" +
+                            "Appearance rank for " +
+                            geneName +
+                            " in " +
+                            clusterName +
+                            " : " +
                             d.data.rank +
                             returnStringADd
                         );
@@ -549,15 +564,39 @@ function generateVis() {
                         d.data.name +
                         "\nAbsolute abundance of selected cells : " +
                         d.data.cellCounts +
-                        "\n" + "Mean expression for " + geneName + " in " + clusterName + " : " +
+                        "\n" +
+                        "Mean expression for " +
+                        geneName +
+                        " in " +
+                        clusterName +
+                        " : " +
                         d.data.mean +
-                        "\n" + "Mean differential expression for " + geneName + " in " + clusterName + " : " +
+                        "\n" +
+                        "Mean differential expression for " +
+                        geneName +
+                        " in " +
+                        clusterName +
+                        " : " +
                         d.data.differential +
-                        "\n" + "Fraction of " + clusterName + " in Neuronal" + " : " +
+                        "\n" +
+                        "Fraction of " +
+                        clusterName +
+                        " in Neuronal" +
+                        " : " +
                         d.data.abundanceTop +
-                        "\n" + "Fraction of " + clusterName + " in " + middleAbundanceClusterName + " : " +
+                        "\n" +
+                        "Fraction of " +
+                        clusterName +
+                        " in " +
+                        middleAbundanceClusterName +
+                        " : " +
                         d.data.abundanceMiddle +
-                        "\n" + "Appearance rank for " + geneName + " in " + clusterName + " : " +
+                        "\n" +
+                        "Appearance rank for " +
+                        geneName +
+                        " in " +
+                        clusterName +
+                        " : " +
                         d.data.rank +
                         returnStringADd
                     );
@@ -758,8 +797,7 @@ function generateVis() {
                     //return colorScoresPermanent(d.data.score); // replace with the color you want
                     if (typeOfColoringScore === "rank") {
                         return colorScoresPermanent(Math.log(d.data.score));
-                    }
-                    else {
+                    } else {
                         return colorScoresPermanent(d.data.score);
                     }
                 }
@@ -870,40 +908,40 @@ L ${d.y} ${d.x}`;
     }
     // Toggle children on click.
     /*
-      function contextmenuNodes(d) {
-        //check if leaf node clicked else do something
-        if (!d.children && !d._children) {
-          //(d.data.name); //TODO: change here
-          if (expandedLeafNameID !== "") {
-            d3.select(expandedLeafNameID).style("font-size", "12px");
-            if (!isDebug) {
-              passScatterplotLeafPointSelectionToQt("");
+        function contextmenuNodes(d) {
+          //check if leaf node clicked else do something
+          if (!d.children && !d._children) {
+            //(d.data.name); //TODO: change here
+            if (expandedLeafNameID !== "") {
+              d3.select(expandedLeafNameID).style("font-size", "12px");
+              if (!isDebug) {
+                passScatterplotLeafPointSelectionToQt("");
+              }
             }
-          }
-          if (expandedLeafNameID !== "#leafName_" + d.data.name) {
-            expandedLeafNameID = "#leafName_" + d.data.name;
-            d3.select(expandedLeafNameID).style("font-size", "14px");
-            if (!isDebug) {
-              passScatterplotLeafPointSelectionToQt(d.data.name);
+            if (expandedLeafNameID !== "#leafName_" + d.data.name) {
+              expandedLeafNameID = "#leafName_" + d.data.name;
+              d3.select(expandedLeafNameID).style("font-size", "14px");
+              if (!isDebug) {
+                passScatterplotLeafPointSelectionToQt(d.data.name);
+              }
             }
-          }
-        } else {
-          if (d.children) {
-            d._children = d.children;
-            d.children = null;
-            d.data.iscollapsed = true;
           } else {
-            d.children = d._children;
-            d._children = null;
-            d.data.iscollapsed = false;
+            if (d.children) {
+              d._children = d.children;
+              d.children = null;
+              d.data.iscollapsed = true;
+            } else {
+              d.children = d._children;
+              d._children = null;
+              d.data.iscollapsed = false;
+            }
+            update(d);
+            updateNamesBelowNodes();
+            updateNodeStyles();
+            legendUpdate();
           }
-          update(d);
-          updateNamesBelowNodes();
-          updateNodeStyles();
-          legendUpdate();
         }
-      }
-      */
+        */
     function findNodeByName(name, data, parent) {
         if (data.name === name) {
             return {
@@ -978,8 +1016,7 @@ L ${d.y} ${d.x}`;
                     //return colorScoresPermanent(d.score) || "black";
                     if (typeOfColoringScore === "rank") {
                         return colorScoresPermanent(Math.log(d.data.score)) || "black";
-                    }
-                    else {
+                    } else {
                         return colorScoresPermanent(d.data.score) || "black";
                     }
                 }
@@ -1369,7 +1406,9 @@ L ${d.y} ${d.x}`;
             .attr("offset", "33%")
             .attr("stop-color", function (d) {
                 if (typeOfColoringScore === "rank") {
-                    return colorScoresPermanent(Math.log(minScore + (maxScore - minScore) / 3));
+                    return colorScoresPermanent(
+                        Math.log(minScore + (maxScore - minScore) / 3)
+                    );
                 } else {
                     return colorScoresPermanent(minScore + (maxScore - minScore) / 3);
                 }
@@ -1381,9 +1420,13 @@ L ${d.y} ${d.x}`;
             .attr("offset", "66%")
             .attr("stop-color", function (d) {
                 if (typeOfColoringScore === "rank") {
-                    return colorScoresPermanent(Math.log(minScore + 2 * (maxScore - minScore) / 3));
+                    return colorScoresPermanent(
+                        Math.log(minScore + (2 * (maxScore - minScore)) / 3)
+                    );
                 } else {
-                    return colorScoresPermanent(minScore + 2 * (maxScore - minScore) / 3);
+                    return colorScoresPermanent(
+                        minScore + (2 * (maxScore - minScore)) / 3
+                    );
                 }
             })
             .attr("stop-opacity", 1);
@@ -1409,7 +1452,12 @@ L ${d.y} ${d.x}`;
             .style("fill", "url(#gradient)");
 
         // Add ticks to the color legend
-        var tickValues = [minScore, minScore + (maxScore - minScore) / 3, minScore + 2 * (maxScore - minScore) / 3, maxScore];
+        var tickValues = [
+            minScore,
+            minScore + (maxScore - minScore) / 3,
+            minScore + (2 * (maxScore - minScore)) / 3,
+            maxScore,
+        ];
         var tickPositions = [0, 33, 66, 100]; // Positions in percentage
 
         tickValues.forEach((value, index) => {
@@ -1442,11 +1490,21 @@ L ${d.y} ${d.x}`;
 
             if (typeOfColoringScore === "rank") {
                 textElement
-                    .attr("transform", `translate(${tickPositions[index] -1}, 15) rotate(75)`) // Align y position at 15 to start at the bottom of the tick line
-                    .attr("transform-origin", `${tickPositions[index] - 16} 15`); // Set the rotation origin at the bottom of the tick line
+                    .attr("transform", `translate(0, 10) rotate(75)`) // Align y position at 15 to start at the bottom of the tick line
+                    .attr("transform-origin", `${tickPositions[index] - 12} 30`); // Set the rotation origin at the bottom of the tick line
             }
         });
 
+        // Add lines in the rect gradient for the tick lines
+        tickPositions.forEach((position) => {
+            colorLegend
+                .append("line")
+                .attr("x1", position - 12)
+                .attr("y1", 0)
+                .attr("x2", position - 12)
+                .attr("y2", 10)
+                .attr("stroke", "black");
+        });
 
         // Bring the permanent legend to the front
         colorLegend.raise();
@@ -1458,13 +1516,13 @@ L ${d.y} ${d.x}`;
             const coloringScoreMap = {
                 "mean expression": "differential expression",
                 "differential expression": "rank",
-                "rank": "abundanceTop",
-                "abundanceTop": "abundanceMiddle",
-                "abundanceMiddle": "mean expression"
-                
+                rank: "abundanceTop",
+                abundanceTop: "abundanceMiddle",
+                abundanceMiddle: "mean expression",
             };
 
-            typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            typeOfColoringScore =
+                coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
             //log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
@@ -1475,9 +1533,7 @@ L ${d.y} ${d.x}`;
                         //console.log("passRemoveSelectionToQt('')");
                     }
                 }
-
-            }
-            else {
+            } else {
                 if (!colorMirror) {
                     colorMirror = true;
                     if (!isDebug) {
@@ -1488,40 +1544,39 @@ L ${d.y} ${d.x}`;
                 }
             }
             /*
+      
+                  if (typeOfColoringScore == "rank") {
+                      averageRankValuesAllLeafChildren(dataReference);
+                      tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
+                      qtColor = "Greys";
+                  }
+                  else if (typeOfColoringScore == "differential expression") {
+                      averageDifferentialValuesAllLeafChildren(dataReference);
+                      tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+                      qtColor = "Plasma"; //Magma
+                  }
+                  else if (typeOfColoringScore == "abundanceTop") {
+                      averageAbundanceTopValuesAllLeafChildren(dataReference);
+                      tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+                      qtColor = "BuPu";
+                  }
+                  else if (typeOfColoringScore == "abundanceMiddle") {
+                      averageAbundanceMiddleValuesAllLeafChildren(dataReference);
+                      tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+                      qtColor = "GnBu";
+                  }
+                  else if (typeOfColoringScore == "mean"){
+                      averageMeanValuesAllLeafChildren(dataReference);
+                      tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+                      qtColor = "Viridis";
+                  }
+                  else {
+                      tooltipTextVal = "";
+                      qtColor = "Reds";
+                  }
+                  */
 
-            if (typeOfColoringScore == "rank") {
-                averageRankValuesAllLeafChildren(dataReference);
-                tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName;
-                qtColor = "Greys";
-            }
-            else if (typeOfColoringScore == "differential expression") {
-                averageDifferentialValuesAllLeafChildren(dataReference);
-                tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
-                qtColor = "Plasma"; //Magma
-            }
-            else if (typeOfColoringScore == "abundanceTop") {
-                averageAbundanceTopValuesAllLeafChildren(dataReference);
-                tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
-                qtColor = "BuPu";
-            }
-            else if (typeOfColoringScore == "abundanceMiddle") {
-                averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-                tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
-                qtColor = "GnBu";
-            }
-            else if (typeOfColoringScore == "mean"){
-                averageMeanValuesAllLeafChildren(dataReference);
-                tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
-                qtColor = "Viridis";
-            }
-            else {
-                tooltipTextVal = "";
-                qtColor = "Reds";
-            }
-            */
-
-            drawChart(jsonValueStore)
-
+            drawChart(jsonValueStore);
         });
     }
 
@@ -1530,7 +1585,7 @@ L ${d.y} ${d.x}`;
         svg.selectAll(".shape-legend").remove();
 
         var legendX = legendXValue - 35; // Move the legend more to the left
-        var legendY = legendYValue + 55;
+        var legendY = legendYValue + 75;
         var sizeLegend;
         if (traitValueNumericFlag && showTraitValues) {
             // Create a group for the size legend
