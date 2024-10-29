@@ -414,8 +414,8 @@ function generateVis() {
                     // )
                     {
                         return (
-                            "leaf : " +
-                            d.data.name +
+                            "Leaf name : " +
+                            d.data.name.replace(/_/g, " ") +
                             "\nAbsolute abundance of selected cells : " +
                             d.data.cellCounts +
                             "\n" +
@@ -565,8 +565,8 @@ function generateVis() {
                 //)
                 {
                     return (
-                        "leaf : " +
-                        d.data.name +
+                        "Leaf name : " +
+                        d.data.name.replace(/_/g, " ") +
                         "\nAbsolute abundance of selected cells : " +
                         d.data.cellCounts +
                         "\n" +
