@@ -413,9 +413,10 @@ function generateVis() {
                     //(traitValueNumericFlag && showTraitValues)
                     // )
                     {
+                        var returnstring = d.data.name.replace(/_/g, " ");
                         return (
                             "Leaf name : " +
-                            d.data.name.replace(/_/g, " ") +
+                            returnstring +
                             "\nAbsolute abundance of selected cells : " +
                             d.data.cellCounts +
                             "\n" +
@@ -564,9 +565,10 @@ function generateVis() {
                 //(traitValueNumericFlag && showTraitValues)
                 //)
                 {
+                    var returnstring = d.data.name.replace(/_/g, " ");
                     return (
                         "Leaf name : " +
-                        d.data.name.replace(/_/g, " ") +
+                        returnstring +
                         "\nAbsolute abundance of selected cells : " +
                         d.data.cellCounts +
                         "\n" +
