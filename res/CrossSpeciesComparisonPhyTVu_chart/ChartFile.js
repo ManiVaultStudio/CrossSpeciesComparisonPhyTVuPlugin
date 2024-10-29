@@ -413,7 +413,7 @@ function generateVis() {
                     //(traitValueNumericFlag && showTraitValues)
                     // )
                     {
-                        var returnstring = d.data.name.replace(/_/g, " ");
+                        var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
                         return (
                             "Leaf name : " +
                             returnstring +
@@ -565,7 +565,7 @@ function generateVis() {
                 //(traitValueNumericFlag && showTraitValues)
                 //)
                 {
-                    var returnstring = d.data.name.replace(/_/g, " ");
+                    var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
                     return (
                         "Leaf name : " +
                         returnstring +
