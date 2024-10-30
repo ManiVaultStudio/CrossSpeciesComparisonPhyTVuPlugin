@@ -60,6 +60,8 @@ public:
         ColorMap1DAction& getColorMapAction() { return _treeColorMapAction; }
         const ToggleAction& getDisableAcceptDatasetDrops() const { return _disableAcceptDatasetDrops; }
         ToggleAction& getDisableAcceptDatasetDrops() { return _disableAcceptDatasetDrops; }
+        const TriggerAction& getExportTreeDataAction() const { return _exportTreeDataAction; }
+        TriggerAction& getExportTreeDataAction() { return _exportTreeDataAction; }
 
     protected:
         ChartOptions& _chartOptions;
@@ -67,6 +69,7 @@ public:
         ColorMap1DAction              _treeColorMapAction;
         ToggleAction                _expandAllAction;
         ToggleAction                _disableAcceptDatasetDrops;
+        TriggerAction                _exportTreeDataAction;
 
     };
 

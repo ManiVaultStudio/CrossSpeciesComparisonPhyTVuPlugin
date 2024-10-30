@@ -115,7 +115,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _extraSettingsHolder.getDisableAcceptDatasetDrops().setVisible(true);
     _updateSettingsHolder.getUpdateViewsButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
     _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
-
+    _extraSettingsHolder.getExportTreeDataAction().setDefaultWidgetFlags(TriggerAction::IconText);
+    _extraSettingsHolder.getExportTreeDataAction().setIcon(Application::getIconFont("FontAwesome").getIcon("save"));
 
     QIcon exploreIcon = Application::getIconFont("FontAwesome").getIcon("wpexplorer");
     _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(exploreIcon);
@@ -210,6 +211,33 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
             _viewerPlugin.getChartWidget().setLeafSelectionFromQT(selectionString);
         };
     connect(&_updateSettingsHolder.getRevertButtonAction(), &TriggerAction::triggered, this, revertButtomUpdate);
+
+
+    const auto exportTreeDataTrigger = [this]() -> void
+        {
+
+            if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
+            {
+                auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
+                if (temp.isValid())
+                {
+                    QString fileName = QFileDialog::getSaveFileName(nullptr, "Save File", "", "JSON (*.json)");
+                    if (fileName != "")
+                    {
+                        QFile file(fileName);
+                        if (file.open(QIODevice::WriteOnly))
+                        {
+                            QJsonDocument doc(temp->getTreeData());
+                            file.write(doc.toJson());
+                        }
+                    }
+                }
+            }
+
+
+        };
+    connect(&_extraSettingsHolder.getExportTreeDataAction(), &TriggerAction::triggered, this, exportTreeDataTrigger);
+
 
     const auto leafStringUpdate = [this]() -> void
         {
@@ -803,7 +831,8 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     _chartOptions(chartOptions),
     _treeColorMapAction(this, "Color map"),
     _expandAllAction(this, "Expand all"),
-    _disableAcceptDatasetDrops(this, "Disable accept dataset drops")
+    _disableAcceptDatasetDrops(this, "Disable accept dataset drops"),
+    _exportTreeDataAction(this, "Save tree data")
 
 {
     setText("Extra Options");
@@ -814,6 +843,7 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
     _expandAllAction.setChecked(true);
     addAction(&_treeColorMapAction);
     addAction(&_disableAcceptDatasetDrops);
+    addAction(&_exportTreeDataAction);
 }
 
 inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions& chartOptions) :
