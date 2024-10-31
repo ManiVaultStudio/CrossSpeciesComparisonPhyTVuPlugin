@@ -1196,7 +1196,12 @@ L ${d.y} ${d.x}`;
                     speciesString = speciesSelected.join(" @%$,$%@ ");
 
                     if (!isDebug) {
-                        passAddSelectionToQt(speciesString);
+                        if (pauseSpeciesSelection) {
+                            log("speciesSelection paused 1")
+                        }
+                        else {
+                            passAddSelectionToQt(speciesString);
+                        }
                     } else {
                         //console.log("passAddSelectionToQt(speciesString): ", speciesString);
                     }
@@ -1322,7 +1327,12 @@ L ${d.y} ${d.x}`;
                 speciesString = speciesSelected.join(" @%$,$%@ ");
 
                 if (!isDebug) {
-                    passAddSelectionToQt(speciesString);
+                    if (pauseSpeciesSelection) {
+                        log("speciesSelection paused 2")
+                    }
+                    else {
+                        passAddSelectionToQt(speciesString);
+                    }
                 } else {
                     //console.log("passAddSelectionToQt(speciesString): ", speciesString);
                 }

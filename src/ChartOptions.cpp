@@ -198,8 +198,8 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
             }*/
             _updateSettingsHolder.getUpdateViewsButtonAction().setDisabled(false);
             _updateSettingsHolder.getRevertButtonAction().setDisabled(false);
-
-
+            QString selectionString = _linkerSettingsHolder.getSelectedLeafValues().getSelectedOptions().join(" @%$,$%@ ");
+            _viewerPlugin.getChartWidget().setLeafSelectionOneWayFromQT(selectionString);
 
 
         };

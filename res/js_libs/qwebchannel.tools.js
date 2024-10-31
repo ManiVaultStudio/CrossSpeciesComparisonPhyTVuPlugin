@@ -19,6 +19,11 @@ try {
         QtBridge.qt_setLeafSelectionFromQT.connect(function () {
             setLeafSelectionFromQT(arguments[0]);
         });
+
+        QtBridge.qt_setLeafSelectionOneWayFromQT.connect(function () {
+            setLeafSelectionOneWayFromQT(arguments[0]);
+        });
+
         QtBridge.qt_setDisableTraitOptions.connect(function () {
             setDisableTraitOptions(arguments[0]);
         });
