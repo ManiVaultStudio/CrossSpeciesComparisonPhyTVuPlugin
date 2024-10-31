@@ -31,6 +31,7 @@ signals:
     void qt_setTreeColorMap(QString data);
     //void qt_setShowReferenceTree(QString data);
     void qt_setLeafSelectionFromQT(QString data);
+    void qt_setLeafSelectionOneWayFromQT(QString data);
     void qt_setDisableTraitOptions(QString data);
     //void qt_setExpandAll(QString data);
     void qt_setTraitColor(QString data);
@@ -70,6 +71,7 @@ public:
     void setTreeColorMap(QString visColorContent);
     //void setShowReferenceTree(QString visColorContent);
     void setLeafSelectionFromQT(QString visColorContent);
+    void setLeafSelectionOneWayFromQT(QString visColorContent);
     void setDisableTraitOptions(QString visColorContent);
     //void setExpandAll(QString visColorContent);
     void setTraitColor(QString visColorContent);

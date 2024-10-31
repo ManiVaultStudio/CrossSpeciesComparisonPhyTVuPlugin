@@ -53,6 +53,7 @@ var geneName = "";
 var middleAbundanceClusterName = "";
 var clusterName = "";
 var jsonValueStore;
+var pauseSpeciesSelection = false;
 //true for Debugging
 var isDebug = false;
 const colorScales = {
@@ -527,6 +528,20 @@ function setLeafSelectionFromQT(speciesStringValue) {
         }
     }
 }
+
+function setLeafSelectionOneWayFromQT(speciesStringValue) {
+    {
+        var speciesArray = speciesStringValue.split(" @%$,$%@ ");
+        pauseSpeciesSelection = true;
+        speciesSelected = speciesArray;
+        if (dataReference != "") {
+
+            generateVis();
+        }
+        pauseSpeciesSelection = false;
+    }
+}
+
 function setDisableTraitOptions(traitHideFlag) {
     if (traitHideFlag == "True") {
         showTraitValues = false;
