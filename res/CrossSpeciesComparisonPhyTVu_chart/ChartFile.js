@@ -1197,7 +1197,7 @@ L ${d.y} ${d.x}`;
 
                     if (!isDebug) {
                         if (pauseSpeciesSelection) {
-                            log("speciesSelection paused 1")
+                            //log("speciesSelection paused 1")
                         }
                         else {
                             passAddSelectionToQt(speciesString);
@@ -1328,7 +1328,7 @@ L ${d.y} ${d.x}`;
 
                 if (!isDebug) {
                     if (pauseSpeciesSelection) {
-                        log("speciesSelection paused 2")
+                        //log("speciesSelection paused 2")
                     }
                     else {
                         passAddSelectionToQt(speciesString);
