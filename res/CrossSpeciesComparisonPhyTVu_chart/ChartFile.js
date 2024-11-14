@@ -335,31 +335,23 @@ function generateVis() {
             .attr("transform", function (d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
             });
-        //.on("contextmenu", contextmenuNodes)
+
         // Add Square for the nodes
         nodeEnter
-            .append("path") // Change "rect" to "path"
+            .append("path")
             .attr("class", "node")
             .attr("d", function (d) {
-                if (
-                    d.data.name !== undefined &&
-                    d.data.name !== "" &&
-                    d.data.name !== "root"
-                ) {
+                if (d.data.name !== undefined && d.data.name !== "" && d.data.name !== "root") {
                     let symbol = d3.symbol();
 
                     if (traitValueStringFlag && showTraitValues) {
-                        symbol = symbol.type(
-                            shapeScale(traitValueStringContainer[d.data.name])
-                        );
+                        symbol = symbol.type(shapeScale(traitValueStringContainer[d.data.name]));
                     } else {
                         symbol = symbol.type(d3.symbolSquare);
                     }
 
                     if (traitValueNumericFlag && showTraitValues) {
-                        symbol = symbol.size(
-                            sizeScale(traitValueNumericContainer[d.data.name])
-                        );
+                        symbol = symbol.size(sizeScale(traitValueNumericContainer[d.data.name]));
                     } else {
                         symbol = symbol.size(sizeofShapes);
                     }
@@ -369,136 +361,65 @@ function generateVis() {
                     return d3.symbol().type(d3.symbolSquare).size(sizeofShapes)();
                 }
             })
-            .attr("transform", "translate(2,0)") // Adjust position if necessary
+            .attr("transform", "translate(2,0)")
             .style("cursor", "pointer")
             .style("stroke", "#000000")
             .style("stroke-width", "1px")
             .on("click", clickNodes)
             .style("fill", function (d) {
-                {
-                    if (typeOfColoringScore === "rank") {
-                        return colorScoresPermanent(Math.log(d.data.score));
-                    } else {
-                        return colorScoresPermanent(d.data.score);
-                    }
+                if (typeOfColoringScore === "rank") {
+                    return colorScoresPermanent(Math.log(d.data.score));
+                } else {
+                    return colorScoresPermanent(d.data.score);
                 }
             })
             .append("title")
             .text(function (d) {
-                if (
-                    d.data.name !== undefined &&
-                    d.data.name !== "" &&
-                    d.data.name !== "root"
-                ) {
+                if (d.data.name !== undefined && d.data.name !== "" && d.data.name !== "root") {
                     var returnStringADd = "";
                     if (d.data.name !== undefined && d.data.name !== "") {
                         if (traitValueStringFlag && showTraitValues) {
-                            returnStringADd +=
-                                "\n" +
-                                traitValueStringKey +
-                                " : " +
-                                traitValueStringContainer[d.data.name];
+                            returnStringADd += "\n" + traitValueStringKey + " : " + traitValueStringContainer[d.data.name];
                         }
                         if (traitValueNumericFlag && showTraitValues) {
-                            returnStringADd +=
-                                "\n" +
-                                traitValueNumericKey +
-                                " : " +
-                                traitValueNumericContainer[d.data.name];
+                            returnStringADd += "\n" + traitValueNumericKey + " : " + traitValueNumericContainer[d.data.name];
                         }
                     }
-
-                    //if (
-                    //(traitValueStringFlag && showTraitValues) ||
-                    //(traitValueNumericFlag && showTraitValues)
-                    // )
-                    {
-                        var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
-                        return (
-                            "Leaf name : " +
-                            returnstring +
-                            "\nAbsolute abundance of selected cells : " +
-                            d.data.cellCounts +
-                            "\n" +
-                            "Mean expression for " +
-                            geneName +
-                            " in " +
-                            clusterName +
-                            " : " +
-                            d.data.mean +
-                            "\n" +
-                            "Mean differential expression for " +
-                            geneName +
-                            " in " +
-                            clusterName +
-                            " : " +
-                            d.data.differential +
-                            "\n" +
-                            "Fraction of " +
-                            clusterName +
-                            " in Neuronal" +
-                            " : " +
-                            d.data.abundanceTop +
-                            "\n" +
-                            "Fraction of " +
-                            clusterName +
-                            " in " +
-                            middleAbundanceClusterName +
-                            " : " +
-                            d.data.abundanceMiddle +
-                            "\n" +
-                            "Appearance rank for " +
-                            geneName +
-                            " in " +
-                            clusterName +
-                            " : " +
-                            d.data.rank +
-                            returnStringADd
-                        );
-                    }
-                    //else
-                    {
-                        return d.data.name;
-                    }
+                    var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
+                    return (
+                        "Leaf name : " + returnstring +
+                        "\nAbsolute abundance of selected cells : " + d.data.cellCounts +
+                        "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
+                        "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
+                        "\nFraction of " + clusterName + " in Neuronal : " + d.data.abundanceTop +
+                        "\nFraction of " + clusterName + " in " + middleAbundanceClusterName + " : " + d.data.abundanceMiddle +
+                        "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank +
+                        returnStringADd
+                    );
                 } else {
                     var childrennames = getChildrenNames(d);
                     if (childrennames.length > 0) {
                         var returnString = "";
                         for (var i = 0; i < childrennames.length; i++) {
                             let result = findNodeByName(childrennames[i], treeData);
-                            returnString +=
-                                (childrennames[i] ? childrennames[i].replace(/_/g, " ") : "") +
-                                "\n";
+                            returnString += (childrennames[i] ? childrennames[i].replace(/_/g, " ") : "") + "\n";
                         }
                         return returnString.trimEnd();
                     }
                 }
             });
 
+        // Add icon image before the name
         nodeEnter
-            .append("text")
-            .attr("id", "nodeScore")
-            .attr("y", function (d) {
-                return isRightChild(d) ? 10 : -5;
-            })
+            .append("image")
+            .attr("xlink:href", "https://images.phylopic.org/images/008d6d88-d1be-470a-8c70-73625c3fb4fb/vector.svg")
+            .attr("width", 12) // Set width of the SVG icon
+            .attr("height", 12) // Set height of the SVG icon
             .attr("x", function (d) {
-                return getXAttribute(d);
+                return d.children || d._children ? -20 : 10; // Adjust x position based on node type
             })
-            //.attr("x", -24)
-            .attr("dy", ".10em")
-            .attr("dx", "-.55em")
-            .style("font-size", "12px")
+            .attr("y", -6); // Adjust y position to align with text
 
-            .text(function (d) {
-                {
-                    if (typeOfColoringScore === "rank") {
-                        //return Math.log(d.data.score).toFixed(2); //change here
-                        return d.data.score;
-                    } else {
-                        return d.data.score;
-                    }
-                }
-            });
         // Add labels for the nodes
         nodeEnter
             .append("text")
@@ -527,17 +448,12 @@ function generateVis() {
             })
             .on("click", clickNodes)
             .attr("x", function (d) {
-                if (d.children || d._children) {
-                    return -15;
-                } else {
-                    return 15;
-                }
+                return d.children || d._children ? -5 : 25; // Position text relative to the icon
             })
             .attr("text-anchor", function (d) {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function (d) {
-                // If false, return the name as is
                 return d && d.data && d.data.name ? d.data.name.replace(/_/g, " ") : "";
             })
             .append("title") // Append title tag for hover text
@@ -545,66 +461,20 @@ function generateVis() {
                 if (d.data.name !== undefined && d.data.name !== "") {
                     var returnStringADd = "";
                     if (traitValueStringFlag && showTraitValues) {
-                        returnStringADd +=
-                            "\n" +
-                            traitValueStringKey +
-                            " : " +
-                            traitValueStringContainer[d.data.name];
+                        returnStringADd += "\n" + traitValueStringKey + " : " + traitValueStringContainer[d.data.name];
                     }
                     if (traitValueNumericFlag && showTraitValues) {
-                        returnStringADd +=
-                            "\n" +
-                            traitValueNumericKey +
-                            " : " +
-                            traitValueNumericContainer[d.data.name];
+                        returnStringADd += "\n" + traitValueNumericKey + " : " + traitValueNumericContainer[d.data.name];
                     }
-                }
-
-                //if (
-                //(traitValueStringFlag && showTraitValues) ||
-                //(traitValueNumericFlag && showTraitValues)
-                //)
-                {
                     var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
                     return (
-                        "Leaf name : " +
-                        returnstring +
-                        "\nAbsolute abundance of selected cells : " +
-                        d.data.cellCounts +
-                        "\n" +
-                        "Mean expression for " +
-                        geneName +
-                        " in " +
-                        clusterName +
-                        " : " +
-                        d.data.mean +
-                        "\n" +
-                        "Mean differential expression for " +
-                        geneName +
-                        " in " +
-                        clusterName +
-                        " : " +
-                        d.data.differential +
-                        "\n" +
-                        "Fraction of " +
-                        clusterName +
-                        " in Neuronal" +
-                        " : " +
-                        d.data.abundanceTop +
-                        "\n" +
-                        "Fraction of " +
-                        clusterName +
-                        " in " +
-                        middleAbundanceClusterName +
-                        " : " +
-                        d.data.abundanceMiddle +
-                        "\n" +
-                        "Appearance rank for " +
-                        geneName +
-                        " in " +
-                        clusterName +
-                        " : " +
-                        d.data.rank +
+                        "Leaf name : " + returnstring +
+                        "\nAbsolute abundance of selected cells : " + d.data.cellCounts +
+                        "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
+                        "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
+                        "\nFraction of " + clusterName + " in Neuronal : " + d.data.abundanceTop +
+                        "\nFraction of " + clusterName + " in " + middleAbundanceClusterName + " : " + d.data.abundanceMiddle +
+                        "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank +
                         returnStringADd
                     );
                 }
