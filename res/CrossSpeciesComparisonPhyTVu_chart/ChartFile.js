@@ -412,7 +412,9 @@ function generateVis() {
         // Add icon image before the name
         nodeEnter
             .append("image")
-            .attr("xlink:href", "https://images.phylopic.org/images/008d6d88-d1be-470a-8c70-73625c3fb4fb/vector.svg")
+            .attr("xlink:href", function (d) {
+                return d.data && d.data.name ? "../SpeciesIcons/"+d.data.name+".svg" : "";
+            })
             .attr("width", 12) // Set width of the SVG icon
             .attr("height", 12) // Set height of the SVG icon
             .attr("x", function (d) {

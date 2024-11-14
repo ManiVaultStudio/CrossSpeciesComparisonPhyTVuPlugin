@@ -14,7 +14,7 @@
 		<file>js_libs/d3-scale-chromatic.v1.min.js</file>
         <file>js_libs/qwebchannel.tools.js</file>
 	</qresource>
-	<qresource prefix="speciesicons">
+	<qresource prefix="CrossSpeciesComparisonPhyTVu">
 		<file>SpeciesIcons/african_green_monkey.svg</file>
 		<file>SpeciesIcons/arctic_ground_squirrel.svg</file>
 		<file>SpeciesIcons/armadillo.svg</file>
