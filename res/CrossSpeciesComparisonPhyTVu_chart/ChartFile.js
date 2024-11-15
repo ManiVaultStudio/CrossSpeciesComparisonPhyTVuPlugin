@@ -413,7 +413,7 @@ function generateVis() {
         nodeEnter
             .append("image")
             .attr("xlink:href", function (d) {
-                return d.data && d.data.name ? "../SpeciesIcons/"+d.data.name+".svg" : "";
+                return d.data && d.data.name ? "../SpeciesIcons/" + d.data.name + ".svg" : "";
             })
             .attr("width", 12) // Set width of the SVG icon
             .attr("height", 12) // Set height of the SVG icon
@@ -422,7 +422,28 @@ function generateVis() {
             })
             .attr("y", -6); // Adjust y position to align with text
 
-        // Add labels for the nodes
+        // Add the score text element
+        nodeEnter
+            .append("text")
+            .attr("id", "nodeScore")
+            .attr("y", function (d) {
+                return isRightChild(d) ? 10 : -5;
+            })
+            .attr("x", function (d) {
+                return getXAttribute(d);
+            })
+            .attr("dy", ".10em")
+            .attr("dx", "-.55em")
+            .style("font-size", "12px")
+            .text(function (d) {
+                if (typeOfColoringScore === "rank") {
+                    return d.data.score; // Display score directly
+                } else {
+                    return d.data.score;
+                }
+            });
+
+        // Add labels for the node names
         nodeEnter
             .append("text")
             .attr("id", function (d) {
@@ -450,7 +471,7 @@ function generateVis() {
             })
             .on("click", clickNodes)
             .attr("x", function (d) {
-                return d.children || d._children ? -5 : 25; // Position text relative to the icon
+                return d.children || d._children ? -5 : 25; // Position name text after the icon and score
             })
             .attr("text-anchor", function (d) {
                 return d.children || d._children ? "end" : "start";
