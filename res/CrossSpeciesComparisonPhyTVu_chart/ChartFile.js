@@ -1445,7 +1445,7 @@ L ${d.y} ${d.x}`;
             }
 
             
-            log(typeOfColoringScore);
+            //log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
                     colorMirror = false;
