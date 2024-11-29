@@ -10,7 +10,7 @@ try {
 
         // register signals   // drawChart is defined in radar_chart.tools.js
         QtBridge.qt_setData.connect(function () {
-            drawChart(arguments[0]);
+            initiateChart(arguments[0]);
         });
         QtBridge.qt_setTreeColorMap.connect(function () {
             setTreeColorMap(arguments[0]);
