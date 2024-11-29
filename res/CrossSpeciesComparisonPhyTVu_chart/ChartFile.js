@@ -1424,9 +1424,8 @@ L ${d.y} ${d.x}`;
         // Add click event to the entire color legend
         colorLegend.on("click", function () {
             //console.log("Color legend clicked!");
-            if (!noGeneMode) {
 
-           
+        
             if (noGeneMode) {
                 const  coloringScoreMap = {
                     abundanceMiddle: "abundanceTop",
@@ -1499,7 +1498,7 @@ L ${d.y} ${d.x}`;
                   */
 
             drawChart();
-            }
+
         });
         //end here
     }

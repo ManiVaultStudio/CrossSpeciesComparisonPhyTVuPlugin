@@ -48,7 +48,7 @@ var maxDepth = 0;
 var eachDepthWidth = 0;
 var maxTotalDepthWidth = 0;
 var dataReference = "";
-var typeOfColoringScore = "mean expression"; //mean or differential expression or rank or abundanceTop or abundanceMiddle
+var typeOfColoringScore; //mean or differential expression or rank or abundanceTop or abundanceMiddle
 var geneName = "";
 var middleAbundanceClusterName = "";
 var clusterName = "";
@@ -467,9 +467,6 @@ function drawChart() {
     speciesArray = [];
 
     if (dataReference !== "") {
-        
-
-
         
             if (typeOfColoringScore == "rank") {
                 averageRankValuesAllLeafChildren(dataReference);
