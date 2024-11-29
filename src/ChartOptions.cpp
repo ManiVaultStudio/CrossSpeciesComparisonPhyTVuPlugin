@@ -528,8 +528,7 @@ std::vector<double> getCondensedDistanceMatrix(const std::vector<double>& distan
     return condensedMatrix;
 }
 void ChartOptions::modifyTreeData(QJsonObject& treeData, bool emptyGeneFlag) {
-    //qDebug() << "Processing node:" << treeData;
-
+    // Remove the specified keys if they exist
     if (emptyGeneFlag) {
         treeData.remove("gene");
         treeData.remove("rank");
@@ -537,11 +536,15 @@ void ChartOptions::modifyTreeData(QJsonObject& treeData, bool emptyGeneFlag) {
         treeData.remove("mean");
     }
 
+    // Remove additional keys
     treeData.remove("color");
     treeData.remove("hastrait");
     treeData.remove("iscollapsed");
     treeData.remove("middleAbundanceClusterName");
+    treeData.remove("score"); // Remove score
+    treeData.remove("width"); // Remove width
 
+    // If the node has "children", recursively update them as well
     if (treeData.contains("children")) {
         QJsonArray children = treeData["children"].toArray();
         for (int i = 0; i < children.size(); ++i) {
@@ -551,8 +554,8 @@ void ChartOptions::modifyTreeData(QJsonObject& treeData, bool emptyGeneFlag) {
         }
         treeData["children"] = children; // Save updated array
     }
-    //qDebug() << "Updated node:" << treeData;
 }
+
 
 
 std::string ChartOptions::extractFormatData(QString datasetValue)
