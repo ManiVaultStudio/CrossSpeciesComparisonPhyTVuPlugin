@@ -112,6 +112,7 @@ public:
         DatasetPickerAction& getLeafDatasetPicker() { return _leafDatasetPicker; }
         const OptionsAction& getSelectedLeafValues() const { return _selectedLeafValues; }
         OptionsAction& getSelectedLeafValues() { return _selectedLeafValues; }
+        
 
     protected:
         ChartOptions& _chartOptions;
@@ -178,7 +179,7 @@ private:
     //void createJsonStringCluster();
     std::string extractFormatData(QString datasetValue);
     void traitDatasetModify();
-
+   
 public: // Action getters
     ExtraSettingsHolder& getExtraSettingsHolder() { return _extraSettingsHolder; }
     MetaDataSettingsHolder& getMetaDataSettingsHolder() { return _metaDataSettingsHolder; }
@@ -194,6 +195,8 @@ public:
     void colorTraitCalculation();
     void stringTraitCalculation();
     void numericTraitCalculation();
+    void modifyTreeData(QJsonObject& node, bool emptyGeneFlag);
+    bool hasEmptyGeneRecursive(const QJsonObject& treeData);
     QStringList extractTraitPropertyOptionValues(QString propertyType, QString propertyString);
     QString filterData(const QString& key, const QString& category, const QJsonObject& data);
     void triggerChart();

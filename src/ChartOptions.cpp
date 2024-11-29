@@ -221,13 +221,23 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
                 auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
                 if (temp.isValid())
                 {
+                    QJsonObject treeData = temp->getTreeData();
+                    // Check if any "gene" key in the entire tree has an empty value
+                    bool hasEmptyGene = hasEmptyGeneRecursive(treeData);
+
+                    // Modify the tree data based on the result
+                    modifyTreeData(treeData, hasEmptyGene);
+
+
+
+                    
                     QString fileName = QFileDialog::getSaveFileName(nullptr, "Save File", "", "JSON (*.json)");
                     if (fileName != "")
                     {
                         QFile file(fileName);
                         if (file.open(QIODevice::WriteOnly))
                         {
-                            QJsonDocument doc(temp->getTreeData());
+                            QJsonDocument doc(treeData);
                             file.write(doc.toJson());
                         }
                     }
@@ -480,6 +490,29 @@ void ChartOptions::updateChartDataJS()
 
 
 }
+
+bool ChartOptions::hasEmptyGeneRecursive(const QJsonObject& treeData) {
+    // Check the current object for an empty "gene" key
+    if (treeData.contains("gene") && treeData["gene"].toString().isEmpty()) {
+        return true;
+    }
+
+    // If "children" exists, recursively check each child
+    if (treeData.contains("children") && treeData["children"].isArray()) {
+        QJsonArray children = treeData["children"].toArray();
+        for (const QJsonValue& child : children) {
+            if (child.isObject()) {
+                if (hasEmptyGeneRecursive(child.toObject())) {
+                    return true; // Return true as soon as one match is found
+                }
+            }
+        }
+    }
+
+    return false; // No empty "gene" found
+}
+
+
 std::vector<double> getCondensedDistanceMatrix(const std::vector<double>& distanceMatrix, int n) {
     std::vector<double> condensedMatrix;
     condensedMatrix.reserve(n * (n - 1) / 2); // Reserve space for upper triangle excluding diagonal
@@ -494,6 +527,33 @@ std::vector<double> getCondensedDistanceMatrix(const std::vector<double>& distan
 
     return condensedMatrix;
 }
+void ChartOptions::modifyTreeData(QJsonObject& treeData, bool emptyGeneFlag) {
+    //qDebug() << "Processing node:" << treeData;
+
+    if (emptyGeneFlag) {
+        treeData.remove("gene");
+        treeData.remove("rank");
+        treeData.remove("differential");
+        treeData.remove("mean");
+    }
+
+    treeData.remove("color");
+    treeData.remove("hastrait");
+    treeData.remove("iscollapsed");
+    treeData.remove("middleAbundanceClusterName");
+
+    if (treeData.contains("children")) {
+        QJsonArray children = treeData["children"].toArray();
+        for (int i = 0; i < children.size(); ++i) {
+            QJsonObject child = children[i].toObject();
+            modifyTreeData(child, emptyGeneFlag); // Recursive call
+            children[i] = child; // Save modified child
+        }
+        treeData["children"] = children; // Save updated array
+    }
+    //qDebug() << "Updated node:" << treeData;
+}
+
 
 std::string ChartOptions::extractFormatData(QString datasetValue)
 {
