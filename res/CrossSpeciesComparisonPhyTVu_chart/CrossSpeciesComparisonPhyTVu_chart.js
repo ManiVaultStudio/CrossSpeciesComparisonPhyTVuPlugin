@@ -54,6 +54,7 @@ var middleAbundanceClusterName = "";
 var clusterName = "";
 var jsonValueStore;
 var pauseSpeciesSelection = false;
+var noGeneMode = false;
 //true for Debugging
 var isDebug = false;
 const colorScales = {
@@ -414,6 +415,10 @@ function collectScores(node) {
     }
     return scores;
 }
+function initiateChart(d) {
+    typeOfColoringScore = "mean expression";
+    drawChart(d);
+}
 function drawChart(jsonValue) {
     speciesSelected = [];
     legendTextContainer = [];
@@ -435,7 +440,7 @@ function drawChart(jsonValue) {
 
     if (jsonStringReference !== "") {
         var dataVariableReference = JSON.parse(jsonStringReference);
-
+        geneName = "";
         maxNameLength = findMaxNameLength(dataVariableReference);
         maxBranchLength = findMaxBranchLength(dataVariableReference);
         minBranchLength = findMinBranchLength(dataVariableReference);
@@ -444,40 +449,48 @@ function drawChart(jsonValue) {
         geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
         middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
         clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
-
+        if (geneName == "") {
+            noGeneMode = true;
+            typeOfColoringScore = "abundanceTop";
+        }
+        else {
+            noGeneMode = false;
+            
+        }
         //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
         //clusterName = clusterName.toLowerCase();
         //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
-
-        if (typeOfColoringScore == "rank") {
-            averageRankValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName + " (log transformed)";
-            qtColor = "Reds";
-        }
-        else if (typeOfColoringScore == "differential expression") {
-            averageDifferentialValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
-            qtColor = "Plasma"; //Magma
-        }
-        else if (typeOfColoringScore == "abundanceTop") {
-            averageAbundanceTopValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
-            qtColor = "BuPu";
-        }
-        else if (typeOfColoringScore == "abundanceMiddle") {
-            averageAbundanceMiddleValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
-            qtColor = "GnBu";
-        }
-        else if (typeOfColoringScore == "mean expression") {
-            averageMeanValuesAllLeafChildren(dataReference);
-            tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
-            qtColor = "Viridis";
-        }
-        else {
-            tooltipTextVal = "";
-            qtColor = "Greys";
-        }
+        
+            if (typeOfColoringScore == "rank") {
+                averageRankValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Appearance rank for " + geneName + " in " + clusterName + " (log transformed)";
+                qtColor = "Reds";
+            }
+            else if (typeOfColoringScore == "differential expression") {
+                averageDifferentialValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean differential expression for " + geneName + " in " + clusterName;
+                qtColor = "Plasma"; //Magma
+            }
+            else if (typeOfColoringScore == "abundanceTop") {
+                averageAbundanceTopValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in Neuronal";
+                qtColor = "BuPu";
+            }
+            else if (typeOfColoringScore == "abundanceMiddle") {
+                averageAbundanceMiddleValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Fraction of " + clusterName + " in " + middleAbundanceClusterName;
+                qtColor = "GnBu";
+            }
+            else if (typeOfColoringScore == "mean expression") {
+                averageMeanValuesAllLeafChildren(dataReference);
+                tooltipTextVal = "Mean expression for " + geneName + " in " + clusterName;
+                qtColor = "Viridis";
+            }
+            else {
+                tooltipTextVal = "";
+                qtColor = "Greys";
+            }
+        
 
         if (!isDebug) {
             alterColorMapToQt(qtColor);
