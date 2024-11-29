@@ -52,7 +52,6 @@ var typeOfColoringScore = "mean expression"; //mean or differential expression o
 var geneName = "";
 var middleAbundanceClusterName = "";
 var clusterName = "";
-var jsonValueStore;
 var pauseSpeciesSelection = false;
 var noGeneMode = false;
 //true for Debugging
@@ -416,15 +415,7 @@ function collectScores(node) {
     return scores;
 }
 function initiateChart(d) {
-    typeOfColoringScore = "mean expression";
-    drawChart(d);
-}
-function drawChart(jsonValue) {
-    speciesSelected = [];
-    legendTextContainer = [];
-    legendTextContainerActivateFlag = false;
-    speciesArray = [];
-    jsonValueStore = jsonValue;
+    
     var jsonStringReference;
     if (isDebug) {
         //jsonStringReference ='{ "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 5.7363, "mean":  0.24, "cellCounts": 10, "name": "chimp" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 5.7363, "mean":  0.564, "cellCounts": 10, "name": "human" } ], "id": 1, "score": 1, "branchLength": 1.3997, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 7.1361, "mean":  1.80, "cellCounts": 10, "name": "gorilla" } ], "id": 2, "score": 1, "branchLength": 20.7383, "width": 1 }, { "children": [ { "children": [ { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 1.8457, "mean":  0.006, "cellCounts": 10, "name": "rhesus_macaque" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 1.8457, "mean":  0.55, "cellCounts": 10, "name": "macaque_nemestrina" } ], "id": 3, "score": 1, "branchLength": 4.1818, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 6.0275, "mean":  0.234, "cellCounts": 10, "name": "baboon" } ], "id": 4, "score": 1, "branchLength": 2.5083, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 8.5359, "mean":  1.870, "cellCounts": 10, "name": "african_green_monkey" } ], "id": 5, "score": 1, "branchLength": 19.3385, "width": 1 } ], "id": 6, "score": 1, "branchLength": 10.8321, "width": 1 }, { "children": [ { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 14.915, "mean":  0.0876, "cellCounts": 10, "name": "south_american_squirrel_monkey" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 14.9151, "mean":  0.0076, "cellCounts": 10, "name": "capuchin" } ], "id": 7, "score": 1, "branchLength": 2.6597, "width": 1 }, { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 16.9859, "mean":  1.440, "cellCounts": 10, "name": "marmoset" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 16.9859, "mean":  0.543, "cellCounts": 10, "name": "owl_monkey" } ], "id": 8, "score": 1, "branchLength": 0.5888, "width": 1 } ], "id": 9, "score": 1, "branchLength": 21.1318, "width": 1 } ], "id": 10, "score": 1, "branchLength": 24.7761, "width": 1 }, { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 50.7455, "mean":  0.5555, "cellCounts": 10, "name": "galago" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 50.7453, "mean":  0.3456, "cellCounts": 10, "name": "gray_mouse_lemur" } ], "id": 11, "score": 1, "branchLength": 12.7371, "width": 1 } ], "id": 12, "score": 1, "branchLength": 15.9431, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 79.4258, "mean":  1.80, "cellCounts": 10, "name": "treeshrew" } ], "id": 13, "score": 1, "branchLength": 2.6377, "width": 1 }, { "children": [ { "children": [ { "children": [ { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 15.2015, "mean":  0.00001, "cellCounts": 10, "name": "mouse" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 15.2015, "mean":  0.110, "cellCounts": 10, "name": "rat" } ], "id": 14, "score": 1, "branchLength": 50.5322, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 64.0935, "mean":  0.543, "cellCounts": 10, "name": "naked_mole_rat" } ], "id": 15, "score": 1, "branchLength": 64.0935, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 1.64, "mean":  1.980, "cellCounts": 10, "name": "arctic_ground_squirrel" } ], "id": 16, "score": 1, "branchLength": 12.0554, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 77.7891, "mean":  1.900, "cellCounts": 10, "name": "rabbit" } ], "id": 17, "score": 1, "branchLength": 4.2744, "width": 1 } ], "id": 18, "score": 1, "branchLength": 17.1999, "width": 1 }, { "children": [ { "children": [ { "children": [ { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 44.9114, "mean":  0.5432, "cellCounts": 10, "name": "ferret" }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 44.9114, "mean":  6.7650, "cellCounts": 10, "name": "coyote" } ], "id": 19, "score": 1, "branchLength": 10.0799, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 54.9913, "mean":  0.86543, "cellCounts": 10, "name": "cat" } ], "id": 20, "score": 1, "branchLength": 29.862, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 84.8534, "mean":  0.4567, "cellCounts": 10, "name": "pig" } ], "id": 21, "score": 1, "branchLength": 14.4099, "width": 1 } ], "id": 22, "score": 1, "branchLength": 4.5413, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 103.8046, "mean":  7.0000, "cellCounts": 10, "name": "armadillo" } ], "id": 23, "score": 1, "branchLength": 68.9951, "width": 1 }, { "color": "#000000", "hastrait": true, "iscollapsed": false, "branchLength": 172.8, "mean":  0.6598, "cellCounts": 10, "name": "opossum" } ], "id": 24, "score": 1, "branchLength": 1, "width": 1 }';
@@ -435,7 +426,7 @@ function drawChart(jsonValue) {
         traitValueStringFlag = true;
         showTraitValues = true;
     } else {
-        jsonStringReference = jsonValueStore;
+        jsonStringReference = d;
     }
 
     if (jsonStringReference !== "") {
@@ -449,17 +440,36 @@ function drawChart(jsonValue) {
         geneName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].gene;
         middleAbundanceClusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].middleAbundanceClusterName;
         clusterName = dataVariableReference.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].clusterName;
+        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
+        //clusterName = clusterName.toLowerCase();
+        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
+
         if (geneName == "") {
             noGeneMode = true;
             typeOfColoringScore = "abundanceTop";
         }
         else {
             noGeneMode = false;
-            
+            typeOfColoringScore = "mean expression";
+
         }
-        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
-        //clusterName = clusterName.toLowerCase();
-        //middleAbundanceClusterName = middleAbundanceClusterName.toLowerCase();
+
+            drawChart();
+
+    }
+
+    
+}
+function drawChart() {
+    speciesSelected = [];
+    legendTextContainer = [];
+    legendTextContainerActivateFlag = false;
+    speciesArray = [];
+
+    if (dataReference !== "") {
+        
+
+
         
             if (typeOfColoringScore == "rank") {
                 averageRankValuesAllLeafChildren(dataReference);

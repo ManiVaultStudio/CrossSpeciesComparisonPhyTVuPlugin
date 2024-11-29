@@ -1273,8 +1273,8 @@ L ${d.y} ${d.x}`;
             .append("g")
             .attr("class", "permanentcolorscale-legend")
             .attr("transform", "translate(" + legendXValue + "," + legendYValue + ")")
-            //.style("cursor", "pointer");
-        .style("cursor", noGeneMode ? "default" : "pointer"); // Change cursor to pointer
+            .style("cursor", "pointer");
+        //.style("cursor", noGeneMode ? "default" : "pointer"); // Change cursor to pointer
 
         // Add background rectangle for color legend
         colorLegend
@@ -1498,7 +1498,7 @@ L ${d.y} ${d.x}`;
                   }
                   */
 
-            drawChart(jsonValueStore);
+            drawChart();
             }
         });
         //end here
