@@ -362,7 +362,7 @@ function generateVis() {
                 }
             })
             .attr("transform", "translate(2,0)")
-            .style("cursor", "pointer")
+            .style("cursor", noGeneMode ? "default" : "pointer")
             .style("stroke", "#000000")
             .style("stroke-width", "1px")
             .on("click", clickNodes)
@@ -389,11 +389,12 @@ function generateVis() {
                     return (
                         "Leaf name : " + returnstring +
                         "\nAbsolute abundance of selected cells : " + d.data.cellCounts +
-                        "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
-                        "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
                         "\nFraction of " + clusterName + " in Neuronal : " + d.data.abundanceTop +
                         "\nFraction of " + clusterName + " in " + middleAbundanceClusterName + " : " + d.data.abundanceMiddle +
-                        "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank +
+                        (!noGeneMode ? 
+                            "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
+                            "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
+                            "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank : "") +
                         returnStringADd
                     );
                 } else {
@@ -450,7 +451,7 @@ function generateVis() {
                 return "leafName_" + d.data.name;
             })
             .attr("dy", ".35em")
-            .style("cursor", "pointer")
+            .style("cursor", noGeneMode ? "default" : "pointer")
             .style("font-size", "12px")
             .style("fill", function (d, i) {
                 if (traitValueStringContainer) {
@@ -490,16 +491,18 @@ function generateVis() {
                         returnStringADd += "\n" + traitValueNumericKey + " : " + traitValueNumericContainer[d.data.name];
                     }
                     var returnstring = d.data.name ? d.data.name.replace(/_/g, " ") : "";
-                    return (
-                        "Leaf name : " + returnstring +
+                    var result = "Leaf name : " + returnstring +
                         "\nAbsolute abundance of selected cells : " + d.data.cellCounts +
-                        "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
-                        "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
                         "\nFraction of " + clusterName + " in Neuronal : " + d.data.abundanceTop +
-                        "\nFraction of " + clusterName + " in " + middleAbundanceClusterName + " : " + d.data.abundanceMiddle +
-                        "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank +
-                        returnStringADd
-                    );
+                        "\nFraction of " + clusterName + " in " + middleAbundanceClusterName + " : " + d.data.abundanceMiddle;
+                    
+                    if (!noGeneMode) {
+                        result += "\nMean expression for " + geneName + " in " + clusterName + " : " + d.data.mean +
+                            "\nMean differential expression for " + geneName + " in " + clusterName + " : " + d.data.differential +
+                            "\nAppearance rank for " + geneName + " in " + clusterName + " : " + d.data.rank;
+                    }
+
+                    return result + returnStringADd;
                 }
             });
 
@@ -704,7 +707,7 @@ function generateVis() {
                 // Otherwise, return the original color
                 return d.data.color;
             })
-            .attr("cursor", "pointer");
+            .style("cursor", noGeneMode ? "default" : "pointer");
 
         // Remove any exiting nodes
         var nodeExit = node
@@ -921,7 +924,7 @@ L ${d.y} ${d.x}`;
                     }
                 }
             })
-            .style("cursor", "pointer")
+            .style("cursor", noGeneMode ? "default" : "pointer")
             .on("click", clickNames)
             .append("title")
             .style("font-size", "12px")
@@ -980,79 +983,86 @@ L ${d.y} ${d.x}`;
     }
 
     function clickNodes(d) {
-        legendTextContainer = [];
-        legendTextContainerActivateFlag = false;
-        //if (expandedLeafNameID !== "")
-        //{
-        //d3.select(expandedLeafNameID).style("font-size", "12px");
-        //if (!isDebug) {
-        //passScatterplotLeafPointSelectionToQt("");
-        //}
-        //}
-        changeLegendColor();
-        if (d3.event.shiftKey) {
-            shiftPressed = true;
-        } else {
-            shiftPressed = false;
-        }
-
-        if (!shiftPressed) {
-            splitGroupsAltKey = false;
-            speciesSelected = [];
-        } else if (shiftPressed) {
-            splitGroupsAltKey = false;
-        } else if (shiftPressed) {
-            //splitGroupsAltKey = false;
-        }
-
-        var clickedSpecies = extractSpeciesNames(d);
-
-        // if all elements of clickedSpecies are in speciesSelected, then remove them
-        // else add the ones that are not in speciesSelected
-        var allIn = true;
-        for (var i = 0; i < clickedSpecies.length; i++) {
-            if (!speciesSelected.includes(clickedSpecies[i])) {
-                allIn = false;
-                break;
+        if (!noGeneMode) {
+            legendTextContainer = [];
+            legendTextContainerActivateFlag = false;
+            //if (expandedLeafNameID !== "")
+            //{
+            //d3.select(expandedLeafNameID).style("font-size", "12px");
+            //if (!isDebug) {
+            //passScatterplotLeafPointSelectionToQt("");
+            //}
+            //}
+            changeLegendColor();
+            if (d3.event.shiftKey) {
+                shiftPressed = true;
+            } else {
+                shiftPressed = false;
             }
-        }
-        if (allIn) {
-            for (var i = 0; i < clickedSpecies.length; i++) {
-                speciesSelected = speciesSelected.filter(
-                    (item) => item !== clickedSpecies[i]
-                );
+
+            if (!shiftPressed) {
+                splitGroupsAltKey = false;
+                speciesSelected = [];
+            } else if (shiftPressed) {
+                splitGroupsAltKey = false;
+            } else if (shiftPressed) {
+                //splitGroupsAltKey = false;
             }
-        } else {
+
+            var clickedSpecies = extractSpeciesNames(d);
+
+            // if all elements of clickedSpecies are in speciesSelected, then remove them
+            // else add the ones that are not in speciesSelected
+            var allIn = true;
             for (var i = 0; i < clickedSpecies.length; i++) {
                 if (!speciesSelected.includes(clickedSpecies[i])) {
-                    speciesSelected.push(clickedSpecies[i]);
+                    allIn = false;
+                    break;
                 }
             }
-        }
-        // Update styles based on selection
-        updateNodeStyles();
-
-        // Select the corresponding icons
-        svg.selectAll(".species-names path").each(function (d) {
-            if (d.data && clickedSpecies.includes(d.data.name)) {
-                d3.select(this).classed(
-                    "selected",
-                    speciesSelected.includes(d.data.name)
-                );
+            if (allIn) {
+                for (var i = 0; i < clickedSpecies.length; i++) {
+                    speciesSelected = speciesSelected.filter(
+                        (item) => item !== clickedSpecies[i]
+                    );
+                }
             } else {
-                if (d && clickedSpecies.includes(d.name)) {
-                    d3.select(this).classed("selected", speciesSelected.includes(d.name));
+                for (var i = 0; i < clickedSpecies.length; i++) {
+                    if (!speciesSelected.includes(clickedSpecies[i])) {
+                        speciesSelected.push(clickedSpecies[i]);
+                    }
                 }
             }
-        });
+            // Update styles based on selection
+            updateNodeStyles();
 
-        shiftPressed = false;
+            // Select the corresponding icons
+            svg.selectAll(".species-names path").each(function (d) {
+                if (d.data && clickedSpecies.includes(d.data.name)) {
+                    d3.select(this).classed(
+                        "selected",
+                        speciesSelected.includes(d.data.name)
+                    );
+                } else {
+                    if (d && clickedSpecies.includes(d.name)) {
+                        d3.select(this).classed("selected", speciesSelected.includes(d.name));
+                    }
+                }
+            });
+
+            shiftPressed = false;
+        }
     }
+
     function changeLegendColor() {
         // change the text color of .selectAll(".shape-legend-label") text to red
         svg.selectAll(".shape-legend-label").style("fill", "black");
     }
     function clickLegendText(d) {
+        if (!noGeneMode) {
+
+       
+
         //if shift pressed
         if (d3.event.shiftKey) {
             shiftPressed = true;
@@ -1111,16 +1121,12 @@ L ${d.y} ${d.x}`;
             legendTextContainer = [];
             legendTextContainerActivateFlag = false;
             changeLegendColor();
+            }
         }
     }
+
     function clickNames(d) {
-        //if (expandedLeafNameID !== "")
-        //{
-        //d3.select(expandedLeafNameID).style("font-size", "12px");
-        //if (!isDebug) {
-        //passScatterplotLeafPointSelectionToQt("");
-        //}
-        //}
+        if (!noGeneMode){
         legendTextContainer = [];
         legendTextContainerActivateFlag = false;
         changeLegendColor();
@@ -1136,6 +1142,7 @@ L ${d.y} ${d.x}`;
 
         // Update styles based on selection
         updateNodeStyles();
+    }
     }
 
     function updateNodeStyles() {
@@ -1266,7 +1273,8 @@ L ${d.y} ${d.x}`;
             .append("g")
             .attr("class", "permanentcolorscale-legend")
             .attr("transform", "translate(" + legendXValue + "," + legendYValue + ")")
-            .style("cursor", "pointer"); // Change cursor to pointer
+            //.style("cursor", "pointer");
+        .style("cursor", noGeneMode ? "default" : "pointer"); // Change cursor to pointer
 
         // Add background rectangle for color legend
         colorLegend
@@ -1416,18 +1424,28 @@ L ${d.y} ${d.x}`;
         // Add click event to the entire color legend
         colorLegend.on("click", function () {
             //console.log("Color legend clicked!");
+            if (!noGeneMode) {
 
-            const coloringScoreMap = {
-                "mean expression": "differential expression",
-                "differential expression": "rank",
-                rank: "abundanceTop",
-                abundanceTop: "abundanceMiddle",
-                abundanceMiddle: "mean expression",
-            };
+           
+            if (noGeneMode) {
+                const  coloringScoreMap = {
+                    abundanceMiddle: "abundanceTop",
+                    abundanceTop: "abundanceMiddle",
+                };
+                typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            } else {
+                const  coloringScoreMap = {
+                    "mean expression": "differential expression",
+                    "differential expression": "rank",
+                    rank: "abundanceTop",
+                    abundanceTop: "abundanceMiddle",
+                    abundanceMiddle: "mean expression",
+                };
+                typeOfColoringScore = coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
+            }
 
-            typeOfColoringScore =
-                coloringScoreMap[typeOfColoringScore] || typeOfColoringScore;
-            //log(typeOfColoringScore);
+            
+            log(typeOfColoringScore);
             if (typeOfColoringScore === "rank") {
                 if (colorMirror) {
                     colorMirror = false;
@@ -1481,7 +1499,9 @@ L ${d.y} ${d.x}`;
                   */
 
             drawChart(jsonValueStore);
+            }
         });
+        //end here
     }
 
     function legendUpdate() {
@@ -1590,7 +1610,7 @@ L ${d.y} ${d.x}`;
                 }) // Adjust this value to change the vertical spacing
                 .attr("dx", 10) // Adjust this value to move the label horizontally
                 .attr("dy", 6)
-                .attr("cursor", "pointer")
+                .style("cursor", noGeneMode ? "default" : "pointer")
                 .attr("fill", function (d, i) {
                     if (legendTextContainerActivateFlag) {
                         if (legendTextContainer.includes(d)) {
