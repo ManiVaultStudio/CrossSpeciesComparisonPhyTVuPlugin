@@ -1273,8 +1273,8 @@ L ${d.y} ${d.x}`;
             .append("g")
             .attr("class", "permanentcolorscale-legend")
             .attr("transform", "translate(" + legendXValue + "," + legendYValue + ")")
-            //.style("cursor", "pointer");
-        .style("cursor", noGeneMode ? "default" : "pointer"); // Change cursor to pointer
+            .style("cursor", "pointer");
+        //.style("cursor", noGeneMode ? "default" : "pointer"); // Change cursor to pointer
 
         // Add background rectangle for color legend
         colorLegend
@@ -1424,9 +1424,8 @@ L ${d.y} ${d.x}`;
         // Add click event to the entire color legend
         colorLegend.on("click", function () {
             //console.log("Color legend clicked!");
-            if (!noGeneMode) {
 
-           
+        
             if (noGeneMode) {
                 const  coloringScoreMap = {
                     abundanceMiddle: "abundanceTop",
@@ -1498,8 +1497,8 @@ L ${d.y} ${d.x}`;
                   }
                   */
 
-            drawChart(jsonValueStore);
-            }
+            drawChart();
+
         });
         //end here
     }
