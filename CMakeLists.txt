@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.22)
 
 # -----------------------------------------------------------------------------
 # CrossSpeciesComparisonPhyTVu Plugin
@@ -118,8 +118,13 @@ target_include_directories(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_CSCTMD_
 # -----------------------------------------------------------------------------
 # Target properties
 # -----------------------------------------------------------------------------
-# Request C++17
-target_compile_features(${CrossSpeciesComparisonPhyTVu} PRIVATE cxx_std_17)
+target_compile_features(${CrossSpeciesComparisonPhyTVu} PRIVATE cxx_std_20)
+
+set_target_properties(${CrossSpeciesComparisonPhyTVu}
+    PROPERTIES
+    FOLDER ViewPlugins
+)
+
 
 # -----------------------------------------------------------------------------
 # Target library linking

@@ -117,9 +117,6 @@ public:
     /** Destructor */
     ~CrossSpeciesComparisonPhyTVuPluginFactory() override {}
 
-    /** Get plugin icon */
-    QIcon getIcon(const QColor& color = Qt::black) const override;
-
     /** Creates an instance of the CrossSpeciesComparisonPhyTVu view plugin */
     ViewPlugin* produce() override;
 

@@ -509,9 +509,9 @@ void CrossSpeciesComparisonPhyTVuPlugin::publishSelection(const std::vector<unsi
 // Plugin Factory 
 // =============================================================================
 
-QIcon CrossSpeciesComparisonPhyTVuPluginFactory::getIcon(const QColor& color /*= Qt::black*/) const
+CrossSpeciesComparisonPhyTVuPluginFactory::CrossSpeciesComparisonPhyTVuPluginFactory()
 {
-    return mv::Application::getIconFont("FontAwesome").getIcon("project-diagram", color);
+    setIconByName("project-diagram");
 }
 
 ViewPlugin* CrossSpeciesComparisonPhyTVuPluginFactory::produce()
@@ -546,7 +546,7 @@ mv::gui::PluginTriggerActions CrossSpeciesComparisonPhyTVuPluginFactory::getPlug
                 this,
                 "CrossSpeciesComparisonPhyTVu",
                 "View JavaScript visualization",
-                getIcon(),
+                StyledIcon("project-diagram"),
                 [this, getPluginInstance, checkDataset](PluginTriggerAction& pluginTriggerAction) -> void {
                     getPluginInstance()->loadData(checkDataset);
                 }
