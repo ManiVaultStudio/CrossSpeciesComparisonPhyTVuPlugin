@@ -116,12 +116,12 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _updateSettingsHolder.getUpdateViewsButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
     _updateSettingsHolder.getRevertButtonAction().setDefaultWidgetFlags(TriggerAction::IconText);
     _extraSettingsHolder.getExportTreeDataAction().setDefaultWidgetFlags(TriggerAction::IconText);
-    _extraSettingsHolder.getExportTreeDataAction().setIcon(Application::getIconFont("FontAwesome").getIcon("save"));
+    _extraSettingsHolder.getExportTreeDataAction().setIcon(mv::util::StyledIcon("save"));
 
-    QIcon exploreIcon = Application::getIconFont("FontAwesome").getIcon("wpexplorer");
+    QIcon exploreIcon = mv::util::StyledIcon("wpexplorer");
     _updateSettingsHolder.getUpdateViewsButtonAction().setIcon(exploreIcon);
 
-    QIcon revertIcon = Application::getIconFont("FontAwesome").getIcon("history");
+    QIcon revertIcon = mv::util::StyledIcon("history");
     _updateSettingsHolder.getRevertButtonAction().setIcon(revertIcon);
 
 
@@ -899,7 +899,7 @@ inline ChartOptions::ExtraSettingsHolder::ExtraSettingsHolder(ChartOptions& char
 
 {
     setText("Extra Options");
-    setIcon(Application::getIconFont("FontAwesome").getIcon("toolbox"));
+    setIcon(mv::util::StyledIcon("toolbox"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
     //addAction(&_expandAllAction);
@@ -920,7 +920,7 @@ inline ChartOptions::MetaDataSettingsHolder::MetaDataSettingsHolder(ChartOptions
 
 {
     setText("Metadata Options");
-    setIcon(Application::getIconFont("FontAwesome").getIcon("highlighter"));
+    setIcon(mv::util::StyledIcon("highlighter"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
     addAction(&_traitDatasetSelectionAction);
@@ -940,7 +940,7 @@ inline ChartOptions::LinkerSettingsHolder::LinkerSettingsHolder(ChartOptions& ch
 
 {
     setText("Linker Options");
-    setIcon(Application::getIconFont("FontAwesome").getIcon("link"));
+    setIcon(mv::util::StyledIcon("link"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
     addAction(&_treeLeafSelectionValue);
@@ -959,7 +959,7 @@ inline ChartOptions::MainSettingsHolder::MainSettingsHolder(ChartOptions& chartO
 
 {
     setText("Chart Options");
-    setIcon(Application::getIconFont("FontAwesome").getIcon("atom"));
+    setIcon(mv::util::StyledIcon("atom"));
     setPopupSizeHint(QSize(350, 0));
     setConfigurationFlag(WidgetAction::ConfigurationFlag::ForceCollapsedInGroup);
     setPopupSizeHint(QSize(350, 0));
@@ -983,7 +983,7 @@ inline ChartOptions::UpdateSettingsHolder::UpdateSettingsHolder(ChartOptions& ch
 
 {
     setText("Update Options");
-    setIcon(Application::getIconFont("FontAwesome").getIcon("sync"));
+    setIcon(mv::util::StyledIcon("sync"));
     setPopupSizeHint(QSize(350, 0));
     addAction(&_updateViewsButton);
     addAction(&_revertButton);

@@ -112,7 +112,7 @@ class CrossSpeciesComparisonPhyTVuPluginFactory : public ViewPluginFactory
 public:
 
     /** Default constructor */
-    CrossSpeciesComparisonPhyTVuPluginFactory() {}
+    CrossSpeciesComparisonPhyTVuPluginFactory();
 
     /** Destructor */
     ~CrossSpeciesComparisonPhyTVuPluginFactory() override {}
