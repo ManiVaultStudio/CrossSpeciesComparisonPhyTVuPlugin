@@ -41,7 +41,7 @@ void CrossSpeciesComparisonPhyTVuPlugin::init()
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Leaf Info", "Hover leaf to see leaf details" });
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Explore", "Explore multiple selected species" });
     shortcuts.add({ QKeySequence(Qt::MouseButton::LeftButton), "Revert", "Revert to initial selected species" });
-    getLearningCenterAction().setPluginTitle("Phylogenetic Tree View");
+    //getLearningCenterAction().setPluginTitle("Phylogenetic Tree View");
 
     connect(&_chartWidget, &ChartWidget::widgetInitialized, this, &CrossSpeciesComparisonPhyTVuPlugin::triggerInitialChart);
 
