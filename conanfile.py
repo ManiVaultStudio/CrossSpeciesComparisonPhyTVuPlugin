@@ -7,7 +7,7 @@ import subprocess
 from rules_support import PluginBranchInfo
 
 
-class CrossSpeciesComparisonPhyTVuPluginConan(ConanFile):
+class CrossSpeciesComparisonLoaderPluginConan(ConanFile):
     """Class to package using conan
 
     Packages both RELEASE and RELWITHDEBINFO.
@@ -16,10 +16,10 @@ class CrossSpeciesComparisonPhyTVuPluginConan(ConanFile):
     as described in https://github.com/ManiVaultStudio/core/wiki/Branch-naming-rules
     """
 
-    name = "CrossSpeciesComparisonPhyTVuPlugin"
+    name = "CrossSpeciesComparisonLoaderPlugin"
     description = """Viewer of cell CrossSpeciesComparisonTreeData and tree metadata data as described in a .swc file."""
-    topics = ("manivault", "plugin", "view", "CrossSpeciesComparisonPhyTVuPlugin")
-    url = "https://github.com/ManiVaultStudio/CrossSpeciesComparisonPhyTVuPlugin"
+    topics = ("manivault", "plugin", "view", "CrossSpeciesComparisonLoaderPlugin")
+    url = "https://github.com/ManiVaultStudio/CrossSpeciesComparisonLoaderPlugin"
     author = "julianthijssen@gmail.com"  # conan recipe author
     license = "LGPL 3.0"
 
@@ -38,7 +38,7 @@ class CrossSpeciesComparisonPhyTVuPluginConan(ConanFile):
 
     scm = {
         "type": "git",
-        "subfolder": "hdps/CrossSpeciesComparisonPhyTVuPlugin",
+        "subfolder": "hdps/CrossSpeciesComparisonLoaderPlugin",
         "url": "auto",
         "revision": "auto",
     }
@@ -117,7 +117,7 @@ class CrossSpeciesComparisonPhyTVuPluginConan(ConanFile):
 
     def _configure_cmake(self):
         cmake = CMake(self)
-        cmake.configure(build_script_folder="hdps/CrossSpeciesComparisonPhyTVuPlugin")
+        cmake.configure(build_script_folder="hdps/CrossSpeciesComparisonLoaderPlugin")
         cmake.verbose = True
         return cmake
 
