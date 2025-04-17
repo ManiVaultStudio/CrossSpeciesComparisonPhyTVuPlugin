@@ -8,8 +8,8 @@
 #include "ClusterData/ClusterData.h"
 #include <actions/ToggleAction.h>
 #include "actions/DatasetPickerAction.h"
-#include <CrossSpeciesComparisonTreeData.h>
-#include <CrossSpeciesComparisonTreeMetaData.h>
+#include <CrossSpeciesComparisonTreeData/CrossSpeciesComparisonTreeData.h>
+#include <CrossSpeciesComparisonTreeMetaData/CrossSpeciesComparisonTreeMetaData.h>
 #include "event/EventListener.h"
 #include "actions/Actions.h"
 #include "Plugin.h"

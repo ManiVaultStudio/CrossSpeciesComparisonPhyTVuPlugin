@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 
 # -----------------------------------------------------------------------------
-# CrossSpeciesComparisonPhyTVu Plugin
+# CrossSpeciesComparisonPhyTVuPlugin
 # -----------------------------------------------------------------------------
-set(CrossSpeciesComparisonPhyTVu "CrossSpeciesComparisonPhyTVuPlugin")
-PROJECT(${CrossSpeciesComparisonPhyTVu})
+PROJECT("CrossSpeciesComparisonPhyTVuPlugin")
 
 # -----------------------------------------------------------------------------
 # CMake Options
@@ -15,33 +14,26 @@ set(CMAKE_AUTOMOC ON)
 
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DWIN32 /EHsc /MP /permissive- /Zc:__cplusplus")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
 endif(MSVC)
-
-# -----------------------------------------------------------------------------
-# Set install directory
-# -----------------------------------------------------------------------------
-# Check if the directory to the ManiVault installation has been provided
-if(NOT DEFINED MV_INSTALL_DIR)
-    set(MV_INSTALL_DIR "" CACHE PATH "Directory where ManiVault is installed")
-    message(FATAL_ERROR "Please set MV_INSTALL_DIR to the directory where ManiVault is installed")
-endif()
-file(TO_CMAKE_PATH ${MV_INSTALL_DIR} MV_INSTALL_DIR)
-
-if(NOT DEFINED MV_CSCTD_INSTALL_DIR) 
-    set(MV_CSCTD_INSTALL_DIR ${MV_INSTALL_DIR} CACHE PATH "Directory where TreeData is installed")
-endif()
-
-if(NOT DEFINED MV_CSCTMD_INSTALL_DIR) 
-    set(MV_CSCTMD_INSTALL_DIR ${MV_INSTALL_DIR} CACHE PATH "Directory where TreeMetaData is installed")
-endif()
 
 # -----------------------------------------------------------------------------
 # Dependencies
 # -----------------------------------------------------------------------------
+if(NOT DEFINED MV_CSCTD_INSTALL_DIR) 
+    set(MV_CSCTD_INSTALL_DIR ${ManiVault_INSTALL_DIR} CACHE PATH "Directory where tree data is installed")
+endif()
+
+if(NOT DEFINED MV_CSCTMD_INSTALL_DIR) 
+    set(MV_CSCTMD_INSTALL_DIR ${ManiVault_INSTALL_DIR} CACHE PATH "Directory where tree meta data is installed")
+endif()
+
+#find_package(OpenSSL REQUIRED)
 find_package(Qt6 COMPONENTS Widgets WebEngineWidgets Concurrent REQUIRED)
+
+find_package(ManiVault COMPONENTS Core PointData ClusterData CONFIG REQUIRED)
 
 # -----------------------------------------------------------------------------
 # Source files
@@ -99,77 +91,72 @@ source_group( ResourceFiles FILES ${RESOURCES})
 source_group( LibFiles FILES ${Lib})
 source_group( ResourceFiles\\generated FILES ${CMAKE_CURRENT_BINARY_DIR}/qrc_phylo_tree_view_resources.cpp)
 source_group( Aux FILES ${AUX})
+
 # -----------------------------------------------------------------------------
 # CMake Target
 # -----------------------------------------------------------------------------
 # Create dynamic library for the plugin
-add_library(${CrossSpeciesComparisonPhyTVu} SHARED ${CrossSpeciesComparisonPhyTVu_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
-qt_wrap_cpp(CrossSpeciesComparisonPhyTVu_MOC ${PLUGIN_MOC_HEADERS} TARGET ${CrossSpeciesComparisonPhyTVu})
-target_sources(${CrossSpeciesComparisonPhyTVu} PRIVATE ${CrossSpeciesComparisonPhyTVu_MOC})
+add_library(${PROJECT_NAME} SHARED ${CrossSpeciesComparisonPhyTVu_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
 
 # -----------------------------------------------------------------------------
 # Target include directories
 # -----------------------------------------------------------------------------
-# Include HDPS headers, including system data plugins
-target_include_directories(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_INSTALL_DIR}/$<CONFIGURATION>/include/")
-target_include_directories(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_CSCTD_INSTALL_DIR}/$<CONFIGURATION>/include/")
-target_include_directories(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_CSCTMD_INSTALL_DIR}/$<CONFIGURATION>/include/")
+# Include ManiVault headers, including system data plugins
+target_include_directories(${PROJECT_NAME} PRIVATE "${ManiVault_INCLUDE_DIR}")
+target_include_directories(${PROJECT_NAME} PRIVATE "${MV_CSCTD_INSTALL_DIR}/$<CONFIGURATION>/include/")
+#target_include_directories(${PROJECT_NAME} PRIVATE "${PROJECT_SOURCE_DIR}/3rdparty/curl/include/")
+
 
 # -----------------------------------------------------------------------------
 # Target properties
 # -----------------------------------------------------------------------------
-target_compile_features(${CrossSpeciesComparisonPhyTVu} PRIVATE cxx_std_20)
-
-set_target_properties(${CrossSpeciesComparisonPhyTVu}
-    PROPERTIES
-    FOLDER ViewPlugins
-)
+# Request C++17
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
 
 
 # -----------------------------------------------------------------------------
 # Target library linking
 # -----------------------------------------------------------------------------
 # Link to Qt libraries
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::Widgets)
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::WebEngineWidgets)
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE Qt6::Concurrent)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::WebEngineWidgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Concurrent )
 
-# Link to HDPS and data plugins
+# Link to ManiVault and data plugins
 # The link path in this repo assumes that the ManiVault core was built locally
 # in contrast to having been installed with an installer. In the latter case you'll have
 # to adapt the MV_LINK_PATH and PLUGIN_LINK_PATH to your install folder
-set(MV_LINK_PATH "${MV_INSTALL_DIR}/$<CONFIGURATION>/lib")
-set(PLUGIN_LINK_PATH "${MV_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
+set(MV_LINK_PATH "${ManiVault_INSTALL_DIR}/$<CONFIGURATION>/lib")
+set(PLUGIN_LINK_PATH "${ManiVault_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
 set(CSCTDPLUGIN_LINK_PATH "${MV_CSCTD_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
 set(CSCTMDPLUGIN_LINK_PATH "${MV_CSCTMD_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
 set(MV_LINK_SUFFIX $<IF:$<CXX_COMPILER_ID:MSVC>,${CMAKE_LINK_LIBRARY_SUFFIX},${CMAKE_SHARED_LIBRARY_SUFFIX}>)
 
-set(MV_LINK_LIBRARY "${MV_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}MV_Public${MV_LINK_SUFFIX}")
-set(POINTDATA_LINK_LIBRARY "${PLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}PointData${MV_LINK_SUFFIX}") 
-set(CLUSTERDATA_LINK_LIBRARY "${PLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}ClusterData${MV_LINK_SUFFIX}") 
-set(CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY "${CSCTDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeData${MV_LINK_SUFFIX}") 
-set(CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY "${CSCTMDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeMetaData${MV_LINK_SUFFIX}") 
+set(CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY "${CSCTDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeData${MV_LINK_SUFFIX}")
+set(CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY "${CSCTMDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeMetaData${MV_LINK_SUFFIX}")
 
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${MV_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${POINTDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CLUSTERDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}")
-target_link_libraries(${CrossSpeciesComparisonPhyTVu} PRIVATE "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}")
+# Link to ManiVault and data plugins
+target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::Core)
+target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::PointData)
+target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::ClusterData)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}")
+target_link_libraries(${PROJECT_NAME} PRIVATE "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}")
 
 # -----------------------------------------------------------------------------
 # Target installation
 # -----------------------------------------------------------------------------
 # Install the shared plugin libary to the "Plugins" folder in the ManiVault install directory
-install(TARGETS ${CrossSpeciesComparisonPhyTVu}
+install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION Plugins COMPONENT PLUGINS # Windows .dll
     LIBRARY DESTINATION Plugins COMPONENT PLUGINS # Linux/Mac .so
 )
 
-add_custom_command(TARGET ${CrossSpeciesComparisonPhyTVu} POST_BUILD
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND "${CMAKE_COMMAND}"
         --install ${CMAKE_CURRENT_BINARY_DIR}
         --config $<CONFIGURATION>
-        --prefix ${MV_INSTALL_DIR}/$<CONFIGURATION>
+        --prefix ${ManiVault_INSTALL_DIR}/$<CONFIGURATION>
 )
 
 # -----------------------------------------------------------------------------
@@ -177,6 +164,6 @@ add_custom_command(TARGET ${CrossSpeciesComparisonPhyTVu} POST_BUILD
 # -----------------------------------------------------------------------------
 # Automatically set the debug environment (command + working directory) for MSVC
 if(MSVC)
-    set_property(TARGET ${CrossSpeciesComparisonPhyTVu} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<IF:$<CONFIG:DEBUG>,${MV_INSTALL_DIR}/debug,${MV_INSTALL_DIR}/release>)
-    set_property(TARGET ${CrossSpeciesComparisonPhyTVu} PROPERTY VS_DEBUGGER_COMMAND $<IF:$<CONFIG:DEBUG>,"${MV_INSTALL_DIR}/debug/ManiVault Studio.exe","${MV_INSTALL_DIR}/release/ManiVault Studio.exe">)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_WORKING_DIRECTORY $<IF:$<CONFIG:DEBUG>,${ManiVault_INSTALL_DIR}/debug,${ManiVault_INSTALL_DIR}/release>)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY VS_DEBUGGER_COMMAND $<IF:$<CONFIG:DEBUG>,${ManiVault_INSTALL_DIR}/debug/ManiVault\ Studio.exe,${ManiVault_INSTALL_DIR}/release/ManiVault\ Studio.exe>)
 endif()
