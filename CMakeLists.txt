@@ -23,7 +23,11 @@ endif(MSVC)
 # Dependencies
 # -----------------------------------------------------------------------------
 if(NOT DEFINED MV_CSCTD_INSTALL_DIR) 
-    set(MV_CSCTD_INSTALL_DIR ${ManiVault_INSTALL_DIR} CACHE PATH "Directory where CellMorphologyData is installed")
+    set(MV_CSCTD_INSTALL_DIR ${ManiVault_INSTALL_DIR} CACHE PATH "Directory where tree data is installed")
+endif()
+
+if(NOT DEFINED MV_CSCTMD_INSTALL_DIR) 
+    set(MV_CSCTMD_INSTALL_DIR ${ManiVault_INSTALL_DIR} CACHE PATH "Directory where tree meta data is installed")
 endif()
 
 #find_package(OpenSSL REQUIRED)
