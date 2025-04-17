@@ -2,8 +2,8 @@
 
 #include <ViewPlugin.h>
 #include <Dataset.h>
-#include <CrossSpeciesComparisonTreeData.h>
-#include <CrossSpeciesComparisonTreeMetaData.h>
+#include <CrossSpeciesComparisonTreeData/CrossSpeciesComparisonTreeData.h>
+#include <CrossSpeciesComparisonTreeMetaData/CrossSpeciesComparisonTreeMetaData.h>
 #include "ChartWidget.h"
 #include "ChartOptions.h"
 #include <QWidget>
