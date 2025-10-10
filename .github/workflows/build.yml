@@ -108,7 +108,7 @@ jobs:
           conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
 
       - name: Install sentry-tools
-        run: pip install git+https://github.com/your-org/sentry-tools.git@v1.0.0
+        run: pip install "git+https://x-access-token:${{ secrets.REPO_ACCESS_TOKEN }}@github.com/ManiVaultStudio/sentry-tools.git@v1.0.0#egg=sentry-tools"
 
       - name: Upload PDBs to Sentry
         if: startsWith(runner.os, 'Windows')
