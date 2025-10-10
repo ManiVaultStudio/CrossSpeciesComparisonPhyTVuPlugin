@@ -107,12 +107,11 @@ jobs:
           conan-password: ${{secrets.LKEB_UPLOAD_USER_PASSWORD}}
           conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
 
-      - name: Install sentry-tools
-        run: pip install "git+https://x-access-token:${{ secrets.SENTRY_TOOLS }}@github.com/ManiVaultStudio/sentry-tools.git@v1.0.0#egg=sentry-tools"
-
-      - name: Upload PDBs to Sentry
-        if: startsWith(runner.os, 'Windows')
-        run: |
-          sentry-upload \
-            --paths "bin/Release/**/*.pdb" "lib/Release/**/*.pdb" \
-            --release "${{ github.ref_name }}"
+      - uses: actions/checkout@v4
+        with:
+          repository: ManiVaultStudio/sentry-tools
+          ref: v1.0.0
+          path: sentry-tools
+          token: ${{ secrets.SENTRY_TOOLS_TOKEN }}   # PAT with contents:read
+      
+      - run: pip install ./sentry-tools
