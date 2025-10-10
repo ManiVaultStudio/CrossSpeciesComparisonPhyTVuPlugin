@@ -106,12 +106,3 @@ jobs:
           conan-user: ${{secrets.LKEB_UPLOAD_USER}}
           conan-password: ${{secrets.LKEB_UPLOAD_USER_PASSWORD}}
           conan-pem: ${{secrets.LKEB_UPLOAD_CERT_CHAIN}}
-
-      - uses: actions/checkout@v4
-        with:
-          repository: ManiVaultStudio/sentry-tools
-          ref: v1.0.0
-          path: sentry-tools
-          token: ${{ secrets.SENTRY_TOOLS_TOKEN }}   # PAT with contents:read
-      
-      - run: pip install ./sentry-tools
