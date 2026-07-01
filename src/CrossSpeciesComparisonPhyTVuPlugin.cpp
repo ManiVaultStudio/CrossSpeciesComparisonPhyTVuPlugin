@@ -7,6 +7,8 @@
 #include <QMimeData>
 #include <DatasetsMimeData.h>
 
+#include <util/Serialization.h>
+
 Q_PLUGIN_METADATA(IID "nl.BioVault.CrossSpeciesComparisonPhyTVuPlugin")
 
 using namespace mv;
