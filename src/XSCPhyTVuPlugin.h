@@ -2,8 +2,8 @@
 
 #include <ViewPlugin.h>
 #include <Dataset.h>
-#include <CrossSpeciesComparisonTreeData/CrossSpeciesComparisonTreeData.h>
-#include <CrossSpeciesComparisonTreeMetaData/CrossSpeciesComparisonTreeMetaData.h>
+#include <XSCTreeData/XSCTreeData.h>
+#include <XSCTreeMetaData/XSCTreeMetaData.h>
 #include "ChartWidget.h"
 #include "ChartOptions.h"
 #include <QWidget>
@@ -21,7 +21,7 @@ using namespace mv::util;
 
 
 
-class CrossSpeciesComparisonPhyTVuPlugin : public ViewPlugin
+class XSCPhyTVuPlugin : public ViewPlugin
 {
     Q_OBJECT
 
@@ -30,17 +30,17 @@ public:
      * Constructor
      * @param factory Pointer to the plugin factory
      */
-    CrossSpeciesComparisonPhyTVuPlugin(const PluginFactory* factory);
+    XSCPhyTVuPlugin(const PluginFactory* factory);
 
     /** Destructor */
-    ~CrossSpeciesComparisonPhyTVuPlugin() override = default;
+    ~XSCPhyTVuPlugin() override = default;
 
     /** This function is called by the core after the view plugin has been created */
     void init() override;
     void onDataEventTreeMeta(mv::DatasetEvent* dataEvent);
     void onDataEventTree(mv::DatasetEvent* dataEvent);
     /** Store a private reference to the data set that should be displayed */
-    void loadData(const Dataset<CrossSpeciesComparisonTree>& dataset);
+    void loadData(const Dataset<XSCTree>& dataset);
 
 public: // Serialization
 
@@ -61,8 +61,8 @@ public slots:
     ChartWidget& getChartWidget() { return _chartWidget; }
     ChartOptions& getChartOptions() { return _chartOptions; }
 
-    mv::Dataset<CrossSpeciesComparisonTree>& getReferenceTreeDataset() { return _referenceTree; }
-    mv::Dataset<CrossSpeciesComparisonTreeMeta>& getMetaInfoDataset() { return _metaInfo; }
+    mv::Dataset<XSCTree>& getReferenceTreeDataset() { return _referenceTree; }
+    mv::Dataset<XSCTreeMeta>& getMetaInfoDataset() { return _metaInfo; }
 
     bool getInitialLoadCompleteflag() { return _initialLoadComplete; }
     void setInitialLoadCompleteflag(int initialLoadComplete) { _initialLoadComplete = initialLoadComplete; }
@@ -90,37 +90,37 @@ private:
     QLabel* _comparisonDatasetNameLabel;   /** Label that show the current dataset name */
     QLabel* _referenceDatasetNameLabel;
     QLabel* _metaInfoDatasetNameLabel;
-    mv::Dataset<CrossSpeciesComparisonTree>   _referenceTree;
-    mv::Dataset<CrossSpeciesComparisonTreeMeta>   _metaInfo;
+    mv::Dataset<XSCTree>   _referenceTree;
+    mv::Dataset<XSCTreeMeta>   _metaInfo;
     bool _initialLoadComplete = false;
     QString _originalName;
 
 };
 
 /**
- * CrossSpeciesComparisonPhyTVu view plugin factory class
+ * XSCPhyTVu view plugin factory class
  *
  * Note: Factory does not need to be altered (merely responsible for generating new plugins when requested)
  */
-class CrossSpeciesComparisonPhyTVuPluginFactory : public ViewPluginFactory
+class XSCPhyTVuPluginFactory : public ViewPluginFactory
 {
     Q_INTERFACES(mv::plugin::ViewPluginFactory mv::plugin::PluginFactory)
         Q_OBJECT
-        Q_PLUGIN_METADATA(IID   "nl.BioVault.CrossSpeciesComparisonPhyTVuPlugin"
-            FILE  "CrossSpeciesComparisonPhyTVuPlugin.json")
+        Q_PLUGIN_METADATA(IID   "nl.BioVault.XSCPhyTVuPlugin"
+            FILE  "XSCPhyTVuPlugin.json")
 
 public:
 
     /** Default constructor */
-    CrossSpeciesComparisonPhyTVuPluginFactory();
+    XSCPhyTVuPluginFactory();
 
     /** Destructor */
-    ~CrossSpeciesComparisonPhyTVuPluginFactory() override {}
+    ~XSCPhyTVuPluginFactory() override {}
 
-    /** Creates an instance of the CrossSpeciesComparisonPhyTVu view plugin */
+    /** Creates an instance of the XSCPhyTVu view plugin */
     ViewPlugin* produce() override;
 
-    /** Returns the data types that are supported by the CrossSpeciesComparisonPhyTVu view plugin */
+    /** Returns the data types that are supported by the XSCPhyTVu view plugin */
     mv::DataTypes supportedDataTypes() const override;
 
     /**

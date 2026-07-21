@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
 
 # -----------------------------------------------------------------------------
-# CrossSpeciesComparisonPhyTVuPlugin
+# XSCPhyTVuPlugin
 # -----------------------------------------------------------------------------
-PROJECT("CrossSpeciesComparisonPhyTVuPlugin")
+PROJECT("XSCPhyTVuPlugin")
 
 # -----------------------------------------------------------------------------
 # CMake Options
@@ -39,27 +39,27 @@ find_package(ManiVault COMPONENTS Core PointData ClusterData CONFIG QUIET)
 # Source files
 # -----------------------------------------------------------------------------
 # Define the plugin sources
-set(CrossSpeciesComparisonPhyTVu_SOURCES
-    src/CrossSpeciesComparisonPhyTVuPlugin.h
-    src/CrossSpeciesComparisonPhyTVuPlugin.cpp
+set(XSCPhyTVu_SOURCES
+    src/XSCPhyTVuPlugin.h
+    src/XSCPhyTVuPlugin.cpp
     src/ChartWidget.h
     src/ChartWidget.cpp
 	src/ChartOptions.h
     src/ChartOptions.cpp
-    src/CrossSpeciesComparisonPhyTVuPlugin.json
+    src/XSCPhyTVuPlugin.json
 )
 
 set(PLUGIN_MOC_HEADERS
-	src/CrossSpeciesComparisonPhyTVuPlugin.h
+	src/XSCPhyTVuPlugin.h
 )
 
 set(WEB_MAIN
-    res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html
-    res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js
-    res/CrossSpeciesComparisonPhyTVu_chart/ChartFile.js
-    res/CrossSpeciesComparisonPhyTVu_chart/DataFile.js
-    res/CrossSpeciesComparisonPhyTVu_chart/FunctionFile.js
-	res/CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.css
+    res/XSCPhyTVu_chart/XSCPhyTVu_chart.html
+    res/XSCPhyTVu_chart/XSCPhyTVu_chart.js
+    res/XSCPhyTVu_chart/ChartFile.js
+    res/XSCPhyTVu_chart/DataFile.js
+    res/XSCPhyTVu_chart/FunctionFile.js
+	res/XSCPhyTVu_chart/XSCPhyTVu_chart.css
 )
 
 set(WEB_LIBS
@@ -79,12 +79,12 @@ set(Lib
 	src/lib/JSONnlohmann/json_fwd.hpp
 )
 set(AUX
-    res/CrossSpeciesComparisonPhyTVu_chart.qrc
+    res/XSCPhyTVu_chart.qrc
 )
 
-qt6_add_resources(RESOURCE_FILES res/CrossSpeciesComparisonPhyTVu_chart.qrc)
+qt6_add_resources(RESOURCE_FILES res/XSCPhyTVu_chart.qrc)
 
-source_group( Plugin FILES ${CrossSpeciesComparisonPhyTVu_SOURCES})
+source_group( Plugin FILES ${XSCPhyTVu_SOURCES})
 source_group(Web\\MainCode FILES ${WEB_MAIN})
 source_group(Web\\LibraryFiles FILES ${WEB_LIBS})
 source_group( ResourceFiles FILES ${RESOURCES})
@@ -96,7 +96,7 @@ source_group( Aux FILES ${AUX})
 # CMake Target
 # -----------------------------------------------------------------------------
 # Create dynamic library for the plugin
-add_library(${PROJECT_NAME} SHARED ${CrossSpeciesComparisonPhyTVu_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
+add_library(${PROJECT_NAME} SHARED ${XSCPhyTVu_SOURCES} ${AUX} ${RESOURCES} ${RESOURCE_FILES} ${WEB_MAIN} ${WEB_LIBS} ${Lib} )
 
 # -----------------------------------------------------------------------------
 # Target include directories
@@ -125,18 +125,18 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Concurrent )
 
 
 # Allow override of plugin library paths from the build system
-set(CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}" CACHE STRING "Path to CrossSpeciesComparisonTreeData library")
-if(NOT CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY)
+set(XSCTREEDATA_LINK_LIBRARY "${XSCTREEDATA_LINK_LIBRARY}" CACHE STRING "Path to XSCTreeData library")
+if(NOT XSCTREEDATA_LINK_LIBRARY)
     set(CSCTDPLUGIN_LINK_PATH "${MV_CSCTD_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
     set(MV_LINK_SUFFIX $<IF:$<CXX_COMPILER_ID:MSVC>,${CMAKE_LINK_LIBRARY_SUFFIX},${CMAKE_SHARED_LIBRARY_SUFFIX}>)
-    set(CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY "${CSCTDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeData${MV_LINK_SUFFIX}")
+    set(XSCTREEDATA_LINK_LIBRARY "${CSCTDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}XSCTreeData${MV_LINK_SUFFIX}")
 endif()
 
-set(CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}" CACHE STRING "Path to CrossSpeciesComparisonTreeMetaData library")
-if(NOT CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY)
+set(XSCTREEMETADATA_LINK_LIBRARY "${XSCTREEMETADATA_LINK_LIBRARY}" CACHE STRING "Path to XSCTreeMetaData library")
+if(NOT XSCTREEMETADATA_LINK_LIBRARY)
     set(CSCTMDPLUGIN_LINK_PATH "${MV_CSCTMD_INSTALL_DIR}/$<CONFIGURATION>/$<IF:$<CXX_COMPILER_ID:MSVC>,lib,Plugins>")
     set(MV_LINK_SUFFIX $<IF:$<CXX_COMPILER_ID:MSVC>,${CMAKE_LINK_LIBRARY_SUFFIX},${CMAKE_SHARED_LIBRARY_SUFFIX}>)
-    set(CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY "${CSCTMDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}CrossSpeciesComparisonTreeMetaData${MV_LINK_SUFFIX}")
+    set(XSCTREEMETADATA_LINK_LIBRARY "${CSCTMDPLUGIN_LINK_PATH}/${CMAKE_SHARED_LIBRARY_PREFIX}XSCTreeMetaData${MV_LINK_SUFFIX}")
 endif()
 
 # Link to ManiVault and data plugins
@@ -144,8 +144,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::Core)
 target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::PointData)
 target_link_libraries(${PROJECT_NAME} PRIVATE ManiVault::ClusterData)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE "${CROSSSPECIESCOMPARISONTREEDATA_LINK_LIBRARY}")
-target_link_libraries(${PROJECT_NAME} PRIVATE "${CROSSSPECIESCOMPARISONTREEMETADATA_LINK_LIBRARY}")
+target_link_libraries(${PROJECT_NAME} PRIVATE "${XSCTREEDATA_LINK_LIBRARY}")
+target_link_libraries(${PROJECT_NAME} PRIVATE "${XSCTREEMETADATA_LINK_LIBRARY}")
 
 # -----------------------------------------------------------------------------
 # Target installation

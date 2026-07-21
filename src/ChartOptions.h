@@ -8,8 +8,8 @@
 #include "ClusterData/ClusterData.h"
 #include <actions/ToggleAction.h>
 #include "actions/DatasetPickerAction.h"
-#include <CrossSpeciesComparisonTreeData/CrossSpeciesComparisonTreeData.h>
-#include <CrossSpeciesComparisonTreeMetaData/CrossSpeciesComparisonTreeMetaData.h>
+#include <XSCTreeData/XSCTreeData.h>
+#include <XSCTreeMetaData/XSCTreeMetaData.h>
 #include "event/EventListener.h"
 #include "actions/Actions.h"
 #include "Plugin.h"
@@ -38,7 +38,7 @@
 #include <actions/VerticalToolbarAction.h>
 using namespace mv::gui;
 class QMenu;
-class CrossSpeciesComparisonPhyTVuPlugin;
+class XSCPhyTVuPlugin;
 namespace mv
 {
     class CoreInterface;
@@ -173,7 +173,7 @@ public:
 protected:
 
 public:
-    ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core);
+    ChartOptions(XSCPhyTVuPlugin& XSCPhyTVuPlugin, mv::CoreInterface* core);
 
 private:
     //void createJsonStringCluster();
@@ -206,7 +206,7 @@ public: // Serialization
 
 
 protected:
-    CrossSpeciesComparisonPhyTVuPlugin& _viewerPlugin;
+    XSCPhyTVuPlugin& _viewerPlugin;
     mv::CoreInterface* _core;
     ExtraSettingsHolder              _extraSettingsHolder;
     MetaDataSettingsHolder              _metaDataSettingsHolder;

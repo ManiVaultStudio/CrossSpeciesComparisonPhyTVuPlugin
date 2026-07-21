@@ -1,1 +1,1 @@
-# CrossSpeciesComparisonPhyloTreeView
+# XSCPhyloTreeView

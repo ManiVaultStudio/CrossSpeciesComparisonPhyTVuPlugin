@@ -1,20 +1,20 @@
 <RCC>
-    <qresource prefix="CrossSpeciesComparisonPhyTVu">
-		<file>CrossSpeciesComparisonPhyTVu_chart/ChartFile.js</file>
-		<file>CrossSpeciesComparisonPhyTVu_chart/DataFile.js</file>
-		<file>CrossSpeciesComparisonPhyTVu_chart/FunctionFile.js</file>
-		<file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.html</file>
-		<file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.css</file>
-        <file>CrossSpeciesComparisonPhyTVu_chart/CrossSpeciesComparisonPhyTVu_chart.js</file>
+    <qresource prefix="XSCPhyTVu">
+		<file>XSCPhyTVu_chart/ChartFile.js</file>
+		<file>XSCPhyTVu_chart/DataFile.js</file>
+		<file>XSCPhyTVu_chart/FunctionFile.js</file>
+		<file>XSCPhyTVu_chart/XSCPhyTVu_chart.html</file>
+		<file>XSCPhyTVu_chart/XSCPhyTVu_chart.css</file>
+        <file>XSCPhyTVu_chart/XSCPhyTVu_chart.js</file>
     </qresource>
-    <qresource prefix="CrossSpeciesComparisonPhyTVu">
+    <qresource prefix="XSCPhyTVu">
         <file>js_libs/d3.v6.js</file>
 		<file>js_libs/d3.v4.js</file>
 		<file>js_libs/d3.v5.js</file>
 		<file>js_libs/d3-scale-chromatic.v1.min.js</file>
         <file>js_libs/qwebchannel.tools.js</file>
 	</qresource>
-	<qresource prefix="CrossSpeciesComparisonPhyTVu">
+	<qresource prefix="XSCPhyTVu">
 		<file>SpeciesIcons/african_green_monkey.svg</file>
 		<file>SpeciesIcons/arctic_ground_squirrel.svg</file>
 		<file>SpeciesIcons/armadillo.svg</file>

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <set>
-#include "CrossSpeciesComparisonPhyTVuPlugin.h"
+#include "XSCPhyTVuPlugin.h"
 #include<string>  
 #include <QFileDialog>
 #include <QPageLayout>
@@ -28,9 +28,9 @@ bool areStringListsEqual(const QStringList& list1, const QStringList& list2) {
     return set1 == set2;
 }
 
-ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesComparisonPhyTVuPlugin, mv::CoreInterface* core) :
-    WidgetAction(&CrossSpeciesComparisonPhyTVuPlugin, "CrossSpeciesComparisonPhyTVuPlugin Chart"),
-    _viewerPlugin(CrossSpeciesComparisonPhyTVuPlugin),
+ChartOptions::ChartOptions(XSCPhyTVuPlugin& XSCPhyTVuPlugin, mv::CoreInterface* core) :
+    WidgetAction(&XSCPhyTVuPlugin, "XSCPhyTVuPlugin Chart"),
+    _viewerPlugin(XSCPhyTVuPlugin),
     _core(core),
     _extraSettingsHolder(*this),
     _mainSettingsHolder(*this),
@@ -66,15 +66,15 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
     _metaDataSettingsHolder.setEnabled(false);
     _linkerSettingsHolder.setEnabled(false);
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().setFilterFunction([this](mv::Dataset<DatasetImpl> dataset) -> bool {
-        return dataset->getDataType() == CrossSpeciesComparisonTreeType;
+        return dataset->getDataType() == XSCTreeType;
         });
     _metaDataSettingsHolder.getTraitDatasetSelectionAction().setFilterFunction([this](mv::Dataset<DatasetImpl> dataset) -> bool {
-        return dataset->getDataType() == CrossSpeciesComparisonTreeMetaType;
+        return dataset->getDataType() == XSCTreeMetaType;
         });
 
 
-    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeType, std::bind(&ChartOptions::onDataEventTree, this, std::placeholders::_1));
-    _eventListener.registerDataEventByType(CrossSpeciesComparisonTreeMetaType, std::bind(&ChartOptions::onDataEventTreeMeta, this, std::placeholders::_1));
+    _eventListener.registerDataEventByType(XSCTreeType, std::bind(&ChartOptions::onDataEventTree, this, std::placeholders::_1));
+    _eventListener.registerDataEventByType(XSCTreeMetaType, std::bind(&ChartOptions::onDataEventTreeMeta, this, std::placeholders::_1));
 
 
     _mainSettingsHolder.getMainReferenceTreeSelectionAction().setDefaultWidgetFlags(OptionAction::ComboBox);
@@ -218,7 +218,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
 
             if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
-                auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
+                auto temp = mv::data().getDataset<XSCTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
                 if (temp.isValid())
                 {
                     QJsonObject treeData = temp->getTreeData();
@@ -352,7 +352,7 @@ ChartOptions::ChartOptions(CrossSpeciesComparisonPhyTVuPlugin& CrossSpeciesCompa
         {
             if (_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
             {
-                auto temp = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
+                auto temp = mv::data().getDataset<XSCTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId());
                 if (temp.isValid())
                 {
                     _viewerPlugin.getReferenceTreeDataset().setDataset(temp.getDataset());
@@ -561,7 +561,7 @@ void ChartOptions::modifyTreeData(QJsonObject& treeData, bool emptyGeneFlag) {
 std::string ChartOptions::extractFormatData(QString datasetValue)
 {
 
-    Dataset<CrossSpeciesComparisonTree> dataset = mv::data().getDataset<CrossSpeciesComparisonTree>(datasetValue);
+    Dataset<XSCTree> dataset = mv::data().getDataset<XSCTree>(datasetValue);
     auto temp = dataset->getTreeData();
     std::string valueStringReference = QJsonDocument(temp).toJson().toStdString();
 
@@ -626,7 +626,7 @@ void ChartOptions::colorTraitCalculation()
     if (value != "" && dataset.isValid() && datasetText != "")
     {
 
-        auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
+        auto data = mv::data().getDataset<XSCTreeMeta>(dataset->getId());
         if (data.isValid())
         {
             auto dataString = data->getTreeMetaData();
@@ -648,7 +648,7 @@ void ChartOptions::stringTraitCalculation()
     auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
     if (value != "" && dataset.isValid() && datasetText != "")
     {
-        auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
+        auto data = mv::data().getDataset<XSCTreeMeta>(dataset->getId());
         if (data.isValid())
         {
             auto dataString = data->getTreeMetaData();
@@ -669,7 +669,7 @@ void ChartOptions::numericTraitCalculation()
     auto datasetText = _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText();
     if (value != "" && dataset.isValid() && datasetText != "")
     {
-        auto data = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(dataset->getId());
+        auto data = mv::data().getDataset<XSCTreeMeta>(dataset->getId());
         if (data.isValid())
         {
             auto dataString = data->getTreeMetaData();
@@ -700,7 +700,7 @@ void ChartOptions::traitDatasetModify()
 {
     if (_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset().isValid() && _metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentText() != "")
     {
-        Dataset<CrossSpeciesComparisonTreeMeta> metaDataDataset = mv::data().getDataset<CrossSpeciesComparisonTreeMeta>(_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getId());
+        Dataset<XSCTreeMeta> metaDataDataset = mv::data().getDataset<XSCTreeMeta>(_metaDataSettingsHolder.getTraitDatasetSelectionAction().getCurrentDataset()->getId());
 
         QStringList metaDataLeafNames = metaDataDataset->getTreeMetaLeafNames();
         if (metaDataLeafNames.size() > 0)
@@ -708,7 +708,7 @@ void ChartOptions::traitDatasetModify()
 
     if ( _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentText() != "" &&  _mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset().isValid())
     {
-        QStringList referenceTreeLeafNames = mv::data().getDataset<CrossSpeciesComparisonTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
+        QStringList referenceTreeLeafNames = mv::data().getDataset<XSCTree>(_mainSettingsHolder.getMainReferenceTreeSelectionAction().getCurrentDataset()->getId())->getTreeLeafNames();
        
         if (areStringListsEqual(referenceTreeLeafNames, metaDataLeafNames))
         {
